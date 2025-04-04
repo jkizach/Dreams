@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.HovedmenuController">
+  <tabs>
+    <Tab text="Ny drøm">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="660.0" prefWidth="900.0">
+               <children>
+                  <GridPane layoutX="14.0" layoutY="597.0" prefHeight="153.0" prefWidth="600.0" vgap="5.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="260.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <CheckBox fx:id="lucid" mnemonicParsing="false" text="Lucid" GridPane.rowIndex="1">
+                           <tooltip>
+                              <Tooltip text="Ved man at man drømmer?" wrapText="true" />
+                           </tooltip></CheckBox>
+                        <CheckBox fx:id="praktiserer" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="2">
+                           <tooltip>
+                              <Tooltip text="Dobbeltretter man eller laver neutral iagttagelse i drømmen?" wrapText="true" />
+                           </tooltip></CheckBox>
+                        <CheckBox fx:id="modsat" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="arketypisk" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <tooltip>
+                              <Tooltip text="Er drømmen kraftig med eventyragtige symboler?" wrapText="true" />
+                           </tooltip></CheckBox>
+                        <CheckBox fx:id="praksis" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <tooltip>
+                              <Tooltip text="Handler drømmen om praksis? Undervisning, øvelser?" wrapText="true" />
+                           </tooltip></CheckBox>
+                        <CheckBox fx:id="mareridt" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Drømmejeget" />
+                        <Label text="Drømmen" GridPane.columnIndex="1" />
+                        <Label text="Dagrest" GridPane.columnIndex="2" />
+                        <TextArea fx:id="dagrestFelt" prefHeight="105.0" prefWidth="210.0" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
+                        <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" />
+                     </padding>
+                  </GridPane>
+                  <DatePicker fx:id="newDreamDate" layoutX="78.0" layoutY="9.0" prefHeight="39.0" prefWidth="180.0" />
+                  <TextArea fx:id="skriveFelt" layoutX="14.0" layoutY="54.0" prefHeight="532.0" prefWidth="600.0" wrapText="true" />
+                  <Button id="minKnap" fx:id="gemDream" layoutX="844.0" layoutY="702.0" mnemonicParsing="false" onAction="#handleAddDream" text="Gem drømmen" />
+                  <Label layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="128.0" text="Dato" />
+                  <VBox fx:id="vBoxSymboler" layoutX="655.0" layoutY="54.0" prefHeight="421.0" prefWidth="280.0" spacing="10.0">
+                     <children>
+                        <Label text="Symboler" />
+                     </children>
+                  </VBox>
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="analyseTab" text="Analyse">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+      </content>
+    </Tab>
+      <Tab text="Drømme">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="660.0" prefWidth="900.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="15.0" text="Fra" />
+                  <DatePicker fx:id="fromDatePicker" layoutX="74.0" layoutY="8.0" prefHeight="39.0" prefWidth="180.0" />
+                  <Label layoutX="284.0" layoutY="15.0" text="Til" />
+                  <DatePicker fx:id="toDatePicker" layoutX="345.0" layoutY="8.0" prefHeight="39.0" prefWidth="180.0" />
+                  <ListView fx:id="dreamListView" editable="true" layoutX="14.0" layoutY="53.0" maxWidth="635.0" prefHeight="675.0" prefWidth="600.0" styleClass="custom-list-view" />
+                  <Button layoutX="630.0" layoutY="701.0" mnemonicParsing="false" text="Rediger drøm" />
+                  <Button layoutX="810.0" layoutY="701.0" mnemonicParsing="false" text="Slet drøm" />
+                  <Separator layoutX="630.0" layoutY="682.0" prefHeight="1.0" prefWidth="351.0" />
+               </children></AnchorPane>
+         </content>
+      </Tab>
+      <Tab fx:id="settingsTab" onClosed="#skiftTandhjul" onSelectionChanged="#skiftTandhjul">
+         <graphic>
+              <ImageView fx:id="settingsIcon" fitHeight="20" fitWidth="20" />
+         </graphic>
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="660.0" prefWidth="900.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="14.0" text="Vælg tema" />
+                  <ComboBox fx:id="cbTemaer" layoutX="14.0" layoutY="44.0" onAction="#handleSkiftTema" prefHeight="37.0" prefWidth="185.0" />
+                  <Label layoutX="14.0" layoutY="104.0" text="Lav nyt tema">
+                     <tooltip>
+                        <Tooltip text="Du kan tilføje dine egne farvetemaer. Se dem før du gemmer!" />
+                     </tooltip></Label>
+                  <VBox layoutX="12.0" layoutY="135.0" prefHeight="336.0" prefWidth="123.0" spacing="16.0">
+                     <children>
+                        <Label text="Baggrund A" />
+                        <Label text="Baggrund B" />
+                        <Label text="Baggrund C" />
+                        <Label text="Baggrund D" />
+                        <Label text="Tekst A" />
+                        <Label text="Tekst B" />
+                        <Label text="Tekst C" />
+                        <Label text="Kanter" />
+                        <Label text="Font" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="156.0" layoutY="135.0" prefHeight="342.0" prefWidth="154.0" spacing="5.0">
+                     <children>
+                        <ColorPicker fx:id="baggrundAPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="baggrundBPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="baggrundCPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="baggrundDPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="tekstAPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="tekstBPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="tekstCPicker" onAction="#farveEllerFontChanged" />
+                        <ColorPicker fx:id="kantPicker" onAction="#farveEllerFontChanged" prefWidth="153.0" />
+                        <ComboBox fx:id="cbFonts" onAction="#farveEllerFontChanged" prefWidth="153.0" promptText="Courier" />
+                     </children>
+                  </VBox>
+                  <Separator layoutX="12.0" layoutY="91.0" prefHeight="5.0" prefWidth="297.0" />
+                  <Separator layoutX="357.0" layoutY="91.0" prefHeight="5.0" prefWidth="489.0" />
+                  <Label layoutX="357.0" layoutY="14.0" text="Info" />
+                  <Button layoutX="357.0" layoutY="45.0" mnemonicParsing="false" text="Om appen" />
+                  <Button layoutX="494.0" layoutY="45.0" mnemonicParsing="false" text="Hjælp" />
+                  <Button fx:id="seTemaKnap" disable="true" layoutX="14.0" layoutY="495.0" mnemonicParsing="false" onAction="#handleSeTemaKnap" text="Se tema" />
+                  <TextField fx:id="tfNytTemaNavn" disable="true" layoutX="14.0" layoutY="542.0" onKeyTyped="#enableGemKnap" promptText="Navngiv tema" />
+                  <Button fx:id="gemNytTemaKnap" disable="true" layoutX="213.0" layoutY="542.0" mnemonicParsing="false" onAction="#handleGemNytTema" text="Gem" />
+                  <GridPane hgap="10.0" layoutX="357.0" layoutY="104.0" prefHeight="259.0" prefWidth="490.0" vgap="10.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="235.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="35.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Tilføj symbol" />
+                        <ComboBox fx:id="cbKategoriAdd" prefHeight="37.0" prefWidth="180.0" promptText="Kategori" GridPane.rowIndex="1" />
+                        <TextField fx:id="tfNytSymbol" maxWidth="235.0" prefHeight="37.0" prefWidth="235.0" promptText="Nyt symbol" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="addSymbolKnap" mnemonicParsing="false" onAction="#handleAddSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label text="Fjern symbol" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="cbKategoriRemove" onAction="#opretCCbox" prefHeight="37.0" prefWidth="180.0" promptText="Kategori" GridPane.rowIndex="3" />
+                        <Button fx:id="fjernSymbolKnap" mnemonicParsing="false" onAction="#handleFjernSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="-" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label text="Ny symbolkategori" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                           <tooltip>
+                              <Tooltip text="Du kan tilføje op til 3 nye symbolkategorier." />
+                           </tooltip>
+                        </Label>
+                        <TextField fx:id="tfNyKategori" maxWidth="180.0" prefHeight="37.0" prefWidth="180.0" promptText="Navn" GridPane.rowIndex="5" />
+                        <Button fx:id="addNyKategoriKnap" mnemonicParsing="false" onAction="#handleAddNyKategoriKnap" text="Tilføj" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+                        <VBox fx:id="fjernSymbolVbox" maxWidth="235.0" prefHeight="38.0" prefWidth="235.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+                  <Separator layoutX="357.0" layoutY="394.0" prefHeight="5.0" prefWidth="489.0" />
+                  <CheckBox fx:id="kollektivStyrer" layoutX="357.0" layoutY="419.0" mnemonicParsing="false" onAction="#handleCbStyrerKol" text="Vis checkboks: Kollektiv" />
+                  <CheckBox fx:id="advarselStyrer" layoutX="357.0" layoutY="454.0" mnemonicParsing="false" onAction="#handleCbStyrerAdv" text="Vis checkboks: Advarsel" />
+               </children></AnchorPane>
+         </content>
+      </Tab>
+  </tabs>
+</TabPane>

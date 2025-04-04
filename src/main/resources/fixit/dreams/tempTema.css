@@ -1,0 +1,279 @@
+/* Midlertidigt tema til visning */
+
+.root {
+    /* Mine farvevariabler: */
+	-fx-hovedbg-background: #1a1a1a;
+	-fx-hovedtxt-text: #d1d1d1;
+	-fx-alttext-text: #1a1a1a;
+	-fx-alternativtxt-text: #62cd84;
+	-fx-alternativbg-background: #62cd84;
+	-fx-border-border: #d699d3;
+	-fx-andenalternativbg-background: #262626;
+	-fx-textfelt-background: #333333;
+
+    -fx-background-color: -fx-hovedbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+    -fx-font-size: 18px;
+	-fx-font-family: 'Courier New';
+    /* er 'monospace' font = Courier New? JA! */
+}
+
+.label {
+    -fx-text-fill: -fx-alternativtxt-text;
+}
+
+.button {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-alternativtxt-text;
+    -fx-border-color: -fx-border-border;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+}
+
+.button:hover {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-hovedbg-background;
+}
+
+.text-area {
+    -fx-background-color: -fx-textfelt-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+    -fx-border-color: -fx-border-border;
+}
+
+.text-area .content {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+.tab-pane {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+.tab-pane .tab {
+    -fx-background-color: -fx-hovedbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -fx-hovedbg-background;
+}
+
+.tab-label {
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.combo-box {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+    -fx-border-color: -fx-border-border;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-alttext-text;
+}
+
+
+.grid-pane {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+.check-box {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.check-box .box {
+    -fx-background-color: -fx-andenalternativbg-background; /* Mørk baggrund */
+    -fx-border-color: -fx-border-border; /* green kant */
+    -fx-border-radius: 3px;
+    -fx-padding: 3px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: -fx-alternativbg-background
+}
+
+.date-picker {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+    -fx-border-color: -fx-border-border;
+}
+
+.date-picker .text-field {
+    -fx-background-color: -fx-textfelt-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-background-radius: 5px;
+}
+
+.date-picker .arrow-button:hover {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+.date-picker .cell {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.date-picker .day-cell:hover {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-alttext-text;
+}
+
+.date-picker .day-cell:selected {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-alttext-text;
+}
+
+/* Baggrundsfarve for kalender-popup */
+.date-picker-popup {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+/* Grid-baggrunden bag dagene */
+.date-picker-popup .calendar-grid {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+/* Gør baggrunden mørk for uvalgte dage */
+.date-picker-popup .day-cell {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+/* Når en dag er valgt */
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-alttext-text;
+}
+
+/* Hover-effekt for dage */
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-alttext-text;
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+/* scroll-bar */
+.text-area .scroll-bar:vertical {
+    -fx-background-color: -fx-hovedbg-background; /* Baggrundsfarve */
+}
+
+/* Ændrer farven på selve scrolleren (thumb) */
+.text-area .scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-alternativbg-background; /* Farve på scroll thumb */
+}
+
+/* Når scrolleren er hovered */
+.text-area .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+/* Når scrolleren bliver klikket */
+.text-area .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+/* Ændrer farven på scrollbar track */
+.text-area .scroll-bar:vertical .track {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+/* Når musen er over pilene */
+.text-area .scroll-bar:vertical .increment-button:hover,
+.text-area .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: -fx-alternativbg-background; /* Hover farve */
+}
+
+
+.custom-list-view {
+    -fx-background-color: -fx-textfelt-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+    -fx-border-color: -fx-border-border;
+}
+
+.custom-list-view .content {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+.custom-list-view .list-cell {
+    -fx-background-color: -fx-textfelt-background; /* Ensfarvet baggrund */
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.custom-list-view .list-cell:odd {
+    -fx-background-color: -fx-textfelt-background; /* Fjern striber */
+}
+
+.custom-list-view .list-cell:selected {
+    -fx-background-color: -fx-andenalternativbg-background; /* Baggrund for valgte element */
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.custom-list-view .scroll-bar:vertical {
+    -fx-background-color: -fx-hovedbg-background;
+    -fx-padding:0;
+    -fx-pref-width: 20;
+}
+
+.custom-list-view .scroll-bar:vertical .track {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+.custom-list-view .scroll-bar:vertical .thumb{
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.custom-list-view .scroll-bar:vertical .increment-button:hover,
+.custom-list-view .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: -fx-alternativbg-background; /* Hover farve */
+}
+
+.custom-list-view .scroll-bar:horizontal {
+    -fx-pref-width: 0;
+    -fx-opacity: 0;
+    -fx-padding:-7;
+}
+
+.custom-list-view .scroll-bar:horizontal .increment-arrow,
+.custom-list-view .scroll-bar:horizontal .decrement-arrow,
+.custom-list-view .scroll-bar:horizontal .increment-button,
+.custom-list-view .scroll-bar:horizontal .decrement-button {
+    -fx-padding:0;
+}
+
+.text-field {
+    -fx-background-color: -fx-textfelt-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+    -fx-border-color: -fx-border-border;
+}
+
+.color-picker {
+    -fx-background-color: -fx-textfelt-background;
+    -fx-border-color: -fx-border-border;
+    -fx-border-radius: 3px;
+}
+
+.separator {
+    -fx-background-color: -fx-alternativbg-background;
+}

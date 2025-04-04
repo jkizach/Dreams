@@ -1,0 +1,34 @@
+[ {
+  "tekstB" : "#1A1A1A",
+  "tekstA" : "#D1D1D1",
+  "temaName" : "Fesen",
+  "baggrundD" : "#333333",
+  "tekstC" : "#62CD84",
+  "baggrundB" : "#62CD84",
+  "baggrundC" : "#262626",
+  "kant" : "#D699D2",
+  "baggrundA" : "#1A1A1A",
+  "font" : "Courier New"
+}, {
+  "tekstB" : "#1A1A1A",
+  "tekstA" : "#D1D1D1",
+  "temaName" : "mørkt blåt",
+  "baggrundD" : "#333333",
+  "tekstC" : "#678AE6",
+  "baggrundB" : "#678AE6",
+  "baggrundC" : "#262626",
+  "kant" : "#0B38AF",
+  "baggrundA" : "#1A1A1A",
+  "font" : "Lucida Bright"
+}, {
+  "tekstB" : "#1A1A1A",
+  "tekstA" : "#D1D1D1",
+  "temaName" : "mørkt grønt",
+  "baggrundD" : "#333333",
+  "tekstC" : "#62CD84",
+  "baggrundB" : "#62CD84",
+  "baggrundC" : "#262626",
+  "kant" : "#62CD84",
+  "baggrundA" : "#1A1A1A",
+  "font" : "Courier New"
+} ]
