@@ -52,7 +52,7 @@ public class HovedmenuController {
     private VBox fjernSymbolVbox = new VBox();
 
     @FXML
-    private CheckComboBox<String> arketyper, chakraer, dyr, farver, personer, forloeb, userDefinedA, userDefinedB, userDefinedC, fjernSymbolCCB;
+    private CheckComboBox<String> fjernSymbolCCB;
 
     @FXML
     private VBox vBoxSymboler = new VBox();
@@ -89,38 +89,11 @@ public class HovedmenuController {
             return; // Stopper metoden tidligt, hvis intet er valgt
         }
         fjernSymbolCCB = new CheckComboBox<>();
-        
-        // Her skal der jo addes den relevante kategori... switch case?
-        if (List.of("Arketyper", "Chakraer", "Dyr", "Farver", "Personer","Forløb").contains(valgteKategori)) {
-            switch (valgteKategori) {
-                case "Arketyper":
-                    fjernSymbolCCB.getItems().addAll(arketyper.getItems());
-                    break;
-                case "Chakraer":
-                    fjernSymbolCCB.getItems().addAll(chakraer.getItems());
-                    break;
-                case "Dyr":
-                    fjernSymbolCCB.getItems().addAll(dyr.getItems());
-                    break;
-                case "Farver":
-                    fjernSymbolCCB.getItems().addAll(farver.getItems());
-                    break;
-                case "Forløb":
-                    fjernSymbolCCB.getItems().addAll(forloeb.getItems());
-                    break;
-                case "Personer":
-                    fjernSymbolCCB.getItems().addAll(personer.getItems());
-                    break;
-            }
-        } else {
-            // Ellers er det en brugerdefineret kategori:
-            String interntNavn = userService.getNewCategoryInternalName(valgteKategori);
-            if (interntNavn.endsWith("A")) {
-                fjernSymbolCCB.getItems().addAll(userDefinedA.getItems());
-            } else if (interntNavn.endsWith("B")) {
-                fjernSymbolCCB.getItems().addAll(userDefinedB.getItems());
-            } else {
-                fjernSymbolCCB.getItems().addAll(userDefinedC.getItems());
+
+        for (Category c : userService.getCats()) {
+            if (valgteKategori.equals(c.getName())) {
+                fjernSymbolCCB.getItems().addAll(c.getSymbols());
+                break;
             }
         }
 
@@ -199,9 +172,6 @@ public class HovedmenuController {
 
         // Sæt currentTemas farver til de foretrukne:
         System.out.println(userService.getTema().getTemaName());
-        //userService.setCurrentTema(userService.getTema());
-        //changeStylesheet(false);
-
 
         ObservableList<DreamDTO> dreams = userService.getDreamsForDisplay();
         dreamListView.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
@@ -232,27 +202,10 @@ public class HovedmenuController {
         newDreamDate.setValue(LocalDate.now());
         toDatePicker.setValue(LocalDate.now());
 
-        // Uomgængeligt fordi CCB ikke er en javafx-widget!
-        arketyper = new CheckComboBox<>(userService.getArketyperForDisplay());
-        chakraer = new CheckComboBox<>(userService.getChakraerForDisplay());
-        dyr = new CheckComboBox<>(userService.getDyrForDisplay());
-        farver = new CheckComboBox<>(userService.getFarverForDisplay());
-        forloeb = new CheckComboBox<>(userService.getForloebForDisplay());
-        personer = new CheckComboBox<>(userService.getPersonerForDisplay());
-        // her skal jo laves mine obs-lister med user-defined - de e er så kategoriLabels der gør at de ikke bliver vist! :-D
-        userDefinedA = new CheckComboBox<>(userService.getBrugerDefineretAForDisplay());
-        userDefinedB = new CheckComboBox<>(userService.getBrugerDefineretBForDisplay());
-        userDefinedC = new CheckComboBox<>(userService.getBrugerDefineretCForDisplay());
+        // Og kunne man så lave et Søren-trick med Categories her i stedet? vv
+        loadCCBs();
 
-        List<CheckComboBox<String>> checkComboBoxes = Arrays.asList(
-                arketyper, chakraer, dyr, farver, forloeb, personer, userDefinedA, userDefinedB, userDefinedC
-        );
-
-        kategoriLabels = user.getKategoriLabels();
-
-        for (int i = 0; i < kategoriLabels.size(); i++) {
-            setupCCB(checkComboBoxes.get(i), kategoriLabels.get(i));
-        }
+        kategoriLabels = user.getKategoriLabels(); // skal løses så det bruger categories og ikke noget andet...
 
         cbKategoriRemove.setItems(kategoriLabels);
         cbKategoriAdd.setItems(kategoriLabels);
@@ -277,28 +230,36 @@ public class HovedmenuController {
 
     }
 
-    private void setupCCB(CheckComboBox<String> ccb, String title) {
-        vBoxSymboler.getChildren().add(ccb);
-        ccb.setMaxWidth(280);
-        ccb.setMinWidth(280);
-        ccb.setTitle(title);
-        ccb.setShowCheckedCount(true);
+    private void loadCCBs() {
+        for (Category c : userService.getCats()) {
+            CheckComboBox<String> ccb = new CheckComboBox<>();
+            ccb.getItems().addAll(c.getSymbols());
+            vBoxSymboler.getChildren().add(ccb);
+            ccb.setMaxWidth(280);
+            ccb.setMinWidth(280);
+            ccb.setTitle(c.getName());
+            ccb.setShowCheckedCount(true);
+            c.addDreamCCB(ccb);
+        }
     }
 
     @FXML
     private void handleAddDream() {
         DreamData dreamData = new DreamData();
-        dreamData.arketyper = arketyper.getCheckModel().getCheckedItems();
-        dreamData.dyr = dyr.getCheckModel().getCheckedItems();
-        dreamData.farver = farver.getCheckModel().getCheckedItems();
-        dreamData.personer = personer.getCheckModel().getCheckedItems();
-        dreamData.forloeb = forloeb.getCheckModel().getCheckedItems();
-        dreamData.chakraer = chakraer.getCheckModel().getCheckedItems();
-
-        // hvis brugerdef er defineret så også dem... vi venter med det til NU:
-        dreamData.brugerDefineretA = userDefinedA.getCheckModel().getCheckedItems();
-        dreamData.brugerDefineretB = userDefinedB.getCheckModel().getCheckedItems();
-        dreamData.brugerDefineretC = userDefinedC.getCheckModel().getCheckedItems();
+//        dreamData.arketyper = arketyper.getCheckModel().getCheckedItems();
+//        dreamData.dyr = dyr.getCheckModel().getCheckedItems();
+//        dreamData.farver = farver.getCheckModel().getCheckedItems();
+//        dreamData.personer = personer.getCheckModel().getCheckedItems();
+//        dreamData.forloeb = forloeb.getCheckModel().getCheckedItems();
+//        dreamData.chakraer = chakraer.getCheckModel().getCheckedItems();
+//
+//        // hvis brugerdef er defineret så også dem... vi venter med det til NU:
+//        dreamData.brugerDefineretA = userDefinedA.getCheckModel().getCheckedItems();
+//        dreamData.brugerDefineretB = userDefinedB.getCheckModel().getCheckedItems();
+//        dreamData.brugerDefineretC = userDefinedC.getCheckModel().getCheckedItems();
+        for (Category c : userService.getCats()) {
+            dreamData.categories.add(c.getccbDreamSelections());
+        }
 
 
         dreamData.lucid = lucid.isSelected();
@@ -330,16 +291,19 @@ public class HovedmenuController {
             cb.setSelected(false);
         }
 
-        arketyper.getCheckModel().clearChecks();
-        dyr.getCheckModel().clearChecks();
-        chakraer.getCheckModel().clearChecks();
-        farver.getCheckModel().clearChecks();
-        forloeb.getCheckModel().clearChecks();
-        personer.getCheckModel().clearChecks();
-
-        userDefinedA.getCheckModel().clearChecks();
-        userDefinedB.getCheckModel().clearChecks();
-        userDefinedC.getCheckModel().clearChecks();
+        for (Category c : userService.getCats()) {
+            c.resetDreamCCBs();
+        }
+//        arketyper.getCheckModel().clearChecks();
+//        dyr.getCheckModel().clearChecks();
+//        chakraer.getCheckModel().clearChecks();
+//        farver.getCheckModel().clearChecks();
+//        forloeb.getCheckModel().clearChecks();
+//        personer.getCheckModel().clearChecks();
+//
+//        userDefinedA.getCheckModel().clearChecks();
+//        userDefinedB.getCheckModel().clearChecks();
+//        userDefinedC.getCheckModel().clearChecks();
 
     }
 
@@ -438,15 +402,8 @@ public class HovedmenuController {
         if (!tfNyKategori.getText().trim().isEmpty() && userService.okToAddNewUserDefinedCat()) {
             userService.addNyBrugerdefineretKategori(tfNyKategori.getText());
 
-            // Få det interne navn (brugerDef...A, B eller C), og brug så det til at sætte en CCB-op:
-            String nyKategoriInterntNavn = userService.getNewCategoryInternalName(tfNyKategori.getText());
-            if (nyKategoriInterntNavn.endsWith("A")) {
-                setupCCB(userDefinedA, tfNyKategori.getText());
-            } else if (nyKategoriInterntNavn.endsWith("B")) {
-                setupCCB(userDefinedB, tfNyKategori.getText());
-            } else {
-                setupCCB(userDefinedC, tfNyKategori.getText());
-            }
+            userService.addNewCat(tfNyKategori.getText());
+
             tfNyKategori.clear();
         }
     }
@@ -487,37 +444,43 @@ public class HovedmenuController {
     }
 
     private void updateKategoriCCB(String ccb) {
-        if (List.of("Arketyper", "Chakraer", "Dyr", "Farver","Forløb", "Personer").contains(ccb)) {
-            switch (ccb) {
-                case "Arketyper":
-                    arketyper.getCheckModel().clearChecks();
-                    break;
-                case "Chakraer":
-                    chakraer.getCheckModel().clearChecks();
-                    break;
-                case "Dyr":
-                    dyr.getCheckModel().clearChecks();
-                    break;
-                case "Farver":
-                    farver.getCheckModel().clearChecks();
-                    break;
-                case "Forløb":
-                    forloeb.getCheckModel().clearChecks();
-                    break;
-                case "Personer":
-                    personer.getCheckModel().clearChecks();
-                    break;
-            }
-        } else {
-            String interntNavn = userService.getNewCategoryInternalName(ccb);
-            if (interntNavn.endsWith("A")) {
-                userDefinedA.getCheckModel().clearChecks();
-            } else if (interntNavn.endsWith("B")) {
-                userDefinedB.getCheckModel().clearChecks();
-            } else {
-                userDefinedC.getCheckModel().clearChecks();
+        for (Category c : userService.getCats()) {
+            if (ccb.equals(c.getName())) {
+                c.resetDreamCCBs();
             }
         }
+
+//        if (List.of("Arketyper", "Chakraer", "Dyr", "Farver","Forløb", "Personer").contains(ccb)) {
+//            switch (ccb) {
+//                case "Arketyper":
+//                    arketyper.getCheckModel().clearChecks();
+//                    break;
+//                case "Chakraer":
+//                    chakraer.getCheckModel().clearChecks();
+//                    break;
+//                case "Dyr":
+//                    dyr.getCheckModel().clearChecks();
+//                    break;
+//                case "Farver":
+//                    farver.getCheckModel().clearChecks();
+//                    break;
+//                case "Forløb":
+//                    forloeb.getCheckModel().clearChecks();
+//                    break;
+//                case "Personer":
+//                    personer.getCheckModel().clearChecks();
+//                    break;
+//            }
+//        } else {
+//            String interntNavn = userService.getNewCategoryInternalName(ccb);
+//            if (interntNavn.endsWith("A")) {
+//                userDefinedA.getCheckModel().clearChecks();
+//            } else if (interntNavn.endsWith("B")) {
+//                userDefinedB.getCheckModel().clearChecks();
+//            } else {
+//                userDefinedC.getCheckModel().clearChecks();
+//            }
+//        }
     }
 
     /* LOADING AF ANALYSETAB */

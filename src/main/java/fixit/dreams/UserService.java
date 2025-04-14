@@ -203,5 +203,9 @@ public class UserService extends ServiceMother {
         return user.isVisKollektiv();
     }
 
+    public void addNewCat(String name) {
+        user.addCategory(name);
+    }
+
 }
 

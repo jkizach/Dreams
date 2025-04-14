@@ -5,11 +5,13 @@ import javafx.scene.chart.XYChart;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Stats {
     protected User user;
+    private Map<String,StatsDO> categoryStats;
     private Map<String, Map<String, Integer>> arketyperStats;
     private Map<String, Map<String, Integer>> chakraerStats;
     private Map<String, Map<String, Integer>> dyrStats;
@@ -35,6 +37,7 @@ public class Stats {
 
     public Stats() {
         this.user = User.getInstance();
+        this.categoryStats = new HashMap<>();
         this.arketyperStats = new HashMap<>();
         this.chakraerStats = new HashMap<>();
         this.dyrStats = new HashMap<>();
@@ -94,49 +97,57 @@ public class Stats {
 
     private void updateStats(String key, Dream dream) {
         arketyperStats.putIfAbsent(key, new HashMap<>());
-        for (String arketype : dream.getArketyper()) {
-            arketyperStats.get(key).merge(arketype, 1, Integer::sum);
+
+        // her skal der i stedet loopes gennem listen af CategoryDTO i hver drøm... men hvad så med stats?
+        for (CategoryDTO cat : dream.getCategories()) {
+            categoryStats.putIfAbsent(cat.name, new StatsDO(cat.name));
+            categoryStats.get(cat.name).updateStatsDO(key,cat);
         }
 
-        chakraerStats.putIfAbsent(key, new HashMap<>());
-        for (String chakra : dream.getChakraer()) {
-            chakraerStats.get(key).merge(chakra, 1, Integer::sum);
-        }
 
-        dyrStats.putIfAbsent(key, new HashMap<>());
-        for (String dyr : dream.getDyr()) {
-            dyrStats.get(key).merge(dyr, 1, Integer::sum);
-        }
-
-        farverStats.putIfAbsent(key, new HashMap<>());
-        for (String farve : dream.getFarver()) {
-            farverStats.get(key).merge(farve, 1, Integer::sum);
-        }
-
-        forloebStats.putIfAbsent(key, new HashMap<>());
-        for (String forloeb : dream.getForloeb()) {
-            forloebStats.get(key).merge(forloeb, 1, Integer::sum);
-        }
-
-        personerStats.putIfAbsent(key, new HashMap<>());
-        for (String personer : dream.getPersoner()) {
-            personerStats.get(key).merge(personer, 1, Integer::sum);
-        }
-
-        aStats.putIfAbsent(key, new HashMap<>());
-        for (String a : dream.getBrugerDefineretA()) {
-            aStats.get(key).merge(a, 1, Integer::sum);
-        }
-
-        bStats.putIfAbsent(key, new HashMap<>());
-        for (String b : dream.getBrugerDefineretB()) {
-            bStats.get(key).merge(b, 1, Integer::sum);
-        }
-
-        cStats.putIfAbsent(key, new HashMap<>());
-        for (String c : dream.getBrugerDefineretC()) {
-            cStats.get(key).merge(c, 1, Integer::sum);
-        }
+//        for (String arketype : dream.getArketyper()) {
+//            arketyperStats.get(key).merge(arketype, 1, Integer::sum);
+//        }
+//
+//        chakraerStats.putIfAbsent(key, new HashMap<>());
+//        for (String chakra : dream.getChakraer()) {
+//            chakraerStats.get(key).merge(chakra, 1, Integer::sum);
+//        }
+//
+//        dyrStats.putIfAbsent(key, new HashMap<>());
+//        for (String dyr : dream.getDyr()) {
+//            dyrStats.get(key).merge(dyr, 1, Integer::sum);
+//        }
+//
+//        farverStats.putIfAbsent(key, new HashMap<>());
+//        for (String farve : dream.getFarver()) {
+//            farverStats.get(key).merge(farve, 1, Integer::sum);
+//        }
+//
+//        forloebStats.putIfAbsent(key, new HashMap<>());
+//        for (String forloeb : dream.getForloeb()) {
+//            forloebStats.get(key).merge(forloeb, 1, Integer::sum);
+//        }
+//
+//        personerStats.putIfAbsent(key, new HashMap<>());
+//        for (String personer : dream.getPersoner()) {
+//            personerStats.get(key).merge(personer, 1, Integer::sum);
+//        }
+//
+//        aStats.putIfAbsent(key, new HashMap<>());
+//        for (String a : dream.getBrugerDefineretA()) {
+//            aStats.get(key).merge(a, 1, Integer::sum);
+//        }
+//
+//        bStats.putIfAbsent(key, new HashMap<>());
+//        for (String b : dream.getBrugerDefineretB()) {
+//            bStats.get(key).merge(b, 1, Integer::sum);
+//        }
+//
+//        cStats.putIfAbsent(key, new HashMap<>());
+//        for (String c : dream.getBrugerDefineretC()) {
+//            cStats.get(key).merge(c, 1, Integer::sum);
+//        }
 
         lucidStats.put(key, lucidStats.getOrDefault(key, 0) + (dream.getLucid() ? 1 : 0));
         praktisererStats.put(key, praktisererStats.getOrDefault(key, 0) + (dream.getPraktiserer() ? 1: 0));
@@ -323,5 +334,9 @@ public class Stats {
 
     public Map<String, Integer> getAdvarselStats() {
         return advarselStats;
+    }
+
+    public Map<String, Map<String, Integer>> getCategoryStats(String name) {
+        return categoryStats.get(name).getCatStats();
     }
 }

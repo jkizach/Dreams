@@ -16,149 +16,171 @@ public class AnalyseService extends ServiceMother{
     public Map<String,Integer> getDataForPieChart(String kategoriNavn) {
         HashMap<String,Integer> outMap = new HashMap<>();
 
+        // men med den nye kode har en dream en ArrayList<CategoryDTO> som har navn og TreeSet
         for (Dream d : user.getDreams().values()) {
-            if (List.of("Arketyper", "Chakraer", "Dyr", "Farver", "Personer","Forløb").contains(kategoriNavn)) {
-                switch (kategoriNavn) {
-                    case "Arketyper":
-                        for (String symbol : d.getArketyper()) {
-                            outMap.merge(symbol, 1, Integer::sum);
-                        }
-                        break;
-                    case "Chakraer":
-                        for (String symbol : d.getChakraer()) {
-                            outMap.merge(symbol, 1, Integer::sum);
-                        }
-                        break;
-                    case "Dyr":
-                        for (String symbol : d.getDyr()) {
-                            outMap.merge(symbol, 1, Integer::sum);
-                        }
-                        break;
-                    case "Farver":
-                        for (String symbol : d.getFarver()) {
-                            outMap.merge(symbol, 1, Integer::sum);
-                        }
-                        break;
-                    case "Forløb":
-                        for (String symbol : d.getForloeb()) {
-                            outMap.merge(symbol, 1, Integer::sum);
-                        }
-                        break;
-                    case "Personer":
-                        for (String symbol : d.getPersoner()) {
-                            outMap.merge(symbol, 1, Integer::sum);
-                        }
-                        break;
-                }
-            } else {
-                String abc = getNewCategoryInternalName(kategoriNavn);
-                // Ellers er det en brugerdefineret kategori:
-                if (abc.endsWith("A")) {
-                    for (String symbol : d.getBrugerDefineretA()) {
-                        outMap.merge(symbol, 1, Integer::sum);
-                    }
-
-                } else if (abc.endsWith("B")) {
-                    for (String symbol : d.getBrugerDefineretB()) {
-                        outMap.merge(symbol, 1, Integer::sum);
-                    }
-                } else {
-                    for (String symbol : d.getBrugerDefineretC()) {
+            for (CategoryDTO c : d.getCategories()) {
+                if (c.name.equals(kategoriNavn)) {
+                    for (String symbol : c.symbols) {
                         outMap.merge(symbol, 1, Integer::sum);
                     }
                 }
             }
         }
+
+//        for (Dream d : user.getDreams().values()) {
+//            if (List.of("Arketyper", "Chakraer", "Dyr", "Farver", "Personer","Forløb").contains(kategoriNavn)) {
+//                switch (kategoriNavn) {
+//                    case "Arketyper":
+//                        for (String symbol : d.getArketyper()) {
+//                            outMap.merge(symbol, 1, Integer::sum);
+//                        }
+//                        break;
+//                    case "Chakraer":
+//                        for (String symbol : d.getChakraer()) {
+//                            outMap.merge(symbol, 1, Integer::sum);
+//                        }
+//                        break;
+//                    case "Dyr":
+//                        for (String symbol : d.getDyr()) {
+//                            outMap.merge(symbol, 1, Integer::sum);
+//                        }
+//                        break;
+//                    case "Farver":
+//                        for (String symbol : d.getFarver()) {
+//                            outMap.merge(symbol, 1, Integer::sum);
+//                        }
+//                        break;
+//                    case "Forløb":
+//                        for (String symbol : d.getForloeb()) {
+//                            outMap.merge(symbol, 1, Integer::sum);
+//                        }
+//                        break;
+//                    case "Personer":
+//                        for (String symbol : d.getPersoner()) {
+//                            outMap.merge(symbol, 1, Integer::sum);
+//                        }
+//                        break;
+//                }
+//            } else {
+//                String abc = getNewCategoryInternalName(kategoriNavn);
+//                // Ellers er det en brugerdefineret kategori:
+//                if (abc.endsWith("A")) {
+//                    for (String symbol : d.getBrugerDefineretA()) {
+//                        outMap.merge(symbol, 1, Integer::sum);
+//                    }
+//
+//                } else if (abc.endsWith("B")) {
+//                    for (String symbol : d.getBrugerDefineretB()) {
+//                        outMap.merge(symbol, 1, Integer::sum);
+//                    }
+//                } else {
+//                    for (String symbol : d.getBrugerDefineretC()) {
+//                        outMap.merge(symbol, 1, Integer::sum);
+//                    }
+//                }
+//            }
+//        }
         return outMap;
     }
 
-    public XYChart.Series<String, Number> onVisGraf(GrafDTO guiData) {
-        XYChart.Series<String, Number> outSeries = new XYChart.Series<>();
-        outSeries.setName("Bananer");
-        TreeMap<String, Integer> data = new TreeMap<>();
-        data.put("Jan 2024", 4);
-        data.put("Feb 2024", 1);
-        data.put("Mar 2024", 3);
-        data.put("Apr 2024", 5);
-        data.put("Maj 2024", 2);
-        data.put("Jun 2024", 6);
-        data.put("Jul 2024", 1);
-        data.put("Aug 2024", 3);
-        data.put("Sep 2024", 5);
-        data.put("Okt 2024", 2);
-        data.put("Nov 2024", 5);
-        data.put("Dec 2024", 2);
-
-        for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            outSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-
-        if (user.skalStatsGenberegnes()){
-            updateStats();
-        }
-
-
-        LocalDate current = guiData.fra;
-        LocalDate end = guiData.til;
-        System.out.println("Sidste ugenr: " + end.get(WeekFields.ISO.weekOfYear()) + " " + end);
-        while (current.get(WeekFields.ISO.weekOfYear()) <= end.get(WeekFields.ISO.weekOfYear())) {
-            System.out.println(current.get(WeekFields.ISO.weekOfYear()));
-
-            current = current.plusWeeks(1);
-        }
-
-        LocalDate current2 = guiData.fra;
-        LocalDate end2 = guiData.til;
-        // brug getMonthValue() for at få månedens talværdi...
-        while (current2.getMonthValue() <= end2.getMonthValue()) {
-
-            current2 = current2.plusMonths(1);
-        }
-
-        return outSeries;
-    }
+//    public XYChart.Series<String, Number> onVisGraf(GrafDTO guiData) {
+//        XYChart.Series<String, Number> outSeries = new XYChart.Series<>();
+//        outSeries.setName("Bananer");
+//        TreeMap<String, Integer> data = new TreeMap<>();
+//        data.put("Jan 2024", 4);
+//        data.put("Feb 2024", 1);
+//        data.put("Mar 2024", 3);
+//        data.put("Apr 2024", 5);
+//        data.put("Maj 2024", 2);
+//        data.put("Jun 2024", 6);
+//        data.put("Jul 2024", 1);
+//        data.put("Aug 2024", 3);
+//        data.put("Sep 2024", 5);
+//        data.put("Okt 2024", 2);
+//        data.put("Nov 2024", 5);
+//        data.put("Dec 2024", 2);
+//
+//        for (Map.Entry<String, Integer> entry : data.entrySet()) {
+//            outSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        if (user.skalStatsGenberegnes()){
+//            updateStats();
+//        }
+//
+//
+//        LocalDate current = guiData.fra;
+//        LocalDate end = guiData.til;
+//        System.out.println("Sidste ugenr: " + end.get(WeekFields.ISO.weekOfYear()) + " " + end);
+//        while (current.get(WeekFields.ISO.weekOfYear()) <= end.get(WeekFields.ISO.weekOfYear())) {
+//            System.out.println(current.get(WeekFields.ISO.weekOfYear()));
+//
+//            current = current.plusWeeks(1);
+//        }
+//
+//        LocalDate current2 = guiData.fra;
+//        LocalDate end2 = guiData.til;
+//        // brug getMonthValue() for at få månedens talværdi...
+//        while (current2.getMonthValue() <= end2.getMonthValue()) {
+//
+//            current2 = current2.plusMonths(1);
+//        }
+//
+//        return outSeries;
+//    }
 
     public ArrayList<XYChart.Series<String, Number>> getDataForLineChart(GrafDTO indat) {
         ArrayList<XYChart.Series<String, Number>> outdat = new ArrayList<>();
 
         //XYChart.Series<String, Number> outSeries = new XYChart.Series<>(); // hm, dem skal jeg jo nok bruge flere af?
 
+        // Det kan nu gøres smartere!!! Med StatsDO osv... for alle checkmodels er tilgængelige
+        // i user.getCategories() -- getccbFilterSelections returnerer en CategoryDTO med et TreeMap med symboler og et navn
+        for (Category c : user.getCategories()) {
+            if (c.getccbFilterSelections() != null) {
+                for (String symbol : c.getccbFilterSelections().symbols) {
+                    outdat.add(stats.makeXY(stats.getCategoryStats(c.getName()), symbol, indat.fra, indat.til, indat.xakse));
+                }
+            }
+        }
+
+
         // Loop gennem hver af GTOens kategorier, og få info fra Stats, og lav en XYseries for hvert hit:
-        for (String symbol : indat.arketyper) {
-            outdat.add(stats.makeXY(stats.getArketyperStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.chakraer) {
-            outdat.add(stats.makeXY(stats.getChakraerStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.dyr) {
-            outdat.add(stats.makeXY(stats.getDyrStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.farver) {
-            outdat.add(stats.makeXY(stats.getFarverStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.forloeb) {
-            outdat.add(stats.makeXY(stats.getForloebStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.personer) {
-            outdat.add(stats.makeXY(stats.getPersonerStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.brugerDefineretA) {
-            outdat.add(stats.makeXY(stats.getaStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.brugerDefineretB) {
-            outdat.add(stats.makeXY(stats.getbStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
-
-        for (String symbol : indat.brugerDefineretC) {
-            outdat.add(stats.makeXY(stats.getcStats(), symbol, indat.fra, indat.til, indat.xakse));
-        }
+//        for (String symbol : indat.arketyper) {
+//            outdat.add(stats.makeXY(stats.getArketyperStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.chakraer) {
+//            outdat.add(stats.makeXY(stats.getChakraerStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.dyr) {
+//            outdat.add(stats.makeXY(stats.getDyrStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.farver) {
+//            outdat.add(stats.makeXY(stats.getFarverStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.forloeb) {
+//            outdat.add(stats.makeXY(stats.getForloebStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.personer) {
+//            outdat.add(stats.makeXY(stats.getPersonerStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.brugerDefineretA) {
+//            outdat.add(stats.makeXY(stats.getaStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.brugerDefineretB) {
+//            outdat.add(stats.makeXY(stats.getbStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
+//
+//        for (String symbol : indat.brugerDefineretC) {
+//            outdat.add(stats.makeXY(stats.getcStats(), symbol, indat.fra, indat.til, indat.xakse));
+//        }
 
         if (indat.lucid) {
             outdat.add(stats.makeBoolXY(stats.getLucidStats(), indat.fra, indat.til, indat.xakse));

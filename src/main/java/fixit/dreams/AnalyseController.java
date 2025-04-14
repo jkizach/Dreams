@@ -49,9 +49,6 @@ public class AnalyseController {
     private ComboBox<String> comboPieKategorier;
 
     @FXML
-    private CheckComboBox<String> arketyper, chakraer, dyr, farver, personer, forloeb, userDefinedA, userDefinedB, userDefinedC;
-
-    @FXML
     private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel;
 
     @FXML
@@ -64,25 +61,26 @@ public class AnalyseController {
         this.analyseService = new AnalyseService(user);
         comboPieKategorier.setItems(user.getKategoriLabels());
 
-        arketyper = new CheckComboBox<>(analyseService.getArketyperForDisplay());
-        chakraer = new CheckComboBox<>(analyseService.getChakraerForDisplay());
-        dyr = new CheckComboBox<>(analyseService.getDyrForDisplay());
-        farver = new CheckComboBox<>(analyseService.getFarverForDisplay());
-        forloeb = new CheckComboBox<>(analyseService.getForloebForDisplay());
-        personer = new CheckComboBox<>(analyseService.getPersonerForDisplay());
-        userDefinedA = new CheckComboBox<>(analyseService.getBrugerDefineretAForDisplay());
-        userDefinedB = new CheckComboBox<>(analyseService.getBrugerDefineretBForDisplay());
-        userDefinedC = new CheckComboBox<>(analyseService.getBrugerDefineretCForDisplay());
+        loadCCBs();
+//        arketyper = new CheckComboBox<>(analyseService.getArketyperForDisplay());
+//        chakraer = new CheckComboBox<>(analyseService.getChakraerForDisplay());
+//        dyr = new CheckComboBox<>(analyseService.getDyrForDisplay());
+//        farver = new CheckComboBox<>(analyseService.getFarverForDisplay());
+//        forloeb = new CheckComboBox<>(analyseService.getForloebForDisplay());
+//        personer = new CheckComboBox<>(analyseService.getPersonerForDisplay());
+//        userDefinedA = new CheckComboBox<>(analyseService.getBrugerDefineretAForDisplay());
+//        userDefinedB = new CheckComboBox<>(analyseService.getBrugerDefineretBForDisplay());
+//        userDefinedC = new CheckComboBox<>(analyseService.getBrugerDefineretCForDisplay());
 
-        List<CheckComboBox<String>> checkComboBoxes = Arrays.asList(
-                arketyper, chakraer, dyr, farver, forloeb, personer, userDefinedA, userDefinedB, userDefinedC
-        );
+//        List<CheckComboBox<String>> checkComboBoxes = Arrays.asList(
+//                arketyper, chakraer, dyr, farver, forloeb, personer, userDefinedA, userDefinedB, userDefinedC
+//        );
 
         kategoriLabels = user.getKategoriLabels();
 
-        for (int i = 0; i < kategoriLabels.size(); i++) {
-            setupCCB(checkComboBoxes.get(i), kategoriLabels.get(i));
-        }
+//        for (int i = 0; i < kategoriLabels.size(); i++) {
+//            setupCCB(checkComboBoxes.get(i), kategoriLabels.get(i));
+//        }
 
         kollektiv.setVisible(user.isVisKollektiv());
         advarsel.setVisible(user.isVisAdvarsel());
@@ -113,6 +111,19 @@ public class AnalyseController {
         }
     }
 
+    private void loadCCBs() {
+        for (Category c : analyseService.getCats()) {
+            CheckComboBox<String> ccb = new CheckComboBox<>();
+            ccb.getItems().addAll(c.getSymbols());
+            vboxTilCCBAnalyse.getChildren().add(ccb);
+            ccb.setMaxWidth(280);
+            ccb.setMinWidth(280);
+            ccb.setTitle(c.getName());
+            ccb.setShowCheckedCount(true);
+            c.addFilterCCB(ccb);
+        }
+    }
+
     @FXML
     private void onVisGraf() {
 
@@ -122,15 +133,15 @@ public class AnalyseController {
         GrafDTO data = new GrafDTO();
         data.fra = dpFraGraf.getValue();
         data.til = dpTilGraf.getValue();
-        data.arketyper = arketyper.getCheckModel().getCheckedItems();
-        data.chakraer = chakraer.getCheckModel().getCheckedItems();
-        data.dyr = dyr.getCheckModel().getCheckedItems();
-        data.farver = farver.getCheckModel().getCheckedItems();
-        data.forloeb = forloeb.getCheckModel().getCheckedItems();
-        data.personer = personer.getCheckModel().getCheckedItems();
-        data.brugerDefineretA = userDefinedA.getCheckModel().getCheckedItems();
-        data.brugerDefineretB = userDefinedB.getCheckModel().getCheckedItems();
-        data.brugerDefineretC = userDefinedC.getCheckModel().getCheckedItems();
+//        data.arketyper = arketyper.getCheckModel().getCheckedItems();
+//        data.chakraer = chakraer.getCheckModel().getCheckedItems();
+//        data.dyr = dyr.getCheckModel().getCheckedItems();
+//        data.farver = farver.getCheckModel().getCheckedItems();
+//        data.forloeb = forloeb.getCheckModel().getCheckedItems();
+//        data.personer = personer.getCheckModel().getCheckedItems();
+//        data.brugerDefineretA = userDefinedA.getCheckModel().getCheckedItems();
+//        data.brugerDefineretB = userDefinedB.getCheckModel().getCheckedItems();
+//        data.brugerDefineretC = userDefinedC.getCheckModel().getCheckedItems();
         data.lucid = lucid.isSelected();
         data.praktiserer = praktiserer.isSelected();
         data.modsat = modsat.isSelected();

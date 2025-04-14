@@ -14,8 +14,8 @@ public class UserDTO {
     public TreeSet<String> dyr;
     public TreeSet<String> farver;
     public TreeSet<String> personer;
-    public ArrayList<String> chakraer;
-    public ArrayList<String> forloeb;
+    public TreeSet<String> chakraer;
+    public TreeSet<String> forloeb;
     public TreeSet<String> brugerDefineretA;
     public TreeSet<String> brugerDefineretB;
     public TreeSet<String> brugerDefineretC;
@@ -38,8 +38,8 @@ public class UserDTO {
         this.dyr = new TreeSet<>(user.getDyr());
         this.farver = new TreeSet<>(user.getFarver());
         this.personer = new TreeSet<>(user.getPersoner());
-        this.chakraer = new ArrayList<>(user.getChakraer());
-        this.forloeb = new ArrayList<>(user.getForloeb());
+        this.chakraer = new TreeSet<>(user.getChakraer());
+        this.forloeb = new TreeSet<>(user.getForloeb());
         this.brugerDefineretA = new TreeSet<>(user.getBrugerDefineretA());
         this.brugerDefineretB = new TreeSet<>(user.getBrugerDefineretB());
         this.brugerDefineretC = new TreeSet<>(user.getBrugerDefineretC());

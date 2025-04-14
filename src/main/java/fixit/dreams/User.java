@@ -12,12 +12,13 @@ import java.util.TreeSet;
 
 class User {
     private static User instans = null;
+    private ArrayList<Category> categories;
     private TreeSet<String> arketyper;
     private TreeSet<String> dyr;
     private TreeSet<String> farver;
     private TreeSet<String> personer;
-    private ArrayList<String> chakraer;
-    private ArrayList<String> forloeb;
+    private TreeSet<String> chakraer;
+    private TreeSet<String> forloeb;
     private TreeSet<String> brugerDefineretA;
     private TreeSet<String> brugerDefineretB;
     private TreeSet<String> brugerDefineretC;
@@ -39,8 +40,17 @@ class User {
     private User() {
         UserDTO loadedUserDTO = IOutils.loadUser();
         HashMap<String,Tema> loadedTemaer = IOutils.loadTemaer();
+        ArrayList<Category> loadedCategories = IOutils.loadCategories();
         if (loadedTemaer != null) {
             System.out.println("Temaer er loaded!");
+        }
+
+        if (loadedCategories != null) {
+            System.out.println("Categories loaded!");
+            this.categories = loadedCategories;
+        } else {
+            System.out.println("Categories not loaded!");
+            // manuel tilføjelse af alle cats til cats...??
         }
 
         if (loadedUserDTO != null) {
@@ -49,8 +59,8 @@ class User {
             this.dyr = new TreeSet<>(loadedUserDTO.dyr);
             this.farver = new TreeSet<>(loadedUserDTO.farver);
             this.personer = new TreeSet<>(loadedUserDTO.personer);
-            this.chakraer = new ArrayList<>(loadedUserDTO.chakraer);
-            this.forloeb = new ArrayList<>(loadedUserDTO.forloeb);
+            this.chakraer = new TreeSet<>(loadedUserDTO.chakraer);
+            this.forloeb = new TreeSet<>(loadedUserDTO.forloeb);
             this.brugerDefineretA = new TreeSet<>(loadedUserDTO.brugerDefineretA);
             this.brugerDefineretB = new TreeSet<>(loadedUserDTO.brugerDefineretB);
             this.brugerDefineretC = new TreeSet<>(loadedUserDTO.brugerDefineretC);
@@ -64,12 +74,13 @@ class User {
 
         } else {
             System.out.println("Load user virkede ikke...");
+            categories = new ArrayList<>();
             arketyper = new TreeSet<>();
             dyr = new TreeSet<>();
             farver = new TreeSet<>();
             personer = new TreeSet<>();
-            forloeb = new ArrayList<>();
-            chakraer = new ArrayList<>();
+            forloeb = new TreeSet<>();
+            chakraer = new TreeSet<>();
             brugerDefineretA = new TreeSet<>();
             brugerDefineretB = new TreeSet<>();
             brugerDefineretC = new TreeSet<>();
@@ -82,6 +93,32 @@ class User {
             dreams = new HashMap<>();
             temaer = new HashMap<>();
             BrugersNavneTilMine = new HashMap<>();
+
+            Category ark = new Category("Arketyper");
+            ark.setSymbols(arketyper);
+            categories.add(ark);
+
+            Category dy = new Category("Dyr");
+            dy.setSymbols(dyr);
+            categories.add(dy);
+
+            Category far = new Category("Farver");
+            far.setSymbols(farver);
+            categories.add(far);
+
+            Category pers = new Category("Personer");
+            pers.setSymbols(personer);
+            categories.add(pers);
+
+            Category cha = new Category("Chakraer");
+            cha.setSymbols(chakraer);
+            categories.add(cha);
+
+            Category forl = new Category("Forløb");
+            forl.setSymbols(forloeb);
+            categories.add(forl);
+
+            testCats();
 
             kategoriLabels.add("Arketyper");
             kategoriLabels.add("Chakraer");
@@ -100,6 +137,13 @@ class User {
             instans = new User();
 
         return instans;
+    }
+
+    public void testCats() {
+        for (Category c : categories) {
+            System.out.println(c.getSymbols().first());
+            System.out.println(c.getName());
+        }
     }
 
     public void addBrugerdefineredeKategoriNavne(){
@@ -147,11 +191,11 @@ class User {
         return personer;
     }
 
-    public ArrayList<String> getChakraer() {
+    public TreeSet<String> getChakraer() {
         return chakraer;
     }
 
-    public ArrayList<String> getForloeb() {
+    public TreeSet<String> getForloeb() {
         return forloeb;
     }
 
@@ -291,11 +335,11 @@ class User {
         this.personer = personer;
     }
 
-    public void setChakraer(ArrayList<String> chakraer) {
+    public void setChakraer(TreeSet<String> chakraer) {
         this.chakraer = chakraer;
     }
 
-    public void setForloeb(ArrayList<String> forloeb) {
+    public void setForloeb(TreeSet<String> forloeb) {
         this.forloeb = forloeb;
     }
 
@@ -350,5 +394,18 @@ class User {
 
     public boolean skalStatsGenberegnes() {
         return statsSkalGenberegnes;
+    }
+
+    public ArrayList<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(ArrayList<Category> categories) {
+        this.categories = categories;
+    }
+
+    public void addCategory(String name) {
+        Category c = new Category(name);
+        categories.add(c);
     }
 }

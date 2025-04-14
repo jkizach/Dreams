@@ -116,11 +116,19 @@ public class ServiceMother {
     }
 
     public List<String> getChakraer() {
-        return user.getChakraer();
+        List<String> outList = new ArrayList<>();
+        for (String s : user.getChakraer()) {
+            outList.add(s);
+        }
+        return outList;
     }
 
     public List<String> getForloeb() {
-        return user.getForloeb();
+        List<String> outList = new ArrayList<>();
+        for (String s : user.getForloeb()) {
+            outList.add(s);
+        }
+        return outList;
     }
 
     public List<String> getBrugerDefineretA() {
@@ -146,6 +154,10 @@ public class ServiceMother {
     }
     public String getNewCategoryInternalName(String brugersNavn) {
         return user.getEtBrugerNavnTilMit(brugersNavn);
+    }
+
+    public ArrayList<Category> getCats() {
+        return user.getCategories();
     }
 }
 

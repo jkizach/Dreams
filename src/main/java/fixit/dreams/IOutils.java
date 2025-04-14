@@ -1,15 +1,16 @@
 package fixit.dreams;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class IOutils {
     private static final String FILE_PATH = "user.json";
     private static final String FILE_PATH_TEMA = "temaer.json";
+    private static final String FILE_PATH_CAT = "cats.json";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
@@ -62,6 +63,39 @@ public class IOutils {
             return null;
         }
     }
+
+    public static void saveCategories(ArrayList<Category> cats) {
+        List<CategoryDTO> dtoList = cats.stream().map(c -> {
+            CategoryDTO dto = new CategoryDTO();
+            dto.name = c.getName();
+            dto.symbols = c.getSymbols();
+            return dto;
+        }).toList();
+        try {
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(FILE_PATH_CAT), dtoList);} catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Category> loadCategories() {
+        try {
+            List<CategoryDTO> dtoList = objectMapper.readValue(
+                    new File(FILE_PATH_CAT),
+                    new TypeReference<List<CategoryDTO>>() {}
+            );
+            ArrayList<Category> result = new ArrayList<>();
+            for (CategoryDTO dto : dtoList) {
+                Category cat = new Category(dto.name);
+                cat.setSymbols(dto.symbols);
+                result.add(cat);
+            }
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
 /*private static final String FILE_PATH = System.getProperty("user.home") + "/user.json";
 Brug noget i den her stil til at finde en path til "home" - det skulle virke på mac,pc og linux!!!

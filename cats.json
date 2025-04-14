@@ -1,0 +1,19 @@
+[ {
+  "name" : "Arketyper",
+  "symbols" : [ "anima|us", "skyggen", "visdom" ]
+}, {
+  "name" : "Dyr",
+  "symbols" : [ "abe", "gorilla", "slange" ]
+}, {
+  "name" : "Farver",
+  "symbols" : [ "blå", "grøn", "gul" ]
+}, {
+  "name" : "Personer",
+  "symbols" : [ "Anna", "Jes", "Petra" ]
+}, {
+  "name" : "Chakraer",
+  "symbols" : [ "hals", "hara", "hjerte", "krone", "pineal", "rod", "solar plexus" ]
+}, {
+  "name" : "Forløb",
+  "symbols" : [ "begyndelse", "slutning" ]
+} ]

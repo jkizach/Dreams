@@ -9,14 +9,14 @@ import java.util.TreeSet;
 public class Category {
     private TreeSet<String> symbols;
     private String name;
-    private ArrayList<ComboBox<String>> combos;
-    private ArrayList<CheckComboBox<String>> checkcombos;
+    private ArrayList<CheckComboBox<String>> ccbDream;
+    private ArrayList<CheckComboBox<String>> ccbFilter;
 
     public Category(String name) {
         this.name = name;
         symbols = new TreeSet<>();
-        checkcombos = new ArrayList<>();
-        combos = new ArrayList<>();
+        ccbDream = new ArrayList<>();
+        ccbFilter = new ArrayList<>();
     }
 
     public String getName() {
@@ -35,25 +35,52 @@ public class Category {
         symbols.add(symbol);
     }
 
-    public void addCombo(ComboBox<String> combo) {
-        combos.add(combo);
+    public void addDreamCCB(CheckComboBox<String> ccb) {
+        ccbDream.add(ccb);
     }
 
-    public void addCheckCombo(CheckComboBox<String> check) {
-        checkcombos.add(check);
+    public void addFilterCCB(CheckComboBox<String> ccb) {
+        ccbFilter.add(ccb);
     }
 
-    public void updateAllCombos() {
-        for (CheckComboBox<String> combo : checkcombos) {
+    public void updateAllCCBs() {
+        for (CheckComboBox<String> combo : ccbDream) {
             combo.getCheckModel().clearChecks();
             combo.getItems().clear();
             combo.getItems().addAll(symbols);
             combo.setShowCheckedCount(true);
         }
-        for (ComboBox<String> combo : combos) {
-            combo.getSelectionModel().clearSelection();
+        for (CheckComboBox<String> combo : ccbFilter) {
+            combo.getCheckModel().clearChecks();
             combo.getItems().clear();
             combo.getItems().addAll(symbols);
+            combo.setShowCheckedCount(true);
         }
+    }
+
+    public void resetDreamCCBs() {
+        for (CheckComboBox<String> combo : ccbDream) {
+            combo.getCheckModel().clearChecks();
+        }
+    }
+
+    public CategoryDTO getccbDreamSelections() {
+        CategoryDTO selected = new CategoryDTO();
+        for (CheckComboBox<String> combo : ccbDream) {
+            selected.name = getName();
+            selected.symbols = new TreeSet<>(combo.getCheckModel().getCheckedItems());
+            break;
+        }
+        return selected;
+    }
+
+    public CategoryDTO getccbFilterSelections() {
+        CategoryDTO selected = new CategoryDTO();
+        for (CheckComboBox<String> combo : ccbFilter) {
+            selected.name = getName();
+            selected.symbols = new TreeSet<>(combo.getCheckModel().getCheckedItems());
+            break;
+        }
+        return selected;
     }
 }

@@ -30,6 +30,7 @@ public class DreamApp extends Application {
         CSSUpdater.updateCSSVariables(tempo.getForetrukneTema().getTemaForCSSUpdater(),false);
         IOutils.saveUser(tempo);
         IOutils.saveTemaer(tempo.getTemaer());
+        IOutils.saveCategories(tempo.getCategories());
     }
 
     public static Scene getCurrentScene() {
