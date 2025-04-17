@@ -9,16 +9,6 @@ public class Dream {
     private String id;
 
     private ArrayList<CategoryDTO> categories;
-//    private TreeSet<String> arketyper = new TreeSet<>();
-//    private TreeSet<String> dyr = new TreeSet<>();
-//    private TreeSet<String> farver = new TreeSet<>();
-//    private TreeSet<String> personer = new TreeSet<>();
-//    private TreeSet<String> forloeb = new TreeSet<>();
-//    private TreeSet<String> chakraer = new TreeSet<>();
-//    private TreeSet<String> brugerDefineretA = new TreeSet<>();
-//    private TreeSet<String> brugerDefineretB = new TreeSet<>();
-//    private TreeSet<String> brugerDefineretC = new TreeSet<>();
-
     private String indhold;
     private String dagrest;
 

@@ -104,87 +104,35 @@ public class UserService extends ServiceMother {
     }
 
     public void addNytSymbol(String kategorien, String symbolet) {
-        // Hvordan håndterer jeg bruger-definerede kategorier???
-        if (List.of("Arketyper", "Chakraer", "Dyr", "Farver", "Personer","Forløb").contains(kategorien)) {
-            switch (kategorien) {
-                case "Arketyper":
-                    user.addArketype(symbolet.toLowerCase());
-                    break;
-                case "Chakraer":
-                    user.addChakra(symbolet.toLowerCase());
-                    break;
-                case "Dyr":
-                    user.addDyr(symbolet.toLowerCase());
-                    break;
-                case "Farver":
-                    user.addFarve(symbolet.toLowerCase());
-                    break;
-                case "Forløb":
-                    user.addForloeb(symbolet.toLowerCase());
-                    break;
-                case "Personer":
-                    user.addPerson(symbolet);
-                    break;
-            }
-        } else {
-            // Ellers er det en brugerdefineret kategori:
-            String interntNavn = getNewCategoryInternalName(kategorien);
-            if (interntNavn.endsWith("A")) {
-                user.addBrugerDefineretA(symbolet);
-            } else if (interntNavn.endsWith("B")) {
-                user.addBrugerDefineretB(symbolet);
-            } else {
-                user.addBrugerDefineretC(symbolet);
+        // Hvordan håndterer jeg bruger-definerede kategorier??? Sådan her:
+        for (Category c : user.getCategories()) {
+            if (c.getName().equals(kategorien)) {
+                c.addSymbol(symbolet);
+                break;
             }
         }
         refreshKategoriLists();
     }
 
-    public void addNyBrugerdefineretKategori(String kategoriNavn) {
-        user.addNyBrugerdefineretKategori(kategoriNavn);
+    public void addNyKategori(String kategoriNavn) {
+        user.addCategory(kategoriNavn);
         kategorier.clear();
         kategorier.addAll(user.getKategoriLabels());
     }
 
     public Boolean okToAddNewUserDefinedCat() {
-        return user.okToAddNewCategory();
+        return user.getCategories().size() <= 8;
     }
 
     public void fjernSymbol(String kategorien, String symbolet) {
-        // Hvordan håndterer jeg bruger-definerede kategorier???
-        if (List.of("Arketyper", "Chakraer", "Dyr", "Farver", "Personer","Forløb").contains(kategorien)) {
-            switch (kategorien) {
-                case "Arketyper":
-                    user.removeArketype(symbolet);
+        for (Category c : user.getCategories()) {
+            if (c.getName().equals(kategorien)) {
+                if (c.getSymbols().contains(symbolet)) {
+                    c.removeSymbol(symbolet);
                     break;
-                case "Chakraer":
-                    user.removeChakra(symbolet);
-                    break;
-                case "Dyr":
-                    user.removeDyr(symbolet);
-                    break;
-                case "Farver":
-                    user.removeFarve(symbolet);
-                    break;
-                case "Forløb":
-                    user.removeForloeb(symbolet);
-                    break;
-                case "Personer":
-                    user.removePerson(symbolet);
-                    break;
-            }
-        } else {
-            // Ellers er det en brugerdefineret kategori:
-            String interntNavn = getNewCategoryInternalName(kategorien);
-            if (interntNavn.endsWith("A")) {
-                user.removeBrugerDefineretA(symbolet);
-            } else if (interntNavn.endsWith("B")) {
-                user.removeBrugerDefineretB(symbolet);
-            } else {
-                user.removeBrugerDefineretC(symbolet);
+                }
             }
         }
-        refreshKategoriLists();
     }
 
     public void setVisAdvarsel(boolean b) {
@@ -203,9 +151,7 @@ public class UserService extends ServiceMother {
         return user.isVisKollektiv();
     }
 
-    public void addNewCat(String name) {
-        user.addCategory(name);
-    }
+
 
 }
 

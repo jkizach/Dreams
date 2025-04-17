@@ -31,6 +31,7 @@ public class DreamApp extends Application {
         IOutils.saveUser(tempo);
         IOutils.saveTemaer(tempo.getTemaer());
         IOutils.saveCategories(tempo.getCategories());
+        IOutils.saveDreams(tempo.getDreams());
     }
 
     public static Scene getCurrentScene() {

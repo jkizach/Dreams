@@ -4,6 +4,7 @@ import javafx.scene.control.ComboBox;
 import org.controlsfx.control.CheckComboBox;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class Category {
@@ -33,6 +34,18 @@ public class Category {
 
     public void addSymbol(String symbol) {
         symbols.add(symbol);
+    }
+
+    public void addSymbols(List<String> symbols) {
+        for (String symbol : symbols) {
+            addSymbol(symbol);
+        }
+        updateAllCCBs();
+    }
+
+    public void removeSymbol(String symbol) {
+        symbols.remove(symbol);
+        updateAllCCBs();
     }
 
     public void addDreamCCB(CheckComboBox<String> ccb) {

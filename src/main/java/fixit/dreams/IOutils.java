@@ -11,6 +11,7 @@ public class IOutils {
     private static final String FILE_PATH = "user.json";
     private static final String FILE_PATH_TEMA = "temaer.json";
     private static final String FILE_PATH_CAT = "cats.json";
+    private static final String FILE_PATH_DREAM = "dreams.json";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
@@ -96,7 +97,64 @@ public class IOutils {
         }
     }
 
+    public static void saveDreams(HashMap<String,Dream> dreams) {
+        List<DreamData> saveMe = new ArrayList<>();
+        for (Dream d : dreams.values()) {
+            DreamData temp = new DreamData();
+            temp.categories = d.getCategories();
+            temp.indhold = d.getIndhold();
+            temp.dagrest = d.getDagrest();
+            temp.dato = d.getDato();
+            temp.lucid = d.getLucid();
+            temp.praktiserer = d.getPraktiserer();
+            temp.modsat = d.getModsat();
+            temp.arketypisk = d.getArketypisk();
+            temp.ompraksis = d.getOmpraksis();
+            temp.mareridt = d.getMareridt();
+            temp.kollektiv = d.getKollektiv();
+            temp.advarsel = d.getAdvarsel();
+
+            saveMe.add(temp);
+        }
+
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(FILE_PATH_DREAM), saveMe);
+            System.out.println("Dreams gemt som JSON!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static HashMap<String, Dream> loadDreams() {
+        HashMap<String, Dream> loadedDreams = new HashMap<>();
+        try {
+            File file = new File(FILE_PATH_DREAM);
+            if (!file.exists()) {
+                return loadedDreams; // returnér tom mappe, hvis fil ikke findes endnu
+            }
+
+            // Læs listen af DreamData-objekter fra fil
+            List<DreamData> dataList = objectMapper.readValue(file, new TypeReference<List<DreamData>>() {});
+
+            for (DreamData data : dataList) {
+                Dream dream = new Dream(data);
+                loadedDreams.put(dream.getId(), dream);
+            }
+            System.out.println("Dreams er loaded!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return loadedDreams;
+    }
+
+
 }
+
+
+
 /*private static final String FILE_PATH = System.getProperty("user.home") + "/user.json";
-Brug noget i den her stil til at finde en path til "home" - det skulle virke på mac,pc og linux!!!
+Brug noget i den her stil til at finde en path til "home" - det skulle virke på mac,pc og linux!
 */

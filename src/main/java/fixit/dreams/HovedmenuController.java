@@ -14,6 +14,7 @@ import org.controlsfx.control.CheckComboBox;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -246,21 +247,11 @@ public class HovedmenuController {
     @FXML
     private void handleAddDream() {
         DreamData dreamData = new DreamData();
-//        dreamData.arketyper = arketyper.getCheckModel().getCheckedItems();
-//        dreamData.dyr = dyr.getCheckModel().getCheckedItems();
-//        dreamData.farver = farver.getCheckModel().getCheckedItems();
-//        dreamData.personer = personer.getCheckModel().getCheckedItems();
-//        dreamData.forloeb = forloeb.getCheckModel().getCheckedItems();
-//        dreamData.chakraer = chakraer.getCheckModel().getCheckedItems();
-//
-//        // hvis brugerdef er defineret så også dem... vi venter med det til NU:
-//        dreamData.brugerDefineretA = userDefinedA.getCheckModel().getCheckedItems();
-//        dreamData.brugerDefineretB = userDefinedB.getCheckModel().getCheckedItems();
-//        dreamData.brugerDefineretC = userDefinedC.getCheckModel().getCheckedItems();
+        dreamData.categories = new ArrayList<>();
+
         for (Category c : userService.getCats()) {
             dreamData.categories.add(c.getccbDreamSelections());
         }
-
 
         dreamData.lucid = lucid.isSelected();
         dreamData.praktiserer = praktiserer.isSelected();
@@ -294,17 +285,6 @@ public class HovedmenuController {
         for (Category c : userService.getCats()) {
             c.resetDreamCCBs();
         }
-//        arketyper.getCheckModel().clearChecks();
-//        dyr.getCheckModel().clearChecks();
-//        chakraer.getCheckModel().clearChecks();
-//        farver.getCheckModel().clearChecks();
-//        forloeb.getCheckModel().clearChecks();
-//        personer.getCheckModel().clearChecks();
-//
-//        userDefinedA.getCheckModel().clearChecks();
-//        userDefinedB.getCheckModel().clearChecks();
-//        userDefinedC.getCheckModel().clearChecks();
-
     }
 
     @FXML
@@ -400,10 +380,7 @@ public class HovedmenuController {
     @FXML
     public void handleAddNyKategoriKnap(){
         if (!tfNyKategori.getText().trim().isEmpty() && userService.okToAddNewUserDefinedCat()) {
-            userService.addNyBrugerdefineretKategori(tfNyKategori.getText());
-
-            userService.addNewCat(tfNyKategori.getText());
-
+            userService.addNyKategori(tfNyKategori.getText());
             tfNyKategori.clear();
         }
     }
