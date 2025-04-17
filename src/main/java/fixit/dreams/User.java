@@ -2,7 +2,9 @@ package fixit.dreams;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ class User {
     private boolean visAdvarsel = false;
     private boolean visKollektiv = false;
     private boolean statsSkalGenberegnes = true;
+    private ArrayList<VBox> vboxes = new ArrayList<>();
 
     private User() {
         UserDTO loadedUserDTO = IOutils.loadUser();
@@ -39,21 +42,25 @@ class User {
 
         }
 
-        if (loadedDreams != null) {
+        if (loadedDreams != null && !loadedDreams.isEmpty()) {
             System.out.println("Dreams loaded!");
             dreams = loadedDreams;
         }
 
         if (loadedUserDTO != null) {
             System.out.println("Load userDTO virkede...");
-            this.kategoriLabels = FXCollections.observableArrayList(loadedUserDTO.kategoriLabels);
+            this.kategoriLabels = FXCollections.observableArrayList();
             this.foretrukneTema = loadedUserDTO.foretrukneTema;
             this.temaer = loadedTemaer;
             this.visAdvarsel = loadedUserDTO.visAdvarsel;
             this.visKollektiv = loadedUserDTO.visKollektiv;
+            for (Category cat : categories) {
+                kategoriLabels.add(cat.getName());
+            }
 
         } else {
             System.out.println("Load user virkede ikke...");
+            this.kategoriLabels = FXCollections.observableArrayList();
             categories = new ArrayList<>();
 
             dreams = new HashMap<>();
@@ -84,7 +91,7 @@ class User {
             forl.addSymbols(List.of("begyndelse", "slutning"));
             categories.add(forl);
 
-            testCats();
+            //testCats();
 
             for (Category cat : categories) {
                 kategoriLabels.add(cat.getName());
@@ -205,6 +212,25 @@ class User {
     public void addCategory(String name) {
         Category c = new Category(name);
         categories.add(c);
+        updateVboxes();
         kategoriLabels.add(c.getName());
+    }
+
+    public void addVbox(VBox vbox) {
+        vboxes.add(vbox);
+    }
+
+    public void updateVboxes() {
+        for (VBox vbox : vboxes) {
+            CheckComboBox<String> ccb = new CheckComboBox<>();
+            ccb.getItems().addAll(categories.getLast().getSymbols());
+            vbox.getChildren().add(ccb);
+            ccb.setMaxWidth(280);
+            ccb.setMinWidth(280);
+            ccb.setTitle(categories.getLast().getName());
+            ccb.setShowCheckedCount(true);
+            categories.getLast().addDreamCCB(ccb);
+            categories.getLast().addDreamCCB(ccb);
+        }
     }
 }

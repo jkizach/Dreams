@@ -1,1 +1,32 @@
-[ ]
+[ {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ]
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ "abe", "slange" ]
+  }, {
+    "name" : "Farver",
+    "symbols" : [ "blå", "grøn" ]
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ]
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ]
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ]
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : true,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "Blå abe jagter grøn slange.",
+  "dagrest" : "",
+  "dato" : [ 2025, 4, 17 ]
+} ]

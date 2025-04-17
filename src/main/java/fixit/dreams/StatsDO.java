@@ -25,6 +25,4 @@ public class StatsDO {
 
     // Så updataStats har som parametre en String-key (datoen) og en drøm - ud fra det smider den data ind
 
-
-
 }

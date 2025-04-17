@@ -108,6 +108,7 @@ public class UserService extends ServiceMother {
         for (Category c : user.getCategories()) {
             if (c.getName().equals(kategorien)) {
                 c.addSymbol(symbolet);
+                c.updateAllCCBs();
                 break;
             }
         }

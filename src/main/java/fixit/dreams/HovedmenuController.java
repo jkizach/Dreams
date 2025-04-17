@@ -193,6 +193,7 @@ public class HovedmenuController {
             }
         });
 
+        user.addVbox(vBoxSymboler);
         dreamListView.setItems(dreams);
 
         settingsIcon.setImage(iconb);
@@ -372,7 +373,7 @@ public class HovedmenuController {
             userService.addNytSymbol(cbKategoriAdd.getValue(),tfNytSymbol.getText());
             tfNytSymbol.clear();
 
-            // sørger for at CCBen viser forskellen!
+            // sørger for at CBen viser forskellen!
             updateKategoriCCB(cbKategoriAdd.getValue());
         }
     }
@@ -426,38 +427,6 @@ public class HovedmenuController {
                 c.resetDreamCCBs();
             }
         }
-
-//        if (List.of("Arketyper", "Chakraer", "Dyr", "Farver","Forløb", "Personer").contains(ccb)) {
-//            switch (ccb) {
-//                case "Arketyper":
-//                    arketyper.getCheckModel().clearChecks();
-//                    break;
-//                case "Chakraer":
-//                    chakraer.getCheckModel().clearChecks();
-//                    break;
-//                case "Dyr":
-//                    dyr.getCheckModel().clearChecks();
-//                    break;
-//                case "Farver":
-//                    farver.getCheckModel().clearChecks();
-//                    break;
-//                case "Forløb":
-//                    forloeb.getCheckModel().clearChecks();
-//                    break;
-//                case "Personer":
-//                    personer.getCheckModel().clearChecks();
-//                    break;
-//            }
-//        } else {
-//            String interntNavn = userService.getNewCategoryInternalName(ccb);
-//            if (interntNavn.endsWith("A")) {
-//                userDefinedA.getCheckModel().clearChecks();
-//            } else if (interntNavn.endsWith("B")) {
-//                userDefinedB.getCheckModel().clearChecks();
-//            } else {
-//                userDefinedC.getCheckModel().clearChecks();
-//            }
-//        }
     }
 
     /* LOADING AF ANALYSETAB */

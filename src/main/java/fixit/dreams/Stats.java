@@ -12,15 +12,6 @@ import java.util.Map;
 public class Stats {
     protected User user;
     private Map<String,StatsDO> categoryStats;
-    private Map<String, Map<String, Integer>> arketyperStats;
-    private Map<String, Map<String, Integer>> chakraerStats;
-    private Map<String, Map<String, Integer>> dyrStats;
-    private Map<String, Map<String, Integer>> farverStats;
-    private Map<String, Map<String, Integer>> forloebStats;
-    private Map<String, Map<String, Integer>> personerStats;
-    private Map<String, Map<String, Integer>> aStats;
-    private Map<String, Map<String, Integer>> bStats;
-    private Map<String, Map<String, Integer>> cStats;
 
     private Map<String, Integer> lucidStats;
     private Map<String, Integer> praktisererStats;
@@ -38,15 +29,6 @@ public class Stats {
     public Stats() {
         this.user = User.getInstance();
         this.categoryStats = new HashMap<>();
-        this.arketyperStats = new HashMap<>();
-        this.chakraerStats = new HashMap<>();
-        this.dyrStats = new HashMap<>();
-        this.farverStats = new HashMap<>();
-        this.forloebStats = new HashMap<>();
-        this.personerStats = new HashMap<>();
-        this.aStats = new HashMap<>();
-        this.bStats = new HashMap<>();
-        this.cStats = new HashMap<>();
 
         this.lucidStats = new HashMap<>();
         this.praktisererStats = new HashMap<>();
@@ -96,58 +78,12 @@ public class Stats {
     }
 
     private void updateStats(String key, Dream dream) {
-        arketyperStats.putIfAbsent(key, new HashMap<>());
-
         // her skal der i stedet loopes gennem listen af CategoryDTO i hver drøm... men hvad så med stats?
         for (CategoryDTO cat : dream.getCategories()) {
             categoryStats.putIfAbsent(cat.name, new StatsDO(cat.name));
             categoryStats.get(cat.name).updateStatsDO(key,cat);
         }
 
-
-//        for (String arketype : dream.getArketyper()) {
-//            arketyperStats.get(key).merge(arketype, 1, Integer::sum);
-//        }
-//
-//        chakraerStats.putIfAbsent(key, new HashMap<>());
-//        for (String chakra : dream.getChakraer()) {
-//            chakraerStats.get(key).merge(chakra, 1, Integer::sum);
-//        }
-//
-//        dyrStats.putIfAbsent(key, new HashMap<>());
-//        for (String dyr : dream.getDyr()) {
-//            dyrStats.get(key).merge(dyr, 1, Integer::sum);
-//        }
-//
-//        farverStats.putIfAbsent(key, new HashMap<>());
-//        for (String farve : dream.getFarver()) {
-//            farverStats.get(key).merge(farve, 1, Integer::sum);
-//        }
-//
-//        forloebStats.putIfAbsent(key, new HashMap<>());
-//        for (String forloeb : dream.getForloeb()) {
-//            forloebStats.get(key).merge(forloeb, 1, Integer::sum);
-//        }
-//
-//        personerStats.putIfAbsent(key, new HashMap<>());
-//        for (String personer : dream.getPersoner()) {
-//            personerStats.get(key).merge(personer, 1, Integer::sum);
-//        }
-//
-//        aStats.putIfAbsent(key, new HashMap<>());
-//        for (String a : dream.getBrugerDefineretA()) {
-//            aStats.get(key).merge(a, 1, Integer::sum);
-//        }
-//
-//        bStats.putIfAbsent(key, new HashMap<>());
-//        for (String b : dream.getBrugerDefineretB()) {
-//            bStats.get(key).merge(b, 1, Integer::sum);
-//        }
-//
-//        cStats.putIfAbsent(key, new HashMap<>());
-//        for (String c : dream.getBrugerDefineretC()) {
-//            cStats.get(key).merge(c, 1, Integer::sum);
-//        }
 
         lucidStats.put(key, lucidStats.getOrDefault(key, 0) + (dream.getLucid() ? 1 : 0));
         praktisererStats.put(key, praktisererStats.getOrDefault(key, 0) + (dream.getPraktiserer() ? 1: 0));
@@ -190,15 +126,7 @@ public class Stats {
     }
 
     private void clearAll() {
-        this.arketyperStats.clear();
-        this.chakraerStats.clear();
-        this.dyrStats.clear();
-        this.farverStats.clear();
-        this.forloebStats.clear();
-        this.personerStats.clear();
-        this.aStats.clear();
-        this.bStats.clear();
-        this.cStats.clear();
+        this.categoryStats.clear();
         this.lucidStats.clear();
         this.praktisererStats.clear();
         this.modsatStats.clear();
@@ -266,42 +194,6 @@ public class Stats {
                 break;
         }
         return series;
-    }
-
-    public Map<String, Map<String, Integer>> getArketyperStats() {
-        return arketyperStats;
-    }
-
-    public Map<String, Map<String, Integer>> getChakraerStats() {
-        return chakraerStats;
-    }
-
-    public Map<String, Map<String, Integer>> getDyrStats() {
-        return dyrStats;
-    }
-
-    public Map<String, Map<String, Integer>> getFarverStats() {
-        return farverStats;
-    }
-
-    public Map<String, Map<String, Integer>> getForloebStats() {
-        return forloebStats;
-    }
-
-    public Map<String, Map<String, Integer>> getPersonerStats() {
-        return personerStats;
-    }
-
-    public Map<String, Map<String, Integer>> getbStats() {
-        return bStats;
-    }
-
-    public Map<String, Map<String, Integer>> getaStats() {
-        return aStats;
-    }
-
-    public Map<String, Map<String, Integer>> getcStats() {
-        return cStats;
     }
 
     public Map<String, Integer> getLucidStats() {
