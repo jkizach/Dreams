@@ -42,6 +42,10 @@ public class DreamDTO {
         return dato;
     }
 
+    public void setDato(LocalDate dato) {
+        this.dato = dato;
+    }
+
     public StringProperty indholdProperty() {
         return indhold;
     }

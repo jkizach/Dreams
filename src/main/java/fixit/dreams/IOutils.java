@@ -70,6 +70,7 @@ public class IOutils {
             CategoryDTO dto = new CategoryDTO();
             dto.name = c.getName();
             dto.symbols = c.getSymbols();
+            dto.customOrder = c.getCustomOrder();
             return dto;
         }).toList();
         try {
@@ -88,6 +89,9 @@ public class IOutils {
             for (CategoryDTO dto : dtoList) {
                 Category cat = new Category(dto.name);
                 cat.setSymbols(dto.symbols);
+                if (cat.hasCustomOrder()) {
+                    cat.setCustomOrder(dto.customOrder);
+                }
                 result.add(cat);
             }
             return result;

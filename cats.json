@@ -1,19 +1,25 @@
 [ {
   "name" : "Arketyper",
-  "symbols" : [ "anima|us", "skyggen", "visdom" ]
+  "symbols" : [ "anima|us", "skyggen", "visdom" ],
+  "customOrder" : [ ]
 }, {
   "name" : "Dyr",
-  "symbols" : [ "abe", "gorilla", "slange" ]
+  "symbols" : [ "abe", "gorilla", "slange" ],
+  "customOrder" : [ ]
 }, {
   "name" : "Farver",
-  "symbols" : [ "blå", "grøn", "gul" ]
+  "symbols" : [ "blå", "grøn", "gul" ],
+  "customOrder" : [ ]
 }, {
   "name" : "Personer",
-  "symbols" : [ "Anna", "Jes", "Petra" ]
+  "symbols" : [ "Anna", "Jes", "Petra" ],
+  "customOrder" : [ ]
 }, {
   "name" : "Chakraer",
-  "symbols" : [ "hals", "hara", "hjerte", "krone", "pineal", "rod", "solar plexus" ]
+  "symbols" : [ "hals", "hara", "hjerte", "krone", "pineal", "rod", "solar plexus" ],
+  "customOrder" : [ "krone", "pineal", "hals", "hjerte", "solar plexus", "hara", "rod" ]
 }, {
   "name" : "Forløb",
-  "symbols" : [ "Kamp", "Tilnærmelse", "begyndelse", "slutning" ]
+  "symbols" : [ "begyndelse", "midten", "slutning" ],
+  "customOrder" : [ "begyndelse", "slutning", "midten" ]
 } ]

@@ -43,9 +43,9 @@
                         <PieChart fx:id="pieChartAnalyse" layoutX="273.0" layoutY="14.0" prefHeight="688.0" prefWidth="618.0" />
                         <ComboBox fx:id="comboPieKategorier" layoutX="14.0" layoutY="14.0" onAction="#onSelectKategori" prefWidth="250.0" promptText="Vælg kategori" />
                         <Label layoutX="10.0" layoutY="83.0" text="Fra" />
-                        <DatePicker fx:id="dpFromPie" layoutX="64.0" layoutY="79.0" prefHeight="25.0" prefWidth="180.0" />
+                        <DatePicker fx:id="dpFromPie" layoutX="64.0" layoutY="79.0" onAction="#onSelectKategori" prefHeight="25.0" prefWidth="180.0" />
                         <Label layoutX="12.0" layoutY="129.0" text="Til" />
-                        <DatePicker fx:id="dpToPie" layoutX="64.0" layoutY="125.0" prefHeight="25.0" prefWidth="180.0" />
+                        <DatePicker fx:id="dpToPie" layoutX="64.0" layoutY="125.0" onAction="#onSelectKategori" prefHeight="25.0" prefWidth="180.0" />
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -76,12 +76,10 @@
                               <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
-                        <GridPane hgap="5.0" layoutX="14.0" layoutY="17.0" prefHeight="80.0" prefWidth="950.0" vgap="5.0">
+                        <GridPane hgap="5.0" layoutX="14.0" layoutY="17.0" prefHeight="80.0" prefWidth="319.0" vgap="5.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0" minWidth="0.0" prefWidth="80.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="443.0" minWidth="10.0" prefWidth="330.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -92,29 +90,16 @@
                               <DatePicker fx:id="dpFraGraf" prefWidth="180.0" GridPane.columnIndex="1" />
                               <Label text="Til" GridPane.rowIndex="1" />
                               <DatePicker fx:id="dpTilGraf" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label prefHeight="17.0" prefWidth="126.0" text="X-aksen" GridPane.columnIndex="2" />
-                              <HBox prefHeight="40.0" prefWidth="263.0" spacing="5.0" GridPane.columnIndex="3">
-                                 <children>
-                                    <ToggleButton fx:id="tgDays" mnemonicParsing="false" prefHeight="25.0" prefWidth="107.0" text="dage">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="grafDMYChooser" />
-                                       </toggleGroup>
-                                    </ToggleButton>
-                                    <ToggleButton fx:id="tgWeeks" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="uger" toggleGroup="$grafDMYChooser" />
-                                    <ToggleButton fx:id="tgMonths" mnemonicParsing="false" prefHeight="25.0" prefWidth="152.0" selected="true" text="måneder" toggleGroup="$grafDMYChooser" />
-                                 </children>
-                              </HBox>
                            </children>
                         </GridPane>
                         <VBox fx:id="vboxTilCCBAnalyse" layoutX="14.0" layoutY="111.0" prefHeight="430.0" prefWidth="285.0" spacing="10.0" />
-                        <Button fx:id="btnVisGraf" layoutX="759.0" layoutY="671.0" mnemonicParsing="false" onAction="#onVisGraf" prefHeight="25.0" prefWidth="127.0" text="Vis graf" />
-                        <TabPane layoutX="349.0" layoutY="56.0" prefHeight="597.0" prefWidth="636.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane layoutX="349.0" layoutY="-1.0" prefHeight="710.0" prefWidth="651.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
                             <Tab fx:id="grafTab" text="Graf">
                               <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="681.0" prefWidth="651.0">
                                        <children>
-                                          <LineChart fx:id="lineChartAnalyse" layoutX="-1.0" layoutY="-1.0" prefHeight="571.0" prefWidth="639.0" visible="false">
+                                          <LineChart fx:id="lineChartAnalyse" layoutX="-1.0" layoutY="52.0" prefHeight="555.0" prefWidth="652.0" visible="false">
                                             <xAxis>
                                               <CategoryAxis side="BOTTOM" />
                                             </xAxis>
@@ -122,6 +107,19 @@
                                               <NumberAxis side="LEFT" />
                                             </yAxis>
                                           </LineChart>
+                                          <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="126.0" text="X-aksen" />
+                                          <HBox layoutX="165.0" layoutY="8.0" prefHeight="40.0" prefWidth="449.0" spacing="5.0">
+                                             <children>
+                                                <ToggleButton fx:id="tgDays" mnemonicParsing="false" prefHeight="25.0" prefWidth="119.0" text="dage">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="grafDMYChooser" />
+                                                   </toggleGroup>
+                                                </ToggleButton>
+                                                <ToggleButton fx:id="tgWeeks" mnemonicParsing="false" prefHeight="25.0" prefWidth="122.0" text="uger" toggleGroup="$grafDMYChooser" />
+                                                <ToggleButton fx:id="tgMonths" mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0" selected="true" text="måneder" toggleGroup="$grafDMYChooser" />
+                                             </children>
+                                          </HBox>
+                                          <Button fx:id="btnVisGraf" layoutX="501.0" layoutY="615.0" mnemonicParsing="false" onAction="#onVisGraf" prefHeight="25.0" prefWidth="127.0" text="Vis graf" />
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -130,7 +128,9 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ListView fx:id="filterListe" layoutX="-3.0" layoutY="-2.0" prefHeight="572.0" prefWidth="641.0" styleClass="custom-list-view" />
+                                          <ListView fx:id="filterListe" layoutX="-1.0" layoutY="-1.0" prefHeight="610.0" prefWidth="651.0" styleClass="custom-list-view" />
+                                          <Button layoutX="539.0" layoutY="617.0" mnemonicParsing="false" onAction="#updateFilterList" text="Opdater" />
+                                          <Button fx:id="btnAndOr" layoutY="617.0" mnemonicParsing="false" onAction="#toggleANDOR" text="Filterstatus: OG" />
                                        </children>
                                     </AnchorPane>
                               </content>

@@ -1,14 +1,20 @@
 package fixit.dreams;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
@@ -23,6 +29,7 @@ public class HovedmenuController {
     private ObservableList<String> temaer;
     ObservableList<String> kategoriLabels;
 
+    private boolean deleteButtonPressed = false;
     private boolean analyseIsLoaded = false;
 
     @FXML
@@ -32,7 +39,7 @@ public class HovedmenuController {
     private ColorPicker baggrundAPicker, baggrundBPicker, baggrundCPicker, baggrundDPicker, tekstAPicker, tekstBPicker, tekstCPicker, kantPicker;
 
     @FXML
-    private Button gemDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap;
+    private Button deleteDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap;
 
     @FXML
     private DatePicker newDreamDate, fromDatePicker, toDatePicker;
@@ -179,7 +186,7 @@ public class HovedmenuController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(600); // Justér denne værdi efter behov
+                label.setMaxWidth(650); // Justér denne værdi efter behov
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -190,6 +197,13 @@ public class HovedmenuController {
                     label.setText(dream.getVisbartIndhold());
                     setGraphic(label);
                 }
+            }
+        });
+
+        user.dreamEdited.addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty()) {
+                userService.updateDreamDTO();
+                dreamListView.setItems(userService.getDreamsForDisplay());
             }
         });
 
@@ -235,7 +249,7 @@ public class HovedmenuController {
     private void loadCCBs() {
         for (Category c : userService.getCats()) {
             CheckComboBox<String> ccb = new CheckComboBox<>();
-            ccb.getItems().addAll(c.getSymbols());
+            ccb.getItems().addAll(c.getSymbolsForDisplay());
             vBoxSymboler.getChildren().add(ccb);
             ccb.setMaxWidth(280);
             ccb.setMinWidth(280);
@@ -247,28 +261,30 @@ public class HovedmenuController {
 
     @FXML
     private void handleAddDream() {
-        DreamData dreamData = new DreamData();
-        dreamData.categories = new ArrayList<>();
+        if (!skriveFelt.getText().isEmpty()) {
+            DreamData dreamData = new DreamData();
+            dreamData.categories = new ArrayList<>();
 
-        for (Category c : userService.getCats()) {
-            dreamData.categories.add(c.getccbDreamSelections());
+            for (Category c : userService.getCats()) {
+                dreamData.categories.add(c.getccbDreamSelections());
+            }
+
+            dreamData.lucid = lucid.isSelected();
+            dreamData.praktiserer = praktiserer.isSelected();
+            dreamData.modsat = modsat.isSelected();
+            dreamData.arketypisk = arketypisk.isSelected();
+            dreamData.ompraksis = praksis.isSelected();
+            dreamData.mareridt = mareridt.isSelected();
+            dreamData.kollektiv = kollektiv.isSelected();
+            dreamData.advarsel = advarsel.isSelected();
+
+            dreamData.indhold = skriveFelt.getText();
+            dreamData.dagrest = dagrestFelt.getText();
+            dreamData.dato = newDreamDate.getValue();
+
+            userService.addDream(dreamData);
+            resetNewDreamTab();
         }
-
-        dreamData.lucid = lucid.isSelected();
-        dreamData.praktiserer = praktiserer.isSelected();
-        dreamData.modsat = modsat.isSelected();
-        dreamData.arketypisk = arketypisk.isSelected();
-        dreamData.ompraksis = praksis.isSelected();
-        dreamData.mareridt = mareridt.isSelected();
-        dreamData.kollektiv = kollektiv.isSelected();
-        dreamData.advarsel = advarsel.isSelected();
-
-        dreamData.indhold = skriveFelt.getText();
-        dreamData.dagrest = dagrestFelt.getText();
-        dreamData.dato = newDreamDate.getValue();
-
-        userService.addDream(dreamData);
-        resetNewDreamTab();
     }
 
     private void resetNewDreamTab() {
@@ -286,6 +302,17 @@ public class HovedmenuController {
         for (Category c : userService.getCats()) {
             c.resetDreamCCBs();
         }
+    }
+
+    @FXML
+    private void handleEditDream() {
+        if (dreamListView.getSelectionModel().getSelectedItem() != null) {
+            String id = dreamListView.getSelectionModel().getSelectedItem().getId();
+            Dream toBeEdited = userService.getDream(id);
+            System.out.println("Drømmens dato er:" + toBeEdited.getDato());
+
+            openEditPopup(toBeEdited); // åbner mit pop-up vindue!
+        };
     }
 
     @FXML
@@ -429,6 +456,28 @@ public class HovedmenuController {
         }
     }
 
+    @FXML
+    private void deleteDreamClick() {
+        if (dreamListView.getSelectionModel().getSelectedItem() != null) {
+            if (!deleteButtonPressed) {
+                deleteDream.setText("Er du sikker?");
+                deleteButtonPressed = true;
+                // Start en timer, der nulstiller knappen efter 4 sekunder
+                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+                    deleteDream.setText("Slet");
+                    deleteButtonPressed = false;
+                }));
+                timeline.setCycleCount(1);
+                timeline.play();
+            } else {
+                String id = dreamListView.getSelectionModel().getSelectedItem().getId();
+                userService.deleteDream(id);
+                deleteDream.setText("Slet drøm");
+                deleteButtonPressed = false;
+            }
+        }
+    }
+
     /* LOADING AF ANALYSETAB */
     private void loadAnalyseTab() {
         try {
@@ -438,5 +487,35 @@ public class HovedmenuController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /* LOADING AF EDIT-POPUP*/
+    @FXML
+    private void openEditPopup(Dream d)  {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("editDream-view.fxml"));
+            Parent root = fxmlLoader.load();
+
+            EditDreamController edc = fxmlLoader.getController();
+            edc.setDream(d);
+
+            System.out.println(d.getIndhold());
+            Stage popupStage = new Stage();
+
+            Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setScene(new Scene(root));
+            File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+            root.getStylesheets().clear();
+            root.getStylesheets().add(tempFile.toURI().toString()); // Indlæs direkte fra resources
+            root.applyCss();
+            popupStage.setTitle("Rediger drøm");
+            popupStage.getIcons().add(icon);
+
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -4,14 +4,16 @@ import javafx.scene.chart.XYChart;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Stats {
     protected User user;
-    private Map<String,StatsDO> categoryStats;
+    private TreeMap<String,StatsDO> categoryStats;
 
     private Map<String, Integer> lucidStats;
     private Map<String, Integer> praktisererStats;
@@ -28,7 +30,7 @@ public class Stats {
 
     public Stats() {
         this.user = User.getInstance();
-        this.categoryStats = new HashMap<>();
+        this.categoryStats = new TreeMap<>();
 
         this.lucidStats = new HashMap<>();
         this.praktisererStats = new HashMap<>();
@@ -84,7 +86,6 @@ public class Stats {
             categoryStats.get(cat.name).updateStatsDO(key,cat);
         }
 
-
         lucidStats.put(key, lucidStats.getOrDefault(key, 0) + (dream.getLucid() ? 1 : 0));
         praktisererStats.put(key, praktisererStats.getOrDefault(key, 0) + (dream.getPraktiserer() ? 1: 0));
         modsatStats.put(key, modsatStats.getOrDefault(key, 0) + (dream.getModsat() ? 1 : 0));
@@ -95,17 +96,17 @@ public class Stats {
         advarselStats.put(key, advarselStats.getOrDefault(key, 0) + (dream.getAdvarsel() ? 1 : 0));
     }
 
-    public Map<String, Integer> getStatsPerDag(Map<String, Map<String, Integer>> statsMap, LocalDate date) {
-        return statsMap.getOrDefault(String.valueOf(date), new HashMap<>());
+    public TreeMap<String, Integer> getStatsPerDag(TreeMap<String, TreeMap<String, Integer>> statsMap, LocalDate date) {
+        return statsMap.getOrDefault(String.valueOf(date), new TreeMap<>());
     }
 
-    public Map<String, Integer> getStatsPerUge(Map<String, Map<String, Integer>> statsMap, LocalDate date) {
+    public TreeMap<String, Integer> getStatsPerUge(TreeMap<String, TreeMap<String, Integer>> statsMap, LocalDate date) {
         String weekKey = "" + date.getYear() + date.get(WeekFields.ISO.weekOfYear());
-        return statsMap.getOrDefault(weekKey, new HashMap<>());
+        return statsMap.getOrDefault(weekKey, new TreeMap<>());
     }
 
-    public Map<String, Integer> getStatsPerM(Map<String, Map<String, Integer>> statsMap, LocalDate date) {
-        return statsMap.getOrDefault(String.valueOf(YearMonth.from(date)), new HashMap<>());
+    public TreeMap<String, Integer> getStatsPerM(TreeMap<String, TreeMap<String, Integer>> statsMap, LocalDate date) {
+        return statsMap.getOrDefault(String.valueOf(YearMonth.from(date)), new TreeMap<>());
     }
 
     public int getBoolStatsPerDag(Map<String, Integer> statsMap, LocalDate date) {
@@ -138,28 +139,31 @@ public class Stats {
     }
 
 
-    public XYChart.Series<String, Number> makeXY(Map<String, Map<String, Integer>> statsMap, String symbol, LocalDate fra, LocalDate til, String xakse) {
+    public XYChart.Series<String, Number> makeXY(TreeMap<String, TreeMap<String, Integer>> statsMap, String symbol, LocalDate fra, LocalDate til, String xakse) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName(symbol);
         switch (xakse) {
             case "dage":
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM");
                 while (!fra.isAfter(til)) {
-                    Map<String, Integer> temp = getStatsPerDag(statsMap, fra);
-                    series.getData().add(new XYChart.Data<>(""+fra.getDayOfMonth(), temp.getOrDefault(symbol, 0)));
+                    TreeMap<String, Integer> temp = getStatsPerDag(statsMap, fra);
+                    String label = fra.format(formatter);
+                    series.getData().add(new XYChart.Data<>(label, temp.getOrDefault(symbol, 0)));
                     fra = fra.plusDays(1);
                 }
                 break;
             case "uger":
                 while (fra.get(WeekFields.ISO.weekOfYear()) <= til.get(WeekFields.ISO.weekOfYear())) {
-                    Map<String, Integer> temp = getStatsPerUge(statsMap, fra);
-                    series.getData().add(new XYChart.Data<>(""+fra.get(WeekFields.ISO.weekOfYear()), temp.getOrDefault(symbol, 0)));
+                    TreeMap<String, Integer> temp = getStatsPerUge(statsMap, fra);
+                    String ugeLabel = fra.get(WeekFields.ISO.weekOfYear()) + "\n" + fra.getYear();
+                    series.getData().add(new XYChart.Data<>(ugeLabel, temp.getOrDefault(symbol, 0)));
                     fra = fra.plusWeeks(1);
                 }
                 break;
             case "måneder":
                 while (fra.getMonthValue() <= til.getMonthValue()) {
-                    Map<String, Integer> temp = getStatsPerM(statsMap, fra);
-                    series.getData().add(new XYChart.Data<>(monthTranslator.get(fra.getMonthValue()), temp.getOrDefault(symbol, 0)));
+                    TreeMap<String, Integer> temp = getStatsPerM(statsMap, fra);
+                    series.getData().add(new XYChart.Data<>(monthTranslator.get(fra.getMonthValue()) + "\n" + fra.getYear(), temp.getOrDefault(symbol, 0)));
                     fra = fra.plusMonths(1);
                 }
                 break;
@@ -228,7 +232,7 @@ public class Stats {
         return advarselStats;
     }
 
-    public Map<String, Map<String, Integer>> getCategoryStats(String name) {
+    public TreeMap<String, TreeMap<String, Integer>> getCategoryStats(String name) {
         return categoryStats.get(name).getCatStats();
     }
 }

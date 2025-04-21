@@ -2,24 +2,25 @@ package fixit.dreams;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class StatsDO {
     private String name;
-    private Map<String, Map<String, Integer>> catStats;
+    private TreeMap<String, TreeMap<String, Integer>> catStats;
 
     public StatsDO(String name) {
         this.name = name;
-        catStats = new HashMap<>();
+        catStats = new TreeMap<>();
     }
 
     public void updateStatsDO(String datekey, CategoryDTO cat) {
-        catStats.putIfAbsent(datekey, new HashMap<>());
+        catStats.putIfAbsent(datekey, new TreeMap<>());
         for (String symbol : cat.symbols) {
             catStats.get(datekey).merge(symbol, 1, Integer::sum);
         }
     }
 
-    public Map<String, Map<String, Integer>> getCatStats() {
+    public TreeMap<String, TreeMap<String, Integer>> getCatStats() {
         return catStats;
     }
 

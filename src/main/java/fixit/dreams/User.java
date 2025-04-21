@@ -1,5 +1,9 @@
 package fixit.dreams;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.VBox;
@@ -21,7 +25,9 @@ class User {
     private HashMap<String,Tema> temaer;
     private boolean visAdvarsel = false;
     private boolean visKollektiv = false;
-    private boolean statsSkalGenberegnes = true;
+    protected BooleanProperty skalStatsGenberegnes = new SimpleBooleanProperty(false);
+    protected StringProperty dreamEdited = new SimpleStringProperty("tom");
+
     private ArrayList<VBox> vboxes = new ArrayList<>();
 
     private User() {
@@ -116,8 +122,6 @@ class User {
         }
     }
 
-
-
     private void addPredefinedThemes() {
         Tema darkGreen = new Tema(Color.web("#1a1a1a"),Color.web("#62cd84"),Color.web("#262626"),Color.web("#333333"),
                 Color.web("#d1d1d1"),Color.web("#1a1a1a"),Color.web("#62cd84"),Color.web("#62cd84"),"mørkt grønt", "Courier New");
@@ -130,7 +134,12 @@ class User {
 
     public void addDream(Dream d) {
         dreams.put(d.getId(),d);
-        statsSkalGenberegnes = true;
+        skalStatsGenberegnes.set(true);
+    }
+
+    public void deleteDream(String id) {
+        dreams.remove(id);
+        skalStatsGenberegnes.set(true);
     }
 
     public Dream getDream(String id) {
@@ -194,11 +203,11 @@ class User {
     }
 
     public void statsErGenberegnet() {
-        statsSkalGenberegnes = false;
+        skalStatsGenberegnes.set(false);
     }
 
     public boolean skalStatsGenberegnes() {
-        return statsSkalGenberegnes;
+        return skalStatsGenberegnes.get();
     }
 
     public ArrayList<Category> getCategories() {
@@ -232,5 +241,13 @@ class User {
             categories.getLast().addDreamCCB(ccb);
             categories.getLast().addDreamCCB(ccb);
         }
+    }
+
+    public void setDreamEdited(String dreamId) {
+        dreamEdited.set(dreamId);
+    }
+
+    public String getDreamEdited() {
+        return dreamEdited.get();
     }
 }

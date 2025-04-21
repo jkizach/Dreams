@@ -39,52 +39,11 @@ public class Dream {
         this.mareridt = data.mareridt;
         this.kollektiv = data.kollektiv;
         this.advarsel = data.advarsel;
-//        this.arketyper.addAll(data.arketyper);
-//        this.dyr.addAll(data.dyr);
-//        this.farver.addAll(data.farver);
-//        this.personer.addAll(data.personer);
-//        this.chakraer.addAll(data.chakraer);
-//        this.forloeb.addAll(data.forloeb);
-//        this.brugerDefineretA.addAll(data.brugerDefineretA);
-//        this.brugerDefineretB.addAll(data.brugerDefineretB);
-//        this.brugerDefineretC.addAll(data.brugerDefineretC);
     }
 
     public String getId() {
         return id;
     }
-
-//    public TreeSet<String> getArketyper() {
-//        return arketyper;
-//    }
-//
-//    public TreeSet<String> getDyr() {
-//        return dyr;
-//    }
-//
-//    public TreeSet<String> getFarver() {
-//        return farver;
-//    }
-//
-//    public TreeSet<String> getPersoner() {
-//        return personer;
-//    }
-//
-//    public TreeSet<String> getBrugerDefineretA() {
-//        return brugerDefineretA;
-//    }
-//
-//    public TreeSet<String> getBrugerDefineretB() {
-//        return brugerDefineretB;
-//    }
-//
-//    public TreeSet<String> getBrugerDefineretC() {
-//        return brugerDefineretC;
-//    }
-//
-//    public TreeSet<String> getChakraer() {
-//        return chakraer;
-//    }
 
     public String getIndhold() {
         return indhold;
@@ -154,45 +113,9 @@ public class Dream {
         this.mareridt = mareridt;
     }
 
-//    public void setArketyper(TreeSet<String> arketyper) {
-//        this.arketyper = arketyper;
-//    }
-//
-//    public void setDyr(TreeSet<String> dyr) {
-//        this.dyr = dyr;
-//    }
-//
-//    public void setFarver(TreeSet<String> farver) {
-//        this.farver = farver;
-//    }
-//
-//    public void setPersoner(TreeSet<String> personer) {
-//        this.personer = personer;
-//    }
-//
-//    public void setChakraer(TreeSet<String> chakraer) {
-//        this.chakraer = chakraer;
-//    }
-//
-//    public void setBrugerDefineretA(TreeSet<String> brugerDefineretA) {
-//        this.brugerDefineretA = brugerDefineretA;
-//    }
-//
-//    public void setBrugerDefineretB(TreeSet<String> brugerDefineretB) {
-//        this.brugerDefineretB = brugerDefineretB;
-//    }
-//
-//    public void setBrugerDefineretC(TreeSet<String> brugerDefineretC) {
-//        this.brugerDefineretC = brugerDefineretC;
-//    }
-
     public void setDato(LocalDate dato) {
         this.dato = dato;
     }
-
-//    public TreeSet<String> getForloeb() {
-//        return forloeb;
-//    }
 
     public Boolean getKollektiv() {
         return kollektiv;
@@ -201,10 +124,6 @@ public class Dream {
     public Boolean getAdvarsel() {
         return advarsel;
     }
-
-//    public void setForloeb(TreeSet<String> forloeb) {
-//        this.forloeb = forloeb;
-//    }
 
     public void setKollektiv(Boolean kollektiv) {
         this.kollektiv = kollektiv;

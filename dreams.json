@@ -1,22 +1,324 @@
 [ {
   "categories" : [ {
     "name" : "Arketyper",
-    "symbols" : [ ]
+    "symbols" : [ ],
+    "customOrder" : null
   }, {
     "name" : "Dyr",
-    "symbols" : [ "abe", "slange" ]
+    "symbols" : [ ],
+    "customOrder" : null
   }, {
     "name" : "Farver",
-    "symbols" : [ "blå", "grøn" ]
+    "symbols" : [ ],
+    "customOrder" : null
   }, {
     "name" : "Personer",
-    "symbols" : [ ]
+    "symbols" : [ ],
+    "customOrder" : null
   }, {
     "name" : "Chakraer",
-    "symbols" : [ ]
+    "symbols" : [ ],
+    "customOrder" : null
   }, {
     "name" : "Forløb",
-    "symbols" : [ ]
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "Test. Test endnu engang.",
+  "dagrest" : "",
+  "dato" : [ 2025, 3, 19 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ "skyggen" ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ "hara" ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "Flasker smøler sig gennem samme intet.",
+  "dagrest" : "",
+  "dato" : [ 2025, 3, 28 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ "abe", "slange" ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ "grøn", "gul" ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "Grøn abe synger om gul slange.",
+  "dagrest" : "",
+  "dato" : [ 2025, 4, 8 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ "gorilla" ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "En test af LineChart!",
+  "dagrest" : "",
+  "dato" : [ 2025, 2, 12 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "Hat og briller.",
+  "dagrest" : "",
+  "dato" : [ 2025, 3, 21 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ "Anna" ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : true,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : true,
+  "indhold" : "Hestehoveder er redigerede med lucid og advarsel. Test. Og en til test. Går teksten virkelig ud i margenen? Det er da ret ringe!",
+  "dagrest" : "",
+  "dato" : [ 2025, 4, 19 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ "slange" ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ "grøn" ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : true,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "En grøn slange.",
+  "dagrest" : "",
+  "dato" : [ 2025, 4, 10 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ "abe" ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ "blå" ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
+  } ],
+  "lucid" : false,
+  "praktiserer" : false,
+  "modsat" : false,
+  "arketypisk" : false,
+  "ompraksis" : false,
+  "mareridt" : false,
+  "kollektiv" : false,
+  "advarsel" : false,
+  "indhold" : "En blå abe. På blå bas.",
+  "dagrest" : "he he",
+  "dato" : [ 2025, 4, 17 ]
+}, {
+  "categories" : [ {
+    "name" : "Arketyper",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Dyr",
+    "symbols" : [ "slange" ],
+    "customOrder" : null
+  }, {
+    "name" : "Farver",
+    "symbols" : [ "grøn" ],
+    "customOrder" : null
+  }, {
+    "name" : "Personer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Chakraer",
+    "symbols" : [ ],
+    "customOrder" : null
+  }, {
+    "name" : "Forløb",
+    "symbols" : [ ],
+    "customOrder" : null
   } ],
   "lucid" : false,
   "praktiserer" : false,
@@ -26,7 +328,7 @@
   "mareridt" : true,
   "kollektiv" : false,
   "advarsel" : false,
-  "indhold" : "Blå abe jagter grøn slange.",
+  "indhold" : "Den sjove slange er grøn.",
   "dagrest" : "",
-  "dato" : [ 2025, 4, 17 ]
+  "dato" : [ 2025, 4, 1 ]
 } ]

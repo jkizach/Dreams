@@ -31,11 +31,28 @@ public class UserService extends ServiceMother {
         return dreamDTOs;
     }
 
-    public void updateDream(DreamDTO dreamDTO, String newText) {
-        dreamDTO.setIndhold(newText); // Opdater GUI'en
+    public void updateDreamDTO() {
+        String id = user.getDreamEdited();
+        if (!id.equals("tom")) {
+            for (DreamDTO d : dreamDTOs) {
+                if (d.getId().equals(id)) {
+                    d.setIndhold(user.getDream(id).getIndhold());
+                    d.setDagrest(user.getDream(id).getDagrest());
+                    d.setDato(user.getDream(id).getDato());
+                    break;
+                }
+            }
+        }
+        user.setDreamEdited("tom");
+    }
 
-        // Find den rigtige Dream i User baseret på ID og opdater den
-        user.getDream(dreamDTO.getId()).setIndhold(newText);
+    public void deleteDream(String id) {
+        user.deleteDream(id);
+        refreshDreamList();
+    }
+
+    public Dream getDream(String id) {
+        return user.getDream(id);
     }
 
     private void refreshDreamList() {
@@ -151,8 +168,6 @@ public class UserService extends ServiceMother {
     public boolean isVisKollektiv() {
         return user.isVisKollektiv();
     }
-
-
 
 }
 

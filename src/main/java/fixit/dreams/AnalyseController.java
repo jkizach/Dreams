@@ -37,7 +37,7 @@ public class AnalyseController {
     private Tab tabPie, grafTab, listeTab;
 
     @FXML
-    private ListView<String> filterListe;
+    private ListView<DreamDTO> filterListe;
 
     @FXML
     private PieChart pieChartAnalyse;
@@ -49,7 +49,7 @@ public class AnalyseController {
     private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel;
 
     @FXML
-    Button btnVisGraf;
+    Button btnVisGraf, btnAndOr;
 
     @FXML
     public void initialize() {
@@ -57,6 +57,14 @@ public class AnalyseController {
 
         this.analyseService = new AnalyseService(user);
         comboPieKategorier.setItems(user.getKategoriLabels());
+
+        user.skalStatsGenberegnes.addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                analyseService.updateStats();
+                setGuiDates();
+            }
+        });
+
 
         user.addVbox(vboxTilCCBAnalyse);
 
@@ -67,23 +75,80 @@ public class AnalyseController {
         kollektiv.setVisible(user.isVisKollektiv());
         advarsel.setVisible(user.isVisAdvarsel());
 
-        dpFraGraf.setValue(analyseService.getFirstDreamDate());
-        dpTilGraf.setValue(LocalDate.now());
+        setGuiDates();
 
-        dpFromPie.setValue(analyseService.getFirstDreamDate());
-        dpToPie.setValue(LocalDate.now());
+        filterListe.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
+            private final Label label = new Label();
+            {
+                label.setWrapText(true);
+                label.setMaxWidth(600); // Justér denne værdi efter behov
+            }
+            @Override
+            protected void updateItem(DreamDTO dream, boolean empty) {
+                super.updateItem(dream, empty);
+                setGraphic(null);
+                setText(null);
+                if (!empty && dream != null) {
+                    label.setText(dream.getVisbartIndhold());
+                    setGraphic(label);
+                }
+            }
+        });
 
-        dpFromTal.setValue(analyseService.getFirstDreamDate());
-        dpToTal.setValue(LocalDate.now());
+        FilterDTO data = new FilterDTO();
+        data.fra = dpFraGraf.getValue();
+        data.til = dpTilGraf.getValue();
+        analyseService.updateFilteredDreams(data, false);
+        filterListe.setItems(analyseService.getFilteredDreams());
 
-        filterListe.getItems().addAll(analyseService.getFilteredDreams(dpFraGraf.getValue(), dpTilGraf.getValue()));
+    }
 
+    private void setGuiDates() {
+        for (DatePicker dp : List.of(dpFraGraf,dpFromPie,dpFromTal)) {
+            dp.setValue(analyseService.getFirstDreamDate());
+        }
+        for (DatePicker dp : List.of(dpTilGraf,dpToPie,dpToTal)) {
+            dp.setValue(LocalDate.now());
+        }
+
+    }
+
+    @FXML
+    private void updateFilterList() {
+        FilterDTO data = new FilterDTO();
+        data.fra = dpFraGraf.getValue();
+        data.til = dpTilGraf.getValue();
+        data.lucid = lucid.isSelected();
+        data.praktiserer = praktiserer.isSelected();
+        data.modsat = modsat.isSelected();
+        data.arketypisk = arketypisk.isSelected();
+        data.praksis = praksis.isSelected();
+        data.mareridt = mareridt.isSelected();
+        data.kollektiv = kollektiv.isSelected();
+        data.advarsel = advarsel.isSelected();
+
+        filterListe.getItems().clear();
+
+        analyseService.updateFilteredDreams(data, true);
+        //filterListe.setItems(FXCollections.observableArrayList());
+        //filterListe.setItems(analyseService.getFilteredDreams());
+    }
+
+    @FXML
+    private void toggleANDOR() {
+        if (analyseService.isAndOr()) {
+            btnAndOr.setText("Filterstatus: ELLER");
+            analyseService.setAndOr(false);
+        } else {
+            btnAndOr.setText("Filterstatus: OG");
+            analyseService.setAndOr(true);
+        }
     }
 
     @FXML
     private void onSelectKategori() {
         if (comboPieKategorier.getSelectionModel().getSelectedItem() != null) {
-            Map<String,Integer> mapData = analyseService.getDataForPieChart(comboPieKategorier.getSelectionModel().getSelectedItem());
+            Map<String,Integer> mapData = analyseService.getDataForPieChart(comboPieKategorier.getSelectionModel().getSelectedItem(),dpFromPie.getValue(),dpToPie.getValue());
             pieData.clear();
             for (Map.Entry<String, Integer> entry : mapData.entrySet()) {
                 pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
@@ -96,7 +161,7 @@ public class AnalyseController {
     private void loadCCBs() {
         for (Category c : analyseService.getCats()) {
             CheckComboBox<String> ccb = new CheckComboBox<>();
-            ccb.getItems().addAll(c.getSymbols());
+            ccb.getItems().addAll(c.getSymbolsForDisplay());
             vboxTilCCBAnalyse.getChildren().add(ccb);
             ccb.setMaxWidth(280);
             ccb.setMinWidth(280);
@@ -108,8 +173,8 @@ public class AnalyseController {
 
     @FXML
     private void onVisGraf() {
-
         lineChartAnalyse.getData().clear();
+        lineChartAnalyse.setAnimated(false);
 
         // Send datoerne med til getData-funktionen - og alt fra alle ccb og cber! Som en GrafDTO :-)
         GrafDTO data = new GrafDTO();
@@ -126,34 +191,16 @@ public class AnalyseController {
         data.praksis = praksis.isSelected();
         data.xakse = dayWeekOrMonth();
 
-        //lineChartAnalyse.getData().add(analyseService.onVisGraf(data));
-
         lineChartAnalyse.setVisible(false);
-//        lineChartAnalyse.getData().clear();
-//        lineChartAnalyse.layout();
+        lineChartAnalyse.layout();
 
         for (XYChart.Series<String, Number> series : analyseService.getDataForLineChart(data)) {
             lineChartAnalyse.getData().add(series);
         }
 
-        //analyseService.getDataForLineChart(data);
         lineChartAnalyse.setCreateSymbols(false);
-
         lineChartAnalyse.layout();
-
-
-        //lineChartAnalyse.layout(); // uundgåeligt! Ellers vises første graf som ragelse...
         lineChartAnalyse.setVisible(true);
-        //lcCategoryAxis.setVisible(true);
-
-    }
-
-    private void setupCCB(CheckComboBox<String> ccb, String title) {
-        vboxTilCCBAnalyse.getChildren().add(ccb);
-        ccb.setMaxWidth(280);
-        ccb.setMinWidth(280);
-        ccb.setTitle(title);
-        ccb.setShowCheckedCount(true);
     }
 
     private String dayWeekOrMonth() {

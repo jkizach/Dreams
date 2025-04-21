@@ -1,9 +1,8 @@
 package fixit.dreams;
 
 import java.time.LocalDate;
-import java.util.List;
 
-public class GrafDTO {
+public class FilterDTO {
     public LocalDate fra;
     public LocalDate til;
     public boolean lucid;
@@ -14,5 +13,4 @@ public class GrafDTO {
     public boolean mareridt;
     public boolean kollektiv;
     public boolean advarsel;
-    public String xakse;
 }
