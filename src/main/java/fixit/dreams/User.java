@@ -77,6 +77,10 @@ class User {
             ark.addSymbols(List.of("skyggen", "anima|us", "visdom"));
             categories.add(ark);
 
+            Category cha = new Category("Chakraer");
+            cha.addSymbols(List.of("krone", "pineal", "hals", "hjerte", "solar plexus", "hara", "rod"));
+            categories.add(cha);
+
             Category dy = new Category("Dyr");
             dy.addSymbols(List.of("abe", "gorilla", "slange"));
             categories.add(dy);
@@ -85,17 +89,13 @@ class User {
             far.addSymbols(List.of("grøn", "blå", "gul"));
             categories.add(far);
 
-            Category pers = new Category("Personer");
-            pers.addSymbols(List.of("Jes", "Anna", "Petra"));
-            categories.add(pers);
-
-            Category cha = new Category("Chakraer");
-            cha.addSymbols(List.of("krone", "pineal", "hals", "hjerte", "solar plexus", "hara", "rod"));
-            categories.add(cha);
-
             Category forl = new Category("Forløb");
             forl.addSymbols(List.of("begyndelse", "slutning"));
             categories.add(forl);
+
+            Category pers = new Category("Personer");
+            pers.addSymbols(List.of("Jes", "Anna", "Petra"));
+            categories.add(pers);
 
             //testCats();
 
@@ -128,7 +128,7 @@ class User {
         temaer.put(foretrukneTema, darkGreen);
 
         Tema darkBlue = new Tema(Color.web("#1a1a1a"),Color.web("#678ae6"),Color.web("#262626"),Color.web("#333333"),
-                Color.web("#d1d1d1"),Color.web("#1a1a1a"),Color.web("#678ae6"),Color.web("#0b38af"),"mørkt blåt", "Lucida Bright");
+                Color.web("#d1d1d1"),Color.web("#1a1a1a"),Color.web("#678ae6"),Color.web("#0b38af"),"mørkt blåt", "Consolas");
         temaer.put("mørkt blåt", darkBlue);
     }
 
@@ -223,6 +223,7 @@ class User {
         categories.add(c);
         updateVboxes();
         kategoriLabels.add(c.getName());
+        skalStatsGenberegnes.set(true);
     }
 
     public void addVbox(VBox vbox) {

@@ -228,7 +228,7 @@ public class HovedmenuController {
 
         cbTemaer.setItems(temaer);
         cbTemaer.setValue(userService.getTemaNavn());
-        cbFonts.getItems().addAll("Courier New", "Lucida Bright");
+        cbFonts.getItems().addAll("Courier New", "Consolas");
 
         /* ADVARSEL OG KOLLEKTIV - VIS ELLER EJ */
         kollektiv.setVisible(userService.isVisKollektiv());

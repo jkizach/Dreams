@@ -3,6 +3,7 @@ package fixit.dreams;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -12,6 +13,8 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
 
 public class AnalyseController {
     private AnalyseService analyseService;
@@ -28,7 +31,7 @@ public class AnalyseController {
     private LineChart<String,Number> lineChartAnalyse;
 
     @FXML
-    private VBox vboxTilCCBAnalyse;
+    private VBox vboxTilCCBAnalyse, talVboxBinary, talVboxBinaryNumbers, talVboxCatOne, talVboxCatTwo;
 
     @FXML
     private ToggleButton tgDays, tgMonths, tgWeeks;
@@ -62,6 +65,7 @@ public class AnalyseController {
             if (newVal) {
                 analyseService.updateStats();
                 setGuiDates();
+                loadTalData();
             }
         });
 
@@ -100,6 +104,9 @@ public class AnalyseController {
         data.til = dpTilGraf.getValue();
         analyseService.updateFilteredDreams(data, false);
         filterListe.setItems(analyseService.getFilteredDreams());
+
+        // Tal-tabben:
+        loadTalData();
 
     }
 
@@ -168,6 +175,55 @@ public class AnalyseController {
             ccb.setTitle(c.getName());
             ccb.setShowCheckedCount(true);
             c.addFilterCCB(ccb);
+        }
+    }
+
+    private void loadTalData() {
+        List<String> binaries = new ArrayList<>(List.of("Lucid", "Praktiserer", "Modsatkønnet", "Arketypisk", "Om praksis", "Mareridt","Advarsel","Kollektiv"));
+
+        talVboxBinary.getChildren().clear();
+        talVboxBinaryNumbers.getChildren().clear();
+
+        int[] values = analyseService.getTalBinary(dpFromTal.getValue(), dpToTal.getValue());
+        for (int i = 0; i < binaries.size(); i++) {
+            Label lbl = new Label();
+            Label vals = new Label();
+            lbl.setText(binaries.get(i));
+            vals.setText(String.valueOf(values[i]));
+
+            if ((!binaries.get(i).equals("Advarsel")||analyseService.usingAdvarsel()) && (!binaries.get(i).equals("Kollektiv")||analyseService.usingKollektiv())) {
+                talVboxBinary.getChildren().add(lbl);
+                talVboxBinaryNumbers.getChildren().add(vals);
+            }
+
+        }
+
+        // Og nu TableViews med labels? i talVboxCatOne, talVboxCatTwo
+        talVboxCatOne.getChildren().clear();
+        talVboxCatTwo.getChildren().clear();
+
+        ArrayList<ArrayList<String>> statsForCats = analyseService.getTalCategories(dpFromTal.getValue(), dpToTal.getValue());
+        ArrayList<Category> cats = analyseService.getCats();
+
+        int counter = 0;
+
+        for (int i = 0; i < cats.size(); i++) {
+            Label lbl = new Label();
+            lbl.setText(cats.get(i).getName());
+            ListView<String> tv = new ListView<>();
+            tv.getStyleClass().add("custom-list-view");
+            tv.getItems().addAll(statsForCats.get(i));
+            tv.addEventHandler(MOUSE_CLICKED, Event -> tv.getSelectionModel().clearSelection());
+
+            if (counter < 4) {
+                talVboxCatOne.getChildren().add(lbl);
+                talVboxCatOne.getChildren().add(tv);
+                counter++;
+            } else {
+                talVboxCatTwo.getChildren().add(lbl);
+                talVboxCatTwo.getChildren().add(tv);
+                counter++;
+            }
         }
     }
 

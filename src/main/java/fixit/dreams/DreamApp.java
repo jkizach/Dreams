@@ -19,7 +19,7 @@ public class DreamApp extends Application {
         stage.setOnCloseRequest(event -> handleWindowClose());
         scene = new Scene(fxmlLoader.load(), 1000, 800);
         scene.getStylesheets().add(getClass().getResource("currentTema.css").toExternalForm());
-        stage.setTitle("Drømmeappen 0.7");
+        stage.setTitle("Drømmeappen 0.9");
         stage.setScene(scene);
         stage.getIcons().add(icon);
         stage.show();

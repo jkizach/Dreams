@@ -140,4 +140,8 @@ public class Dream {
     public ArrayList<CategoryDTO> getCategories() {
         return categories;
     }
+
+    public void addCategoryDTO(CategoryDTO cdto) {
+        categories.add(cdto);
+    }
 }

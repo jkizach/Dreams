@@ -24,6 +24,10 @@ public class StatsDO {
         return catStats;
     }
 
-    // Så updataStats har som parametre en String-key (datoen) og en drøm - ud fra det smider den data ind
+    public String getName() {
+        return name;
+    }
+
+    // Så updateStats har som parametre en String-key (datoen) og en drøm - ud fra det smider den data ind
 
 }

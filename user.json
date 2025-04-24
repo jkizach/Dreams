@@ -1,5 +1,5 @@
 {
   "foretrukneTema" : "mørkt grønt",
-  "visAdvarsel" : true,
-  "visKollektiv" : true
+  "visAdvarsel" : false,
+  "visKollektiv" : false
 }

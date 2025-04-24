@@ -7,6 +7,8 @@ import javafx.scene.chart.XYChart;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AnalyseService extends ServiceMother{
     private Stats stats = new Stats();
@@ -106,6 +108,10 @@ public class AnalyseService extends ServiceMother{
         return filteredDreams;
     }
 
+    private void sortDreamsByDate() {
+        FXCollections.sort(filteredDreams, Comparator.comparing(DreamDTO::getDato).reversed()); // Nyeste først
+    }
+
     public void updateFilteredDreams(FilterDTO data, boolean useData) {
         filteredDreams.clear();
 
@@ -178,6 +184,7 @@ public class AnalyseService extends ServiceMother{
                 }
             }
         }
+        sortDreamsByDate();
     }
 
     public boolean isAndOr() {
@@ -187,4 +194,51 @@ public class AnalyseService extends ServiceMother{
     public void setAndOr(boolean andOr) {
         this.andOr = andOr;
     }
+
+    public boolean usingKollektiv() {
+        return user.isVisKollektiv();
+    }
+
+    public boolean usingAdvarsel() {
+        return user.isVisAdvarsel();
+    }
+
+    public int[] getTalBinary(LocalDate fra, LocalDate til) {
+        stats.getTalCatStats(fra,til);
+        return(stats.getTalBinary(fra, til));
+    }
+
+    public ArrayList<ArrayList<String>> getTalCategories(LocalDate fra, LocalDate til) {
+        ArrayList<ArrayList<String>> outDat = new ArrayList<>();
+        ArrayList<TreeMap<String,Integer>> totalStats = stats.getTalCatStats(fra,til);
+
+        // Kan en ny kat være null her?
+        for (TreeMap<String,Integer> data : totalStats) {
+            ArrayList<String> temp = new ArrayList<>();
+
+            for (Map.Entry<String, Integer> entry : data.entrySet()) {
+                temp.add(String.format("%-22s %3d", entry.getKey(), entry.getValue()));
+            }
+
+            // Sorter temp efter tallet...
+            temp.sort((a, b) -> {
+                int valueA = extractNumber(a);
+                int valueB = extractNumber(b);
+                return Integer.compare(valueB, valueA); // Omvendt orden
+            });
+
+            outDat.add(temp);
+        }
+        return outDat;
+    }
+
+    private static int extractNumber(String input) {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group());
+        }
+        throw new IllegalArgumentException("Intet tal fundet i strengen: " + input);
+    }
+
 }

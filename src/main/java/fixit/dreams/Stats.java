@@ -6,10 +6,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Stats {
     protected User user;
@@ -23,6 +20,8 @@ public class Stats {
     private Map<String, Integer> praksisStats;
     private Map<String, Integer> mareridtStats;
     private Map<String, Integer> advarselStats;
+
+    ArrayList<Map<String, Integer>> binaryStats;
 
     private LocalDate firstDream;
 
@@ -41,6 +40,16 @@ public class Stats {
         this.mareridtStats = new HashMap<>();
         this.advarselStats = new HashMap<>();
 
+        this.binaryStats = new ArrayList<>();
+        binaryStats.add(lucidStats);
+        binaryStats.add(praktisererStats);
+        binaryStats.add(modsatStats);
+        binaryStats.add(arketypiskStats);
+        binaryStats.add(praksisStats);
+        binaryStats.add(mareridtStats);
+        binaryStats.add(advarselStats);
+        binaryStats.add(kollektivStats);
+
         this.monthTranslator = new HashMap<>();
         calculateStats();
         setupTranslators();
@@ -48,6 +57,10 @@ public class Stats {
 
     public void calculateStats() {
         clearAll();
+
+        for (Category c : user.getCategories()) {
+            categoryStats.putIfAbsent(c.getName(), new StatsDO(c.getName()));
+        }
         firstDream = LocalDate.now();
         for (Dream dream : user.getDreams().values()) {
             LocalDate date = dream.getDato();
@@ -82,7 +95,7 @@ public class Stats {
     private void updateStats(String key, Dream dream) {
         // her skal der i stedet loopes gennem listen af CategoryDTO i hver drøm... men hvad så med stats?
         for (CategoryDTO cat : dream.getCategories()) {
-            categoryStats.putIfAbsent(cat.name, new StatsDO(cat.name));
+            //categoryStats.putIfAbsent(cat.name, new StatsDO(cat.name)); // jeg tror at den her skal flyttes til CalculateStats og skal bruge user.Cats!
             categoryStats.get(cat.name).updateStatsDO(key,cat);
         }
 
@@ -199,6 +212,53 @@ public class Stats {
         }
         return series;
     }
+
+    public int[] getTalBinary(LocalDate fra, LocalDate til) {
+        int[] out = new int[8];
+        while (!fra.isAfter(til)) {
+            for (int i = 0; i < 8; i++) {
+                int value = getBoolStatsPerDag(binaryStats.get(i), fra);
+                out[i] += value;
+            }
+            fra = fra.plusDays(1);
+        }
+        return out;
+    }
+
+    public ArrayList<TreeMap<String,Integer>> getTalCatStats(LocalDate fra, LocalDate til) {
+        ArrayList<TreeMap<String,Integer>> testList = new ArrayList<>();
+
+        // Nej jeg skal loope gennem StatsDO og SÅ for hver køre et dato-while-loop!
+
+        // Kunne jeg loope gennem user.getCategories().getName() og så bruge det som key i mine statsCats?
+        for (Category category : user.getCategories()) {
+            TreeMap<String, Integer> totals = new TreeMap<>();
+            LocalDate loopVar = fra;
+            while (!loopVar.isAfter(til)) {
+                TreeMap<String, Integer> tm = categoryStats.get(category.getName()).getCatStats().get(String.valueOf(loopVar));
+                if (tm != null) {
+                    tm.forEach((key, value) -> totals.merge(key, value, Integer::sum));
+                }
+                loopVar = loopVar.plusDays(1);
+            }
+            testList.add(totals);
+
+//        for (StatsDO sdo : categoryStats.values()) {
+//            TreeMap<String, Integer> totals = new TreeMap<>();
+//            LocalDate loopVar = fra;
+//            while (!loopVar.isAfter(til)) {
+//                TreeMap<String, Integer> tm = sdo.getCatStats().get(String.valueOf(loopVar));
+//                if (tm != null) {
+//                    tm.forEach((key, value) -> totals.merge(key, value, Integer::sum));
+//                }
+//                loopVar = loopVar.plusDays(1);
+//            }
+//            System.out.println(sdo.getName());
+//            testList.add(totals);
+        }
+        return testList;
+    }
+
 
     public Map<String, Integer> getLucidStats() {
         return lucidStats;

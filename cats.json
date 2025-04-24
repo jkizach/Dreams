@@ -3,6 +3,10 @@
   "symbols" : [ "anima|us", "skyggen", "visdom" ],
   "customOrder" : [ ]
 }, {
+  "name" : "Chakraer",
+  "symbols" : [ "hals", "hara", "hjerte", "krone", "pineal", "rod", "solar plexus" ],
+  "customOrder" : [ "krone", "pineal", "hals", "hjerte", "solar plexus", "hara", "rod" ]
+}, {
   "name" : "Dyr",
   "symbols" : [ "abe", "gorilla", "slange" ],
   "customOrder" : [ ]
@@ -11,15 +15,23 @@
   "symbols" : [ "blå", "grøn", "gul" ],
   "customOrder" : [ ]
 }, {
+  "name" : "Forløb",
+  "symbols" : [ "begyndelse", "slutning" ],
+  "customOrder" : [ "begyndelse", "slutning" ]
+}, {
   "name" : "Personer",
-  "symbols" : [ "Anna", "Jes", "Petra" ],
+  "symbols" : [ "Anna", "Jes", "Michael Krabbe", "Petra" ],
   "customOrder" : [ ]
 }, {
-  "name" : "Chakraer",
-  "symbols" : [ "hals", "hara", "hjerte", "krone", "pineal", "rod", "solar plexus" ],
-  "customOrder" : [ "krone", "pineal", "hals", "hjerte", "solar plexus", "hara", "rod" ]
+  "name" : "Temaer",
+  "symbols" : [ "Flugt", "kamp" ],
+  "customOrder" : [ ]
 }, {
-  "name" : "Forløb",
-  "symbols" : [ "begyndelse", "midten", "slutning" ],
-  "customOrder" : [ "begyndelse", "slutning", "midten" ]
+  "name" : "Huse",
+  "symbols" : [ "højhus" ],
+  "customOrder" : [ ]
+}, {
+  "name" : "Flasker",
+  "symbols" : [ ],
+  "customOrder" : [ ]
 } ]
