@@ -318,3 +318,32 @@
     -fx-text-fill: -fx-alternativtxt-text;
 }
 
+.spinner {
+    -fx-background-color: -fx-andenalternativbg-background; /* Baggrundsfarve */
+    -fx-border-color: -fx-border-border; /* Kantens farve */
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -fx-alternativbg-background; /* Baggrundsfarve */
+    -fx-border-color: -fx-andenalternativbg-background;
+    -fx-border-width: 0.6;
+    -fx-body-color: -fx-border-border;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: -fx-andenalternativbg-background; /* Baggrundsfarve */
+}
+
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+.spinner .increment-arrow-button:hover:pressed,
+.spinner .decrement-arrow-button:hover:pressed {
+    -fx-background-color: -fx-alternativbg-background;
+}

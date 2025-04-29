@@ -2,6 +2,8 @@ package fixit.dreams;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -60,6 +62,17 @@ public class UserService extends ServiceMother {
         for (Dream dream : user.getDreams().values()) {
             dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato()));
         }
+    }
+
+    public void refreshDreamList(LocalDate fra, LocalDate til) {
+        dreamDTOs.clear();
+        for (Dream dream : user.getDreams().values()) {
+            if (isInRange(dream.getDato(), fra, til)) {
+                dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato()));
+
+            }
+        }
+        sortDreamsByDate();
     }
 
     private void sortDreamsByDate() {
@@ -147,18 +160,32 @@ public class UserService extends ServiceMother {
             if (c.getName().equals(kategorien)) {
                 if (c.getSymbols().contains(symbolet)) {
                     c.removeSymbol(symbolet);
+                    c.updateAllCCBs();
                     break;
                 }
             }
         }
+        // Fjern symbolet fra alle drømme!
+        for (Dream d : user.getDreams().values()) {
+            for (CategoryDTO cdto : d.getCategories()) {
+                if (cdto.name.equals(kategorien)) {
+                    cdto.symbols.remove(symbolet);
+                    break;
+                }
+            }
+        }
+        refreshDreamList();
+        user.skalStatsGenberegnes.set(true);
     }
 
     public void setVisAdvarsel(boolean b) {
         user.setVisAdvarsel(b);
+        user.skalStatsGenberegnes.set(true);
     }
 
     public void setVisKollektiv(boolean b) {
         user.setVisKollektiv(b);
+        user.skalStatsGenberegnes.set(true);
     }
 
     public boolean isVisAdvarsel() {
@@ -169,5 +196,19 @@ public class UserService extends ServiceMother {
         return user.isVisKollektiv();
     }
 
+    public LocalDate getFirstDreamDate() {
+        LocalDate firstDate = LocalDate.now();
+        for (Dream d : user.getDreams().values()) {
+            LocalDate date = d.getDato();
+            if (firstDate.isAfter(date)) {
+                firstDate = date;
+            }
+        }
+        return firstDate;
+    }
+
+    private boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {
+        return (date.isEqual(start) || date.isAfter(start)) && (date.isEqual(end) || date.isBefore(end));
+    }
 }
 

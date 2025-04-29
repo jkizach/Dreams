@@ -54,5 +54,17 @@ public class DreamDTO {
         String dg = (!dagrest.get().isEmpty()) ? "\nDAGREST: " + dagrest.get() + "\n": "\n";
         return ("-------------------------------\n" + dato + "\n" + indhold.get() + dg);
     }
+
+    public String getMinimalIndhold() {
+        String tekst = indhold.get();
+        int maxLen = 50;
+        boolean trimmed = tekst.length() > maxLen;
+
+        String visning = tekst.substring(0, Math.min(maxLen, tekst.length()));
+        if (trimmed) {
+            visning += "...";
+        }
+        return ("----------------------\n" + dato + "\n" + visning + "\n");
+    }
 }
 

@@ -242,19 +242,6 @@ public class Stats {
                 loopVar = loopVar.plusDays(1);
             }
             testList.add(totals);
-
-//        for (StatsDO sdo : categoryStats.values()) {
-//            TreeMap<String, Integer> totals = new TreeMap<>();
-//            LocalDate loopVar = fra;
-//            while (!loopVar.isAfter(til)) {
-//                TreeMap<String, Integer> tm = sdo.getCatStats().get(String.valueOf(loopVar));
-//                if (tm != null) {
-//                    tm.forEach((key, value) -> totals.merge(key, value, Integer::sum));
-//                }
-//                loopVar = loopVar.plusDays(1);
-//            }
-//            System.out.println(sdo.getName());
-//            testList.add(totals);
         }
         return testList;
     }

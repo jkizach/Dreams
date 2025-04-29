@@ -181,7 +181,7 @@ public class HovedmenuController {
         // Sæt currentTemas farver til de foretrukne:
         System.out.println(userService.getTema().getTemaName());
 
-        ObservableList<DreamDTO> dreams = userService.getDreamsForDisplay();
+        //ObservableList<DreamDTO> dreams = userService.getDreamsForDisplay();
         dreamListView.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
             private final Label label = new Label();
             {
@@ -208,7 +208,7 @@ public class HovedmenuController {
         });
 
         user.addVbox(vBoxSymboler);
-        dreamListView.setItems(dreams);
+        dreamListView.setItems(userService.getDreamsForDisplay());
 
         settingsIcon.setImage(iconb);
 
@@ -217,6 +217,7 @@ public class HovedmenuController {
 
         newDreamDate.setValue(LocalDate.now());
         toDatePicker.setValue(LocalDate.now());
+        fromDatePicker.setValue(userService.getFirstDreamDate());
 
         // Og kunne man så lave et Søren-trick med Categories her i stedet? vv
         loadCCBs();
@@ -287,6 +288,11 @@ public class HovedmenuController {
         }
     }
 
+    @FXML
+    public void filtrerDreamList() {
+        userService.refreshDreamList(fromDatePicker.getValue(),toDatePicker.getValue());
+    }
+
     private void resetNewDreamTab() {
         skriveFelt.clear();
         dagrestFelt.clear();
@@ -309,8 +315,6 @@ public class HovedmenuController {
         if (dreamListView.getSelectionModel().getSelectedItem() != null) {
             String id = dreamListView.getSelectionModel().getSelectedItem().getId();
             Dream toBeEdited = userService.getDream(id);
-            System.out.println("Drømmens dato er:" + toBeEdited.getDato());
-
             openEditPopup(toBeEdited); // åbner mit pop-up vindue!
         };
     }

@@ -9,15 +9,64 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.IntStream.rangeClosed;
 
 public class AnalyseService extends ServiceMother{
     private Stats stats = new Stats();
     private boolean andOr = true;
     ObservableList<DreamDTO> filteredDreams = FXCollections.observableArrayList();
+    ObservableList<DreamDTO> forloebDreams = FXCollections.observableArrayList();
+    ObservableList<DreamDTO> forloeb = FXCollections.observableArrayList();
+
 
     public AnalyseService(User user) {
         super(user);
     }
+
+    public ObservableList<DreamDTO> getForloeb() {
+        return forloeb;
+    }
+
+    public void updateForloeb() {
+        forloeb.clear();
+        for (Dream d : user.getDreams().values()) {
+            for (CategoryDTO c : d.getCategories()) {
+                if (c.name.equals("Forløb") && !c.symbols.isEmpty()) {
+                    DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                    forloeb.add(dto);
+                    break;
+                }
+            }
+        }
+        sortDreamsByDate(forloeb);
+    }
+
+    public ObservableList<DreamDTO> getForloebDreams() {
+        return forloebDreams;
+    }
+
+    public void refreshForloebDreams(LocalDate startDate, int days, int targetMonthDelta) {
+        forloebDreams.clear();
+
+        LocalDate targetDate = startDate.plusMonths(targetMonthDelta);
+
+        // Lav vindue ± precisionDays omkring den dato
+        Set<LocalDate> datoer = IntStream.rangeClosed(-days, days)
+                .mapToObj(targetDate::plusDays)
+                .collect(Collectors.toSet());
+
+        for (Dream d : user.getDreams().values()) {
+            if (datoer.contains(d.getDato())) {
+                DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                forloebDreams.add(dto);
+            }
+        }
+        sortDreamsByDate(forloebDreams);
+    }
+
 
     public Map<String,Integer> getDataForPieChart(String kategoriNavn, LocalDate start, LocalDate slut) {
         // Her skal fra og til datoerne jo bruges!
@@ -108,8 +157,8 @@ public class AnalyseService extends ServiceMother{
         return filteredDreams;
     }
 
-    private void sortDreamsByDate() {
-        FXCollections.sort(filteredDreams, Comparator.comparing(DreamDTO::getDato).reversed()); // Nyeste først
+    private void sortDreamsByDate(ObservableList<DreamDTO> sortme) {
+        FXCollections.sort(sortme, Comparator.comparing(DreamDTO::getDato).reversed()); // Nyeste først
     }
 
     public void updateFilteredDreams(FilterDTO data, boolean useData) {
@@ -184,7 +233,7 @@ public class AnalyseService extends ServiceMother{
                 }
             }
         }
-        sortDreamsByDate();
+        sortDreamsByDate(filteredDreams);
     }
 
     public boolean isAndOr() {
@@ -239,6 +288,18 @@ public class AnalyseService extends ServiceMother{
             return Integer.parseInt(matcher.group());
         }
         throw new IllegalArgumentException("Intet tal fundet i strengen: " + input);
+    }
+
+    public String getForloebStage(String id) {
+        String out = "";
+        for (CategoryDTO c : user.getDream(id).getCategories()) {
+            if (c.name.equals("Forløb")) {
+                for (String symbol : c.symbols) {
+                    out = out + symbol;
+                }
+            }
+        }
+        return out;
     }
 
 }

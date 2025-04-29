@@ -19,7 +19,7 @@ import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
 public class AnalyseController {
     private AnalyseService analyseService;
     private ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
-    ObservableList<String> kategoriLabels;
+    private ObservableList<String> kategoriLabels;
 
     @FXML
     private AnchorPane analyseRoot;
@@ -40,7 +40,7 @@ public class AnalyseController {
     private Tab tabPie, grafTab, listeTab;
 
     @FXML
-    private ListView<DreamDTO> filterListe;
+    private ListView<DreamDTO> filterListe, forloebListe, forloebValgListe;
 
     @FXML
     private PieChart pieChartAnalyse;
@@ -52,7 +52,13 @@ public class AnalyseController {
     private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel;
 
     @FXML
-    Button btnVisGraf, btnAndOr;
+    private Button btnVisGraf, btnAndOr, btnForloebVisListe, btnForloebPlus;
+
+    @FXML
+    private Spinner<Integer> daysSpinner, monthsSpinner;
+
+    @FXML
+    private Label lblForloebDream;
 
     @FXML
     public void initialize() {
@@ -66,6 +72,7 @@ public class AnalyseController {
                 analyseService.updateStats();
                 setGuiDates();
                 loadTalData();
+                analyseService.updateForloeb();
             }
         });
 
@@ -99,6 +106,42 @@ public class AnalyseController {
             }
         });
 
+        forloebListe.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
+            private final Label label = new Label();
+            {
+                label.setWrapText(true);
+                label.setMaxWidth(550); // Justér denne værdi efter behov
+            }
+            @Override
+            protected void updateItem(DreamDTO dream, boolean empty) {
+                super.updateItem(dream, empty);
+                setGraphic(null);
+                setText(null);
+                if (!empty && dream != null) {
+                    label.setText(dream.getVisbartIndhold());
+                    setGraphic(label);
+                }
+            }
+        });
+
+        forloebValgListe.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
+            private final Label label = new Label();
+            {
+                label.setWrapText(true);
+                label.setMaxWidth(280); // Justér denne værdi efter behov
+            }
+            @Override
+            protected void updateItem(DreamDTO dream, boolean empty) {
+                super.updateItem(dream, empty);
+                setGraphic(null);
+                setText(null);
+                if (!empty && dream != null) {
+                    label.setText(dream.getMinimalIndhold());
+                    setGraphic(label);
+                }
+            }
+        });
+
         FilterDTO data = new FilterDTO();
         data.fra = dpFraGraf.getValue();
         data.til = dpTilGraf.getValue();
@@ -107,6 +150,12 @@ public class AnalyseController {
 
         // Tal-tabben:
         loadTalData();
+
+        // Forløb-tabben:
+        setupSpinners();
+        forloebListe.setItems(analyseService.getForloebDreams());
+        forloebValgListe.setItems(analyseService.getForloeb());
+        analyseService.updateForloeb();
 
     }
 
@@ -117,7 +166,6 @@ public class AnalyseController {
         for (DatePicker dp : List.of(dpTilGraf,dpToPie,dpToTal)) {
             dp.setValue(LocalDate.now());
         }
-
     }
 
     @FXML
@@ -137,8 +185,6 @@ public class AnalyseController {
         filterListe.getItems().clear();
 
         analyseService.updateFilteredDreams(data, true);
-        //filterListe.setItems(FXCollections.observableArrayList());
-        //filterListe.setItems(analyseService.getFilteredDreams());
     }
 
     @FXML
@@ -178,7 +224,8 @@ public class AnalyseController {
         }
     }
 
-    private void loadTalData() {
+    @FXML
+    public void loadTalData() {
         List<String> binaries = new ArrayList<>(List.of("Lucid", "Praktiserer", "Modsatkønnet", "Arketypisk", "Om praksis", "Mareridt","Advarsel","Kollektiv"));
 
         talVboxBinary.getChildren().clear();
@@ -265,4 +312,35 @@ public class AnalyseController {
         return xAkseValg;
     }
 
+    /* Forløbs-tabbens funktioner */
+    private void setupSpinners() {
+        daysSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 5));
+        monthsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 8, 1));
+        daysSpinner.setEditable(false);
+        monthsSpinner.setEditable(false);
+    }
+
+    @FXML
+    private void plusBtnPressed() {
+        if (btnForloebPlus.getText().equals("+")) {
+            btnForloebPlus.setText("-");
+        } else {
+            btnForloebPlus.setText("+");
+        }
+    }
+
+    @FXML
+    private void btnVisForloebPressed() {
+        if (!forloebValgListe.getSelectionModel().isEmpty()) {
+            int months = (btnForloebPlus.getText().equals("+") ? monthsSpinner.getValue() : monthsSpinner.getValue()*-1);
+            analyseService.refreshForloebDreams(forloebValgListe.getSelectionModel().getSelectedItem().getDato(), daysSpinner.getValue(), months);
+        }
+
+    }
+
+    @FXML
+    public void onSelectForloebDream() {
+        String id = forloebValgListe.getSelectionModel().getSelectedItem().getId();
+        lblForloebDream.setText(analyseService.getForloebStage(id));
+    }
 }
