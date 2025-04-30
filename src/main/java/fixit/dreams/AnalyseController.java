@@ -315,7 +315,7 @@ public class AnalyseController {
     /* Forløbs-tabbens funktioner */
     private void setupSpinners() {
         daysSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 5));
-        monthsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 8, 1));
+        monthsSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9, 1));
         daysSpinner.setEditable(false);
         monthsSpinner.setEditable(false);
     }

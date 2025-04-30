@@ -50,7 +50,6 @@ public class UserService extends ServiceMother {
 
     public void deleteDream(String id) {
         user.deleteDream(id);
-        refreshDreamList();
     }
 
     public Dream getDream(String id) {
@@ -62,6 +61,7 @@ public class UserService extends ServiceMother {
         for (Dream dream : user.getDreams().values()) {
             dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato()));
         }
+        sortDreamsByDate();
     }
 
     public void refreshDreamList(LocalDate fra, LocalDate til) {

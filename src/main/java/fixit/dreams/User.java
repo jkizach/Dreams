@@ -74,7 +74,7 @@ class User {
 
             // Manuel tilføjelse af symboler:
             Category ark = new Category("Arketyper");
-            ark.addSymbols(List.of("skyggen", "anima|us", "visdom"));
+            ark.addSymbols(List.of("skyggen", "anima", "animus", "visdom"));
             categories.add(ark);
 
             Category cha = new Category("Chakraer");
@@ -82,15 +82,15 @@ class User {
             categories.add(cha);
 
             Category dy = new Category("Dyr");
-            dy.addSymbols(List.of("abe", "gorilla", "slange"));
+            dy.addSymbols(List.of("abe", "aborre", "admiral", "agerhøne", "albatros", "alligator", "allike", "anakonda", "and", "antilope", "bavian", "bison", "bjørn", "blishøne", "blåhals", "blåhval", "blåmejse", "blæksprutte", "bogfinke", "brilleslange", "bæltedyr", "bændelorm", "bæver", "bøffel", "chimpanse", "delfin", "drage", "dingo", "dinosaur", "djævlerokke", "dompap", "dovendyr", "dromedar", "dronte", "dræbersnegl", "duehøg", "dådyr", "ederfugl", "egern", "elefant", "elg", "ellekrage", "falk", "fasan", "firben", "fiskehejre", "fiskeørn", "fjeldræv", "flagermus", "flamingo", "flodhest", "flåt", "frø", "fugl", "fugleedderkop", "fuglekonge", "fårekylling", "gazelle", "gedde", "gekko", "gepard", "gibbon", "giraf", "glente", "gnaver", "gnu", "gorilla", "gransanger", "grib", "gris", "gråand", "gråegern", "gråspurv", "græshoppe", "grævling", "grønirisk", "gulirisk", "gulspurv", "gås", "gærdesanger", "gærdesmutte", "gøg", "haj", "halemajse", "hammerhaj", "hare", "havodder", "havskildpadde", "havørn", "hejre", "hest", "hingst", "hjort", "hornugle", "hugorm", "humlebi", "hund", "husskade", "hvalros", "hveps", "hvepsevåge", "hvidhaj", "hyæne", "hærfugl", "hættemåge", "høg", "høne", "igle", "ilder", "ildsalamander", "insekt", "isbjørn", "isfugl", "islænder", "jagtfalk", "jaguar", "jernspurv", "jordegern", "jærv", "kakadue", "kakerlak", "kalkun", "kamel", "kamæleon", "kanin", "kaskelot", "kat", "kejserpingvin", "kejserørn", "kernebider", "kiwi", "klapperslange", "knopsvane", "knæler", "koalabjørn", "kobra", "kolibri", "komodovaran", "kondor", "kongeørn", "koraller", "kronhjort", "kvækerfinke", "kvælerslange", "kænguru", "laks", "lam", "lama", "larve", "leguan", "lemming", "lemur", "leopard", "los", "lunde", "lækat", "lærke", "løve", "marabustork", "mariehøne", "markmus", "marsvin", "mink", "mosegris", "moskusokse", "muldvarp", "muldyr", "mus", "musvit", "musvåge", "myg", "myre", "myresluger", "måge", "mår", "møl", "natsværmer", "nattergal", "natugle", "næbdyr", "nældesommerfugl", "næseabe", "næsehorn", "næsehornsbille", "okse", "orangutang", "orm", "ozelot", "padderokke", "panda", "papegøje", "papegøjefisk", "pegasus", "pelikan", "perlehøne", "pindsvin", "piratfisk", "plankton", "prærieulv", "puddelhund", "pukkelhval", "puma", "pungrotte", "pytonslange", "rottweiler", "rovdyr", "rovfugl", "rådyr", "ræv", "rødhals", "rødkælk", "rødspætte", "sardin", "sild", "skarv", "skildpadde", "skorpion", "skovmus", "skovsnegl", "skrubtudse", "skøjteløber", "slange", "slørugle", "sneppe", "snog", "solsort", "sommerfugl", "sortspætte", "spurv", "spækhugger", "stenbider", "stenbuk", "stinkdyr", "stork", "struds", "sumpmus", "svale", "svane", "sæl", "søhest", "sølvmåge", "søløve", "søpapegøje", "søpindsvin", "tapir", "terrier", "tiger", "tornskade", "torsk", "trane", "troldand", "tukan", "turteldue", "tusindben", "tæge", "ugle", "ulv", "urokse", "vagtel", "vampyrflaggermus", "vandmand", "vaskebjørn", "vildsvin", "vipstjert", "vårhare", "vædder", "væsel", "zebra", "yak", "ælling", "æsel", "ørkenrotte", "ørred", "ål"));
             categories.add(dy);
 
             Category far = new Category("Farver");
-            far.addSymbols(List.of("grøn", "blå", "gul"));
+            far.addSymbols(List.of("blommefarvet","blå","bordeaux","bronze","brun","dueblå","grå","græsgrøn","grøn","gul","guld","himmelblå","hvid","kastanjebrun","khaki","kobber","koksgrå","laksefarvet","lavendel","lilla","limegrøn","lyseblå","lysebrun","lysegrå","lysegrøn","lyselilla","lyserød","marineblå","mørkeblå","mørkebrun","mørkegrå","mørkelilla","mørkerød","nøddebrun","okker","olivengrøn","orange","pink","rav","rosa","rød","sort","turkis","vinrød","violet"));
             categories.add(far);
 
             Category forl = new Category("Forløb");
-            forl.addSymbols(List.of("begyndelse", "slutning"));
+            forl.addSymbols(List.of("begyndelse", "det ukendte","tilnærmelse","møde","enhed","opdeling","adskillelse","det nye ukendte","afslutning"));
             categories.add(forl);
 
             Category pers = new Category("Personer");

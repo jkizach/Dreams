@@ -2,14 +2,14 @@
 
 .root {
     /* Mine farvevariabler: */
-	-fx-hovedbg-background: #1a1a1a;
-	-fx-hovedtxt-text: #d1d1d1;
-	-fx-alttext-text: #1a1a1a;
-	-fx-alternativtxt-text: #62cd84;
-	-fx-alternativbg-background: #62cd84;
-	-fx-border-border: #d699d3;
-	-fx-andenalternativbg-background: #262626;
-	-fx-textfelt-background: #333333;
+	-fx-hovedbg-background: #b3b3b3;
+	-fx-hovedtxt-text: #000000;
+	-fx-alttext-text: #e6e6e6;
+	-fx-alternativtxt-text: #000000;
+	-fx-alternativbg-background: #336633;
+	-fx-border-border: #4d804d;
+	-fx-andenalternativbg-background: #b3e6b3;
+	-fx-textfelt-background: #cccccc;
 
     -fx-background-color: -fx-hovedbg-background;
     -fx-text-fill: -fx-hovedtxt-text;

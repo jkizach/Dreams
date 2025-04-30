@@ -181,7 +181,6 @@ public class HovedmenuController {
         // Sæt currentTemas farver til de foretrukne:
         System.out.println(userService.getTema().getTemaName());
 
-        //ObservableList<DreamDTO> dreams = userService.getDreamsForDisplay();
         dreamListView.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
             private final Label label = new Label();
             {
@@ -193,6 +192,7 @@ public class HovedmenuController {
                 super.updateItem(dream, empty);
                 if (empty || dream == null) {
                     setText(null);
+                    setGraphic(null);
                 } else {
                     label.setText(dream.getVisbartIndhold());
                     setGraphic(label);
@@ -476,6 +476,7 @@ public class HovedmenuController {
             } else {
                 String id = dreamListView.getSelectionModel().getSelectedItem().getId();
                 userService.deleteDream(id);
+                userService.refreshDreamList(fromDatePicker.getValue(),toDatePicker.getValue());
                 deleteDream.setText("Slet drøm");
                 deleteButtonPressed = false;
             }

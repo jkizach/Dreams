@@ -107,6 +107,38 @@
     -fx-background-color: -fx-alternativbg-background
 }
 
+/* CheckComboBoxes Styling: */
+.list-view .scroll-bar:vertical  {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-alternativbg-background; /* Selve dimsen man flytter på */
+}
+
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: -fx-textfelt-background; /* Baggrunden */
+}
+
+.list-view .scroll-bar:vertical .increment-arrow,
+.list-view .scroll-bar:vertical .decrement-arrow,
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+.list-view .scroll-bar:vertical .increment-button:hover,
+.list-view .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: -fx-alternativbg-background; /* Hover farve */
+}
+
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+
+
 .date-picker {
     -fx-background-color: -fx-andenalternativbg-background;
     -fx-text-fill: -fx-hovedtxt-text;
