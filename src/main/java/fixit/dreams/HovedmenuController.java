@@ -3,6 +3,7 @@ package fixit.dreams;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -32,6 +34,8 @@ public class HovedmenuController {
     private boolean deleteButtonPressed = false;
     private boolean analyseIsLoaded = false;
 
+    private FileChooser fileChooser = new FileChooser();
+
     @FXML
     private TextArea skriveFelt, dagrestFelt;
 
@@ -39,7 +43,7 @@ public class HovedmenuController {
     private ColorPicker baggrundAPicker, baggrundBPicker, baggrundCPicker, baggrundDPicker, tekstAPicker, tekstBPicker, tekstCPicker, kantPicker;
 
     @FXML
-    private Button deleteDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap;
+    private Button deleteDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap, eksportBtn;
 
     @FXML
     private DatePicker newDreamDate, fromDatePicker, toDatePicker;
@@ -106,7 +110,7 @@ public class HovedmenuController {
         }
 
         //fjernSymbolCCB.getCheckModel().getCheckedItems();
-        fjernSymbolCCB.setMaxWidth(235); // måske 235, ligesom ved ny drøm, og måske counter?
+        fjernSymbolCCB.setMaxWidth(260); // måske 235, ligesom ved ny drøm, og måske counter?
         fjernSymbolCCB.setMinWidth(235);
         fjernSymbolCCB.setTitle("Symboler");
 
@@ -132,7 +136,7 @@ public class HovedmenuController {
     @FXML
     private void placeholderCCB() {
         CheckComboBox<String> placeholder = new CheckComboBox<>();
-        placeholder.setMaxWidth(235); // måske 235, ligesom ved ny drøm, og måske counter?
+        placeholder.setMaxWidth(260); // måske 235, ligesom ved ny drøm, og måske counter?
         placeholder.setMinWidth(235);
         placeholder.setTitle("Vælg symboler");
         placeholder.setDisable(true);
@@ -177,9 +181,6 @@ public class HovedmenuController {
 
         setTema(userService.getCurrentTema());
         temaer = userService.getTemaerForDisplay();
-
-        // Sæt currentTemas farver til de foretrukne:
-        System.out.println(userService.getTema().getTemaName());
 
         dreamListView.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
             private final Label label = new Label();
@@ -229,7 +230,7 @@ public class HovedmenuController {
 
         cbTemaer.setItems(temaer);
         cbTemaer.setValue(userService.getTemaNavn());
-        cbFonts.getItems().addAll("Courier New", "Consolas");
+        cbFonts.getItems().addAll("Courier New", "Source Code Pro");
 
         /* ADVARSEL OG KOLLEKTIV - VIS ELLER EJ */
         kollektiv.setVisible(userService.isVisKollektiv());
@@ -483,6 +484,12 @@ public class HovedmenuController {
         }
     }
 
+    @FXML
+    public void clickBtnOmHelp(ActionEvent event) {
+        Button clicked = (Button) event.getSource();
+        openTxtView(clicked.getText());
+    }
+
     /* LOADING AF ANALYSETAB */
     private void loadAnalyseTab() {
         try {
@@ -504,7 +511,6 @@ public class HovedmenuController {
             EditDreamController edc = fxmlLoader.getController();
             edc.setDream(d);
 
-            System.out.println(d.getIndhold());
             Stage popupStage = new Stage();
 
             Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
@@ -521,6 +527,49 @@ public class HovedmenuController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    /* Loading af om- og hjælp-vinduerne */
+    @FXML
+    private void openTxtView(String type)  {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("txt-view.fxml"));
+            Parent root = fxmlLoader.load();
+
+            TxtController tc = fxmlLoader.getController();
+            tc.setType(type);
+
+            Stage popupStage = new Stage();
+
+            Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setScene(new Scene(root));
+            File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+            root.getStylesheets().clear();
+            root.getStylesheets().add(tempFile.toURI().toString()); // Indlæs direkte fra resources
+            root.applyCss();
+            popupStage.setTitle(type);
+            popupStage.getIcons().add(icon);
+
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /* FileChooser når man eksporterer drømmeliste som txt.fil */
+    @FXML
+    void eksportBtn() {
+        fileChooser.setTitle("Gem drømme som .txt");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("txt", "*.txt")
+        );
+        File fileToSave = fileChooser.showSaveDialog(dreamListView.getScene().getWindow());
+        if (fileToSave != null) {
+            IOutils.eksporterDreamlist(dreamListView.getItems(), fileToSave.getAbsolutePath());
+        } else {
+            System.out.println("No path selected");
+        }
     }
 }

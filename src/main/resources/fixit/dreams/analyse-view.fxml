@@ -32,9 +32,9 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Label layoutX="14.0" layoutY="23.0" text="Fra" />
-                        <DatePicker fx:id="dpFromTal" layoutX="58.0" layoutY="19.0" onAction="#loadTalData" />
+                        <DatePicker fx:id="dpFromTal" layoutX="58.0" layoutY="19.0" onAction="#loadTalData" prefHeight="30.0" prefWidth="180.0" />
                         <Label layoutX="17.0" layoutY="66.0" text="Til" />
-                        <DatePicker fx:id="dpToTal" layoutX="58.0" layoutY="62.0" onAction="#loadTalData" />
+                        <DatePicker fx:id="dpToTal" layoutX="58.0" layoutY="62.0" onAction="#loadTalData" prefHeight="30.0" prefWidth="180.0" />
                         <HBox layoutX="312.0" layoutY="37.0" prefHeight="663.0" prefWidth="672.0" spacing="10.0">
                            <children>
                               <VBox fx:id="talVboxCatOne" prefHeight="200.0" prefWidth="330.0" spacing="10.0" />
@@ -57,9 +57,9 @@
                         <PieChart fx:id="pieChartAnalyse" layoutX="273.0" layoutY="14.0" prefHeight="688.0" prefWidth="618.0" />
                         <ComboBox fx:id="comboPieKategorier" layoutX="14.0" layoutY="14.0" onAction="#onSelectKategori" prefWidth="250.0" promptText="Vælg kategori" />
                         <Label layoutX="10.0" layoutY="83.0" text="Fra" />
-                        <DatePicker fx:id="dpFromPie" layoutX="64.0" layoutY="79.0" onAction="#onSelectKategori" prefHeight="25.0" prefWidth="180.0" />
+                        <DatePicker fx:id="dpFromPie" layoutX="64.0" layoutY="79.0" onAction="#onSelectKategori" prefHeight="30.0" prefWidth="180.0" />
                         <Label layoutX="12.0" layoutY="129.0" text="Til" />
-                        <DatePicker fx:id="dpToPie" layoutX="64.0" layoutY="125.0" onAction="#onSelectKategori" prefHeight="25.0" prefWidth="180.0" />
+                        <DatePicker fx:id="dpToPie" layoutX="64.0" layoutY="125.0" onAction="#onSelectKategori" prefHeight="30.0" prefWidth="180.0" />
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -101,9 +101,9 @@
                           </rowConstraints>
                            <children>
                               <Label text="Fra" />
-                              <DatePicker fx:id="dpFraGraf" prefWidth="180.0" GridPane.columnIndex="1" />
+                              <DatePicker fx:id="dpFraGraf" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" />
                               <Label text="Til" GridPane.rowIndex="1" />
-                              <DatePicker fx:id="dpTilGraf" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <DatePicker fx:id="dpTilGraf" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                         <VBox fx:id="vboxTilCCBAnalyse" layoutX="14.0" layoutY="111.0" prefHeight="430.0" prefWidth="285.0" spacing="10.0" />

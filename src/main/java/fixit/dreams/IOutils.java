@@ -3,8 +3,8 @@ package fixit.dreams;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.*;
 
 public class IOutils {
@@ -13,6 +13,9 @@ public class IOutils {
     private static final String FILE_PATH_CAT = "cats.json";
     private static final String FILE_PATH_DREAM = "dreams.json";
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String TXT_PATH_OM = "om.txt";
+    private static final String TXT_PATH_HELP = "help.txt";
+
 
     static {
         objectMapper.registerModule(new JavaTimeModule()); // Registrér JavaTimeModule
@@ -151,6 +154,34 @@ public class IOutils {
             e.printStackTrace();
         }
         return loadedDreams;
+    }
+
+    public static void eksporterDreamlist(List<DreamDTO> dreams, String filNavn) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filNavn))) {
+            for (DreamDTO dto : dreams) {
+                String txt = dto.getVisbartIndhold();
+                writer.write(txt);
+                writer.newLine(); // Tilføjer et linjeskift for hvert objekt
+            }
+            System.out.println("Data er blevet skrevet til filen: " + filNavn);
+        } catch (IOException e) {
+            System.err.println("Fejl ved skrivning til fil: " + e.getMessage());
+        }
+    }
+
+    public static String loadOmHelpTxt(String type) {
+        File file = new File((type.equals("Om appen")) ? TXT_PATH_OM : TXT_PATH_HELP);
+        StringBuilder content = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");  // Tilføjer hver linje + newline
+            }
+        } catch (IOException e) {
+            System.err.println("Fejl: " + e.getMessage());
+        }
+        return content.toString();
     }
 }
 

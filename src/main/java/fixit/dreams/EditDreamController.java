@@ -1,6 +1,5 @@
 package fixit.dreams;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -40,16 +39,12 @@ public class EditDreamController {
 
     @FXML
     public void initialize() {
-        System.out.println("Initialized...");
         user = User.getInstance();
         loadCCBs();
 
         // De to valgfri cber:
         kollektivEdit.setVisible(user.isVisKollektiv());
         advarselEdit.setVisible(user.isVisAdvarsel());
-
-
-        //displayDream();
     }
 
     private void loadCCBs() {
@@ -84,11 +79,8 @@ public class EditDreamController {
         kollektivEdit.setSelected(dream.getKollektiv());
         advarselEdit.setSelected(dream.getAdvarsel());
         praksisEdit.setSelected(dream.getOmpraksis());
-
         editDagrest.setText(dream.getDagrest());
         editSkrivefelt.setText(dream.getIndhold());
-
-
         dpEditDream.setValue(dream.getDato());
     }
 
@@ -120,6 +112,7 @@ public class EditDreamController {
 
         dream.setDagrest(editDagrest.getText());
         dream.setIndhold(editSkrivefelt.getText());
+        dream.setDato(dpEditDream.getValue());
 
         dream.setLucid(lucidEdit.isSelected());
         dream.setMareridt(mareridtEdit.isSelected());

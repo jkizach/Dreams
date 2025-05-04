@@ -1,15 +1,15 @@
-/* Midlertidigt tema til visning */
+/* Tema JavaFX */
 
 .root {
     /* Mine farvevariabler: */
-	-fx-hovedbg-background: #b3b3b3;
-	-fx-hovedtxt-text: #000000;
-	-fx-alttext-text: #e6e6e6;
-	-fx-alternativtxt-text: #000000;
-	-fx-alternativbg-background: #336633;
-	-fx-border-border: #4d804d;
-	-fx-andenalternativbg-background: #b3e6b3;
-	-fx-textfelt-background: #cccccc;
+	-fx-hovedbg-background: #1a1a1a;
+	-fx-hovedtxt-text: #d1d1d1;
+	-fx-alttext-text: #1a1a1a;
+	-fx-alternativtxt-text: #678ae6;
+	-fx-alternativbg-background: #678ae6;
+	-fx-border-border: #0b38af;
+	-fx-andenalternativbg-background: #262626;
+	-fx-textfelt-background: #333333;
 
     -fx-background-color: -fx-hovedbg-background;
     -fx-text-fill: -fx-hovedtxt-text;
@@ -106,6 +106,38 @@
 .check-box:selected .mark {
     -fx-background-color: -fx-alternativbg-background
 }
+
+/* CheckComboBoxes Styling: */
+.list-view .scroll-bar:vertical  {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-alternativbg-background; /* Selve dimsen man flytter på */
+}
+
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: -fx-textfelt-background; /* Baggrunden */
+}
+
+.list-view .scroll-bar:vertical .increment-arrow,
+.list-view .scroll-bar:vertical .decrement-arrow,
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+.list-view .scroll-bar:vertical .increment-button:hover,
+.list-view .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: -fx-alternativbg-background; /* Hover farve */
+}
+
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+
 
 .date-picker {
     -fx-background-color: -fx-andenalternativbg-background;
@@ -275,5 +307,75 @@
 }
 
 .separator {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.chart-pie-label {
+    -fx-fill: -fx-hovedtxt-text;
+}
+
+.chart-plot-background {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.chart-legend {
+    -fx-background-color:  -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+
+/* Standard-udseende */
+.toggle-button {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-text-fill: -fx-alternativtxt-text;
+    -fx-border-color: -fx-border-border;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 10px;
+}
+
+/* Når knappen er aktiveret (valgt) */
+.toggle-button:selected {
+    -fx-background-color: -fx-alternativbg-background;
+    -fx-text-fill: -fx-alttext-text;
+}
+
+/* Hover-effekt */
+.toggle-button:hover {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+/* Når knappen er deaktiveret */
+.toggle-button:disabled {
+    -fx-background-color: -fx-hovedbg-background;
+    -fx-text-fill: -fx-alternativtxt-text;
+}
+
+.spinner {
+    -fx-background-color: -fx-andenalternativbg-background; /* Baggrundsfarve */
+    -fx-border-color: -fx-border-border; /* Kantens farve */
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -fx-alternativbg-background; /* Baggrundsfarve */
+    -fx-border-color: -fx-andenalternativbg-background;
+    -fx-border-width: 0.6;
+    -fx-body-color: -fx-border-border;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: -fx-andenalternativbg-background; /* Baggrundsfarve */
+}
+
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: -fx-textfelt-background;
+}
+
+.spinner .increment-arrow-button:hover:pressed,
+.spinner .decrement-arrow-button:hover:pressed {
     -fx-background-color: -fx-alternativbg-background;
 }
