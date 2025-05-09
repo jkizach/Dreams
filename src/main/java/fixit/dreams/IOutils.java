@@ -5,17 +5,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class IOutils {
-    private static final String FILE_PATH = "user.json";
-    private static final String FILE_PATH_TEMA = "temaer.json";
-    private static final String FILE_PATH_CAT = "cats.json";
-    private static final String FILE_PATH_DREAM = "dreams.json";
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    // Base folder (Documents/Drømmeappen)
+    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen");
+
+    // Alle filstier er nu relative til appDataPath
+    private static final Path FILE_PATH_USER = APP_DATA_PATH.resolve("user.json");
+    private static final Path FILE_PATH_TEMA = APP_DATA_PATH.resolve("temaer.json");
+    private static final Path FILE_PATH_CAT = APP_DATA_PATH.resolve("cats.json");
+    private static final Path FILE_PATH_DREAM = APP_DATA_PATH.resolve("dreams.json");
     private static final String TXT_PATH_OM = "om.txt";
     private static final String TXT_PATH_HELP = "help.txt";
 
+    // Sørg for at mappen findes før alt andet
+    static {
+        try {
+            if (Files.notExists(APP_DATA_PATH)) {
+                Files.createDirectories(APP_DATA_PATH);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Eller log til bruger
+        }
+    }
 
     static {
         objectMapper.registerModule(new JavaTimeModule()); // Registrér JavaTimeModule
@@ -24,7 +43,7 @@ public class IOutils {
     public static void saveUser(User user) {
         try {
             UserDTO userDTO = new UserDTO(user); // Konverter til DTO
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(FILE_PATH), userDTO);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_USER.toFile(), userDTO);
             System.out.println("User gemt som JSON!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,7 +52,7 @@ public class IOutils {
 
     public static UserDTO loadUser() {
         try {
-            UserDTO userDTO = objectMapper.readValue(new File(FILE_PATH), UserDTO.class);
+            UserDTO userDTO = objectMapper.readValue(FILE_PATH_USER.toFile(), UserDTO.class);
             System.out.println("User indlæst fra JSON!");
             return userDTO;
         } catch (IOException e) {
@@ -48,7 +67,7 @@ public class IOutils {
             for (Tema tema : userTemaer.values()) {
                 mapList.add(tema.getTemaForSaving());
             }
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(FILE_PATH_TEMA), mapList);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_TEMA.toFile(), mapList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,7 +75,7 @@ public class IOutils {
 
     public static HashMap<String,Tema> loadTemaer() {
         try {
-            ArrayList<HashMap<String, String>> mapList = objectMapper.readValue(new File(FILE_PATH_TEMA), ArrayList.class);
+            ArrayList<HashMap<String, String>> mapList = objectMapper.readValue(FILE_PATH_TEMA.toFile(), ArrayList.class);
             HashMap<String,Tema> userTema = new HashMap<>();
             for (HashMap<String, String> tema : mapList) {
                 userTema.put(tema.get("temaName"), new Tema(tema));
@@ -77,7 +96,7 @@ public class IOutils {
             return dto;
         }).toList();
         try {
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(FILE_PATH_CAT), dtoList);} catch (IOException e) {
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_CAT.toFile(), dtoList);} catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -85,7 +104,7 @@ public class IOutils {
     public static ArrayList<Category> loadCategories() {
         try {
             List<CategoryDTO> dtoList = objectMapper.readValue(
-                    new File(FILE_PATH_CAT),
+                    FILE_PATH_CAT.toFile(),
                     new TypeReference<List<CategoryDTO>>() {}
             );
             ArrayList<Category> result = new ArrayList<>();
@@ -125,7 +144,7 @@ public class IOutils {
         }
 
         try {
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(FILE_PATH_DREAM), saveMe);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_DREAM.toFile(), saveMe);
             System.out.println("Dreams gemt som JSON!");
 
         } catch (IOException e) {
@@ -136,7 +155,7 @@ public class IOutils {
     public static HashMap<String, Dream> loadDreams() {
         HashMap<String, Dream> loadedDreams = new HashMap<>();
         try {
-            File file = new File(FILE_PATH_DREAM);
+            File file = FILE_PATH_DREAM.toFile();
             if (!file.exists()) {
                 return loadedDreams; // returnér tom mappe, hvis fil ikke findes endnu
             }
@@ -170,10 +189,15 @@ public class IOutils {
     }
 
     public static String loadOmHelpTxt(String type) {
-        File file = new File((type.equals("Om appen")) ? TXT_PATH_OM : TXT_PATH_HELP);
+        // Bestem hvilken fil vi skal bruge
+        String resourceName = (type.equals("Om appen")) ? "om.txt" : "help.txt";
         StringBuilder content = new StringBuilder();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        // Brug getResourceAsStream til at hente filen fra resources
+        try (InputStream inputStream = IOutils.class.getResourceAsStream("/" + resourceName);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+            // Læs linje for linje
             String line;
             while ((line = reader.readLine()) != null) {
                 content.append(line).append("\n");  // Tilføjer hver linje + newline

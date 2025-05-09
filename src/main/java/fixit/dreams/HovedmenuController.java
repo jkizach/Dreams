@@ -21,6 +21,8 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,14 +163,18 @@ public class HovedmenuController {
         Scene scene = DreamApp.getCurrentScene();
         if (scene != null) {
             if (temp) {
-                File tempFile = new File("src/main/resources/fixit/dreams/tempTema.css");
+                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "tempTema.css");
+                File cssFile = cssPath.toFile();
+                //File tempFile = new File("src/main/resources/fixit/dreams/tempTema.css");
                 scene.getStylesheets().clear();
-                scene.getStylesheets().add(tempFile.toURI().toString()); // Indlæs direkte fra resources
+                scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
                 scene.getRoot().applyCss();
             } else {
-                File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "currentTema.css");
+                File cssFile = cssPath.toFile();
+                //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
                 scene.getStylesheets().clear();
-                scene.getStylesheets().add(tempFile.toURI().toString()); // Indlæs direkte fra resources
+                scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
                 scene.getRoot().applyCss();
             }
         }
@@ -516,9 +522,11 @@ public class HovedmenuController {
             Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
-            File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+            //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "currentTema.css");
+            File cssFile = cssPath.toFile();
             root.getStylesheets().clear();
-            root.getStylesheets().add(tempFile.toURI().toString()); // Indlæs direkte fra resources
+            root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
             root.applyCss();
             popupStage.setTitle("Rediger drøm");
             popupStage.getIcons().add(icon);
@@ -544,9 +552,11 @@ public class HovedmenuController {
             Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
-            File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+            //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
+            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "currentTema.css");
+            File cssFile = cssPath.toFile();
             root.getStylesheets().clear();
-            root.getStylesheets().add(tempFile.toURI().toString()); // Indlæs direkte fra resources
+            root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
             root.applyCss();
             popupStage.setTitle(type);
             popupStage.getIcons().add(icon);
