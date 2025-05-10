@@ -27,7 +27,7 @@ public class CSSUpdater {
         }
     }
 
-    // Helper metode til at kopiere CSS-filer fra resources til appens mappe
+    // Metode til at kopiere CSS-filer fra resources til appens mappe
     private static void copyCssIfNotExists(String resourcePath, Path targetPath) throws IOException {
         if (Files.notExists(targetPath)) {
             try (InputStream in = CSSUpdater.class.getResourceAsStream("/" + resourcePath)) {

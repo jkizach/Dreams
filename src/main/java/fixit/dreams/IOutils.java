@@ -14,7 +14,7 @@ import java.util.*;
 public class IOutils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Base folder (Documents/Drømmeappen)
+    // Base folder (Documents/Drømmeappen) - burde virke både på pc og mac
     private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen");
 
     // Alle filstier er nu relative til appDataPath
@@ -208,9 +208,3 @@ public class IOutils {
         return content.toString();
     }
 }
-
-
-
-/*private static final String FILE_PATH = System.getProperty("user.home") + "/user.json";
-Brug noget i den her stil til at finde en path til "home" - det skulle virke på mac,pc og linux!
-*/
