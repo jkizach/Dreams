@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Main-Class: fixit.dreams.DreamApp
+Class-Path: javafx-controls-21-win.jar javafx-graphics-21.jar javafx-gra
+ phics-21-win.jar jackson-databind-2.15.0.jar javafx-base-21-win.jar jav
+ afx-controls-21.jar controlsfx-11.2.0.jar jackson-datatype-jsr310-2.16.
+ 1.jar javafx-base-21.jar javafx-fxml-21-win.jar javafx-fxml-21.jar jack
+ son-annotations-2.15.0.jar jackson-core-2.15.0.jar
+
