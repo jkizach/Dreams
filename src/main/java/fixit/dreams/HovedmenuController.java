@@ -259,7 +259,9 @@ public class HovedmenuController {
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());
             vBoxSymboler.getChildren().add(ccb);
-            ccb.setMaxWidth(280);
+            //ccb.setMaxWidth(280);
+            ccb.setMaxWidth(Double.MAX_VALUE);
+
             ccb.setMinWidth(280);
             ccb.setTitle(c.getName());
             ccb.setShowCheckedCount(true);
