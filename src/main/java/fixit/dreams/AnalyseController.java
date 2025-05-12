@@ -90,7 +90,13 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(600); // Justér denne værdi efter behov
+                //label.setMaxWidth(600); // Justér denne værdi efter behov
+                // Dynamisk justering baseret på ListView'ens bredde
+                // "param" er her ListView'en selv
+                param.widthProperty().addListener((obs, oldVal, newVal) -> {
+                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
+                    label.setMaxWidth(newWidth);
+                });
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -108,7 +114,13 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(550); // Justér denne værdi efter behov
+                //label.setMaxWidth(550); // Justér denne værdi efter behov
+                // Dynamisk justering baseret på ListView'ens bredde
+                // "param" er her ListView'en selv
+                param.widthProperty().addListener((obs, oldVal, newVal) -> {
+                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
+                    label.setMaxWidth(newWidth);
+                });
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -127,6 +139,12 @@ public class AnalyseController {
             {
                 label.setWrapText(true);
                 label.setMaxWidth(280); // Justér denne værdi efter behov
+                // Dynamisk justering baseret på ListView'ens bredde
+                // "param" er her ListView'en selv
+                param.widthProperty().addListener((obs, oldVal, newVal) -> {
+                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
+                    label.setMaxWidth(newWidth);
+                });
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {

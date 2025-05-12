@@ -192,7 +192,12 @@ public class HovedmenuController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(650); // Justér denne værdi efter behov
+                // Dynamisk justering baseret på ListView'ens bredde
+                // "param" er her ListView'en selv
+                param.widthProperty().addListener((obs, oldVal, newVal) -> {
+                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
+                    label.setMaxWidth(newWidth);
+                });
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
