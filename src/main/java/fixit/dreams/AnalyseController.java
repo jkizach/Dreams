@@ -67,6 +67,8 @@ public class AnalyseController {
                 analyseService.updateStats();
                 setGuiDates();
                 loadTalData();
+                kollektiv.setVisible(user.isVisKollektiv());
+                advarsel.setVisible(user.isVisAdvarsel());
                 analyseService.updateForloeb();
             }
         });
@@ -352,7 +354,9 @@ public class AnalyseController {
 
     @FXML
     public void onSelectForloebDream() {
-        String id = forloebValgListe.getSelectionModel().getSelectedItem().getId();
-        lblForloebDream.setText(analyseService.getForloebStage(id));
+        if (forloebValgListe.getSelectionModel().getSelectedItem() != null) {
+            String id = forloebValgListe.getSelectionModel().getSelectedItem().getId();
+            lblForloebDream.setText(analyseService.getForloebStage(id));
+        }
     }
 }

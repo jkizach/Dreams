@@ -137,6 +137,12 @@ public class UserService extends ServiceMother {
         // Hvordan håndterer jeg bruger-definerede kategorier??? Sådan her:
         for (Category c : user.getCategories()) {
             if (c.getName().equals(kategorien)) {
+                // Med stort hvis person, ellers to-lower?
+                if (kategorien.equals("Personer")) {
+                    symbolet = symbolet.substring(0, 1).toUpperCase() + symbolet.substring(1);
+                } else {
+                    symbolet = symbolet.toLowerCase();
+                }
                 c.addSymbol(symbolet);
                 c.updateAllCCBs();
                 break;
@@ -146,6 +152,10 @@ public class UserService extends ServiceMother {
     }
 
     public void addNyKategori(String kategoriNavn) {
+        char first = kategoriNavn.charAt(0);
+        if (Character.isLowerCase(first)) {
+            kategoriNavn = kategoriNavn.substring(0, 1).toUpperCase() + kategoriNavn.substring(1);
+        }
         user.addCategory(kategoriNavn);
         kategorier.clear();
         kategorier.addAll(user.getKategoriLabels());

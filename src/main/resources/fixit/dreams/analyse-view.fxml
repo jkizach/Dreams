@@ -141,7 +141,7 @@
                                           <DatePicker fx:id="dpTilGraf" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
                                     </GridPane>
-                                    <VBox fx:id="vboxTilCCBAnalyse" maxHeight="1.7976931348623157E308" prefHeight="430.0" prefWidth="285.0" spacing="10.0" VBox.vgrow="ALWAYS" />
+                                    <VBox fx:id="vboxTilCCBAnalyse" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefHeight="430.0" prefWidth="280.0" spacing="10.0" VBox.vgrow="NEVER" />
                                     <GridPane prefHeight="150.0" prefWidth="360.0" vgap="5.0" VBox.vgrow="NEVER">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />

@@ -198,12 +198,12 @@ class User {
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(categories.getLast().getSymbols());
             vbox.getChildren().add(ccb);
-            ccb.setMaxWidth(280);
+            ccb.setMaxWidth(Double.MAX_VALUE);
             ccb.setMinWidth(280);
             ccb.setTitle(categories.getLast().getName());
             ccb.setShowCheckedCount(true);
             categories.getLast().addDreamCCB(ccb);
-            categories.getLast().addDreamCCB(ccb);
+            categories.getLast().addFilterCCB(ccb);
         }
     }
 

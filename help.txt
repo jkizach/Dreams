@@ -1,8 +1,62 @@
 Her kan du læse om hvordan man bruger de forskellige funktioner i appen
 
-Informationen er organiseret efter fanebladene, så kig gennem listen og find det sted du har brug for hjælp til.
+Appen er bygget op med faneblade, og informationen er organiseret efter fanebladene, så kig gennem listen og find det sted du har brug for hjælp til. 
+Bemærk at mange steder i appen kan man holde musepilen over et felt eller en knap og så kommer der en hjælpetekst frem.
+
+Indhold
+1. Ny drøm
+2. Analyse
+3. Drømme
+4. Indstillinger (tandhjulet)
+5. Analyse-fanerne:
+5.1 Tal
+5.2 Cirkel
+5.3 Filter
+5.4 Forløb
 
 1. Ny drøm
-bladi-dah
+Her kan man skrive sin drøm i det store skrivefelt, og sætte datoen for drømmen (den starter med dagens dato).
+Der er også et lille felt til dagresten. 
+Så er der 8 bokse hvor man kan krydse af om drømmen fx var lucid, handlede om meditation osv. To af boksene (kollektiv og advarsel) er skjulte som udgangspunkt, men man kan gøre dem synlige i indstillingerne.
+I højre side er der 5 symbolkategorier, hvor man kan holde styr på hvilke symboler der forekommer i drømmen: Arketyper, Chakraer, Farver, Dyr og Personer.
+Man kan selv tilføje eller fjerne symboler, og tilføje op til 3 nye symbolkategorier. Fx kunne man tilføje Kropssteder, hvis det er noget man kan bruge, eller Temaer, eller hvad man nu synes er vigtigt.
 
-2. jjdiwdw
+Når drømmen er skrevet og alle symboler er markeret trykker man på "Gem drøm" og så nulstilles alle felter og drømmen er nu gemt.
+
+2. Analyse
+Under den her fane er der 4 nye faner hvor man kan se statistik og søge i sine drømme. De beskrives til sidst i den her tekst.
+
+3. Drømme
+Her ser man en liste over alle sine drømme, og kan så slette eller redigere en drøm. Man kan også gemme hele listen som en txt-fil. Hvis man ændrer datoerne (til og fra) så viser listen kun de drømme der er mellem datoerne (begge inklusive).
+
+4. Indstillinger (tandhjulet)
+Her kan man ændre udseende og indhold.
+
+Øverst til venstre kan man vælge tema - der er to indbyggede temaer. Lige under kan man lave sit eget tema: Alle de 4 baggrundsfarver, de 3 tekstfarver, kantfarven og fonten kan ændres som man vil have det. 
+Ved at ændre farverne og så trykke på "Se tema" kan man se sit tilpassede tema. Hvis man synes det er flot, kan man give det et navn og gemme det.
+
+Til højre øverst er der to knapper "Om appen" og "Hjælp" som begge indeholder praktisk info om appen.
+
+Under det finder man "Tilføj symbol". Her kan man vælge en symbolkategori, og så - i feltet til højre for valgboksen - skrive navnet på det nye symbol. Knappen "+" gemmer det så.
+
+"Fjern symbol" fungerer på næsten samme måde - men her skal man ikke selv skrive, men bare vælge det symbol man vil fjerne, og nu er knappen selvfølgelig en minus-knap "-".
+
+Hvis man vil tilføje en helt ny symbolkategori (Kropssteder, Temaer, Lyde...) så skriver man bare navnet på kategorien i feltet "Navn" og trykker på "Tilføj". Bemærk at der kun kan tilføjes 3 nye kategorier, og at de ikke kan slettes igen - så brug den med omtanke.
+
+Nederst i højre side er der to bokse hvor man kan gøre kollektiv og advarsel synlige eller usynlige i appen. Så aktiver dem, hvis du har kollektive drømme, eller advarselsdrømme.
+
+5. Analyse-fanerne
+5.1 Tal
+Her ser man ganske enkelt optællinger af alle symbolerne indenfor den valgte periode (fra første drøm til dags dato er udgangspunktet, men man kan selv justere datoerne). Der vises de binære kategorier (lucid, praktiserer, modsatkønnet osv) og hvor mange drømme der har været i perioden for hver. Symbolkategorierne vises også - som lister med de hyppigste symboler øverst.
+
+5.2 Cirkel
+Igen kan man selv vælge perioden med datovælgerne. Så kan man se et cirkeldiagram over symbolkategorierne, en ad gangen.
+
+5.3 Filter
+Her er alle de samme bokse og drp-down menuer som ved Ny drøm-fanen. Man kan så vælge de symboler man er interesseret i, og så se en graf med symbolernes antal over tid. Det er for at man kan undersøge sammenhænge mellem symboler: Hvis man fx ofte drømmer om farven grøn og vil se om der er nogle bestemte personer der dukker op i de drømme, så kan man tjekke det her. Man kan tjekke per dag, per uge eller per måned.
+
+Man kan også se en liste i stedet for en graf - her kan man enten søge efter drømme der passer nøjagtigt med det man har valgt (Filterstatus: OG) eller man kan finde alle drømme hvor bare én af de valgte symboler forekommer (Filterstatus: ELLER).
+
+5.4 Forløb
+I den her fane kan man få hjælp til at opdage genfødselsforløb i sine drømme. Ideen (fra Jung og Jes) er at drømme af og til hænger sammen i 9-måneders forløb med en ret klar struktur som svarer til de 9 måneder i et svangerskab. Navnene i symbolkategorien "Forløb" er et forsøg på at ramme de 9 strukturer (se Dybdepsykologi 2 for en grundig gennemgang). 
+Hvis man så har fx en drøm man føler er en afslutning, en genfødsel, eller måske en død - så kunne man jo undersøge om der mon var en drøm der lignede en begyndelse 8 måneder tidligere. Det er netop hvad man kan i Forløb-fanen! Til venstre er der en liste over drømme man har ment passede til en af de 9 faser, og når man vælger en af dem, kan man så søge frem eller tilbage med en præcision på +/- 1 til 10 dage. Det er lettere end at bladre i et hæfte.

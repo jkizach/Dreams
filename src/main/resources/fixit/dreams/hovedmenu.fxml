@@ -308,7 +308,7 @@
                                     <Insets />
                                  </GridPane.margin>
                               </Label>
-                              <ComboBox fx:id="cbKategoriAdd" prefHeight="37.0" prefWidth="180.0" promptText="Kategori" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="cbKategoriAdd" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="1" />
                               <TextField fx:id="tfNytSymbol" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="260.0" promptText="Nyt symbol" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Button fx:id="addSymbolKnap" mnemonicParsing="false" onAction="#handleAddSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                               <Label text="Fjern symbol" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
@@ -316,14 +316,14 @@
                                     <Insets />
                                  </GridPane.margin>
                               </Label>
-                              <ComboBox fx:id="cbKategoriRemove" onAction="#opretCCbox" prefHeight="37.0" prefWidth="180.0" promptText="Kategori" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="cbKategoriRemove" onAction="#opretCCbox" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="3" />
                               <Button fx:id="fjernSymbolKnap" mnemonicParsing="false" onAction="#handleFjernSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="-" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                               <Label text="Ny symbolkategori" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
                                  <tooltip>
                                     <Tooltip text="Du kan tilføje op til 3 nye symbolkategorier." />
                                  </tooltip>
                               </Label>
-                              <TextField fx:id="tfNyKategori" maxWidth="180.0" prefHeight="37.0" prefWidth="180.0" promptText="Navn" GridPane.rowIndex="5" />
+                              <TextField fx:id="tfNyKategori" maxWidth="220.0" prefHeight="37.0" prefWidth="220.0" promptText="Navn" GridPane.rowIndex="5" />
                               <Button fx:id="addNyKategoriKnap" mnemonicParsing="false" onAction="#handleAddNyKategoriKnap" prefHeight="25.0" prefWidth="100.0" text="Tilføj" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
                               <VBox fx:id="fjernSymbolVbox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="260.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>

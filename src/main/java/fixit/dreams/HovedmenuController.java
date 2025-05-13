@@ -51,9 +51,6 @@ public class HovedmenuController {
     private DatePicker newDreamDate, fromDatePicker, toDatePicker;
 
     @FXML
-    private TabPane tabPane;
-
-    @FXML
     public Tab analyseTab;
 
     @FXML
@@ -578,7 +575,7 @@ public class HovedmenuController {
 
     /* FileChooser når man eksporterer drømmeliste som txt.fil */
     @FXML
-    void eksportBtn() {
+    public void eksportBtn() {
         fileChooser.setTitle("Gem drømme som .txt");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("txt", "*.txt")
