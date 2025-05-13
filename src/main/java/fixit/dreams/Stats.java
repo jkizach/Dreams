@@ -184,9 +184,9 @@ public class Stats {
         return series;
     }
 
-    public XYChart.Series<String, Number> makeBoolXY(Map<String, Integer> statsMap, LocalDate fra, LocalDate til, String xakse) {
+    public XYChart.Series<String, Number> makeBoolXY(Map<String, Integer> statsMap, LocalDate fra, LocalDate til, String xakse, String name) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("lucid");
+        series.setName(name); // skal sættes til havdenten navnet jo er!
         switch (xakse) {
             case "dage":
                 while (!fra.isAfter(til)) {

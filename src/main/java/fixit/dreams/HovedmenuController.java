@@ -192,6 +192,7 @@ public class HovedmenuController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
+                label.setMaxWidth(650);
                 // Dynamisk justering baseret på ListView'ens bredde
                 // "param" er her ListView'en selv
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -530,7 +531,7 @@ public class HovedmenuController {
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
             //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
-            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "currentTema.css");
+            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
             File cssFile = cssPath.toFile();
             root.getStylesheets().clear();
             root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
@@ -560,7 +561,7 @@ public class HovedmenuController {
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
             //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
-            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "currentTema.css");
+            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
             File cssFile = cssPath.toFile();
             root.getStylesheets().clear();
             root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources

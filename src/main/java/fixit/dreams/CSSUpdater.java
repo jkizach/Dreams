@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CSSUpdater {
-    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen");
+    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData");
     private static final Path TEMP_PATH = APP_DATA_PATH.resolve("tempTema.css");
     private static final Path CURRENT_PATH = APP_DATA_PATH.resolve("currentTema.css");
 

@@ -15,7 +15,7 @@ public class IOutils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     // Base folder (Documents/Drømmeappen) - burde virke både på pc og mac
-    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen");
+    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData");
 
     // Alle filstier er nu relative til appDataPath
     private static final Path FILE_PATH_USER = APP_DATA_PATH.resolve("user.json");

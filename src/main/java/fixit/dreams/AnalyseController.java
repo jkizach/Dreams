@@ -35,9 +35,6 @@ public class AnalyseController {
     private ToggleButton tgDays, tgMonths, tgWeeks;
 
     @FXML
-    private Tab tabPie, grafTab, listeTab;
-
-    @FXML
     private ListView<DreamDTO> filterListe, forloebListe, forloebValgListe;
 
     @FXML
@@ -90,7 +87,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                //label.setMaxWidth(600); // Justér denne værdi efter behov
+                label.setMaxWidth(590);
                 // Dynamisk justering baseret på ListView'ens bredde
                 // "param" er her ListView'en selv
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -114,9 +111,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                //label.setMaxWidth(550); // Justér denne værdi efter behov
-                // Dynamisk justering baseret på ListView'ens bredde
-                // "param" er her ListView'en selv
+                label.setMaxWidth(610);
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {
                     double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
                     label.setMaxWidth(newWidth);
@@ -138,9 +133,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(280); // Justér denne værdi efter behov
-                // Dynamisk justering baseret på ListView'ens bredde
-                // "param" er her ListView'en selv
+                label.setMaxWidth(290);
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {
                     double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
                     label.setMaxWidth(newWidth);
@@ -325,6 +318,9 @@ public class AnalyseController {
     private String dayWeekOrMonth() {
         String xAkseValg;
         xAkseValg = (tgDays.isSelected()) ? "dage" : (tgWeeks.isSelected()) ? "uger" : "måneder";
+        if (xAkseValg.equals("måneder")) {
+            tgMonths.setSelected(true);
+        }
         return xAkseValg;
     }
 
