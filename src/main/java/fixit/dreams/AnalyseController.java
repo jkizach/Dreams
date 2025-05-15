@@ -53,7 +53,7 @@ public class AnalyseController {
     private Spinner<Integer> daysSpinner, monthsSpinner;
 
     @FXML
-    private Label lblForloebDream;
+    private Label lblForloebDream, antalDreamsLblTal;
 
     @FXML
     public void initialize() {
@@ -65,7 +65,7 @@ public class AnalyseController {
         user.skalStatsGenberegnes.addListener((obs, oldVal, newVal) -> {
             if (newVal) {
                 analyseService.updateStats();
-                setGuiDates();
+                updateGuiDates();
                 loadTalData();
                 kollektiv.setVisible(user.isVisKollektiv());
                 advarsel.setVisible(user.isVisAdvarsel());
@@ -84,6 +84,8 @@ public class AnalyseController {
         advarsel.setVisible(user.isVisAdvarsel());
 
         setGuiDates();
+
+        setAntalDreamsLabel();
 
         filterListe.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
             private final Label label = new Label();
@@ -170,12 +172,27 @@ public class AnalyseController {
 
     }
 
+    private void setAntalDreamsLabel() {
+        int antal = analyseService.countDreams(dpFromTal.getValue(), dpToTal.getValue());
+        if (antal == 1) {
+            antalDreamsLblTal.setText("Data for 1 drøm");
+        } else {
+            antalDreamsLblTal.setText("Data for " + antal + " drømme");
+        }
+    }
+
     private void setGuiDates() {
         for (DatePicker dp : List.of(dpFraGraf,dpFromPie,dpFromTal)) {
             dp.setValue(analyseService.getFirstDreamDate());
         }
         for (DatePicker dp : List.of(dpTilGraf,dpToPie,dpToTal)) {
             dp.setValue(LocalDate.now());
+        }
+    }
+
+    private void updateGuiDates() {
+        for (DatePicker dp : List.of(dpFraGraf,dpFromPie,dpFromTal)) {
+            dp.setValue(analyseService.getFirstDreamDate());
         }
     }
 
@@ -283,6 +300,9 @@ public class AnalyseController {
                 counter++;
             }
         }
+        // og så drømmeantallet
+        setAntalDreamsLabel();
+
     }
 
     @FXML

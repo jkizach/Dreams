@@ -69,7 +69,6 @@ public class UserService extends ServiceMother {
         for (Dream dream : user.getDreams().values()) {
             if (isInRange(dream.getDato(), fra, til)) {
                 dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato()));
-
             }
         }
         sortDreamsByDate();

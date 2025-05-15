@@ -302,4 +302,14 @@ public class AnalyseService extends ServiceMother{
         return out;
     }
 
+    public int countDreams(LocalDate fra, LocalDate til) {
+        int counts = 0;
+        for (Dream d : user.getDreams().values()) {
+            if (isInRange(d.getDato(), fra, til)) {
+                counts++;
+            }
+        }
+        return counts;
+    }
+
 }

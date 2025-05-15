@@ -300,6 +300,7 @@ public class HovedmenuController {
 
             userService.addDream(dreamData);
             resetNewDreamTab();
+            fromDatePicker.setValue(userService.getFirstDreamDate());
         }
     }
 
@@ -491,6 +492,7 @@ public class HovedmenuController {
             } else {
                 String id = dreamListView.getSelectionModel().getSelectedItem().getId();
                 userService.deleteDream(id);
+                fromDatePicker.setValue(userService.getFirstDreamDate());
                 userService.refreshDreamList(fromDatePicker.getValue(),toDatePicker.getValue());
                 deleteDream.setText("Slet drøm");
                 deleteButtonPressed = false;
