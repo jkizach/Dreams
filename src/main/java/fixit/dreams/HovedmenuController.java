@@ -160,14 +160,14 @@ public class HovedmenuController {
         Scene scene = DreamApp.getCurrentScene();
         if (scene != null) {
             if (temp) {
-                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "tempTema.css");
+                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "tempTema.css");
                 File cssFile = cssPath.toFile();
                 //File tempFile = new File("src/main/resources/fixit/dreams/tempTema.css");
                 scene.getStylesheets().clear();
                 scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
                 scene.getRoot().applyCss();
             } else {
-                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "Drømmeappen", "currentTema.css");
+                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
                 File cssFile = cssPath.toFile();
                 //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
                 scene.getStylesheets().clear();
@@ -254,6 +254,9 @@ public class HovedmenuController {
                 analyseIsLoaded = true;
             }
         });
+
+        /* check for updates */
+        GITHUBUpdater.checkForUpdateIfNeeded();
 
     }
 

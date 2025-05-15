@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class DreamApp extends Application {
     private static Scene scene;
@@ -15,6 +16,7 @@ public class DreamApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
+        Locale.setDefault(new Locale("da", "DK"));
         FXMLLoader fxmlLoader = new FXMLLoader(DreamApp.class.getResource("hovedmenu.fxml"));
         stage.setOnCloseRequest(event -> handleWindowClose());
         scene = new Scene(fxmlLoader.load(), 1000, 800);
