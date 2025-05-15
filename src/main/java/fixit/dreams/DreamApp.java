@@ -21,7 +21,7 @@ public class DreamApp extends Application {
         stage.setOnCloseRequest(event -> handleWindowClose());
         scene = new Scene(fxmlLoader.load(), 1000, 800);
         scene.getStylesheets().add(getClass().getResource("currentTema.css").toExternalForm());
-        stage.setTitle("Drømmeappen 1.0");
+        stage.setTitle("Drømmeappen 1.1");
         stage.setMinWidth(650);
         stage.setMinHeight(550);
         stage.setScene(scene);
