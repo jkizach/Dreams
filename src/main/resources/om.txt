@@ -1,12 +1,16 @@
-Drømmeappen 1.0
+Drømmeappen 1.2
 
 Den er udviklet af Johannes Kizach og er til fri afbenyttelse - man kan downloade en installer fra github her:
 https://github.com/jkizach/Dreams/releases/latest
+
+Man kan også tjekke for updates og downloade updates med link-adressen ovenfor (Drømmeappen giver selv besked når der er en opdatering tilgængelig, mne tjekker kun hver 30. dag).
 
 Installeren installerer Drømmeappen i program files, og opretter en mappe, DrømmeappenData, i ens lokale Documents-mappe. Hvis man flytter til en ny pc/mac så kan man bare hente installeren og køre den på den nye pc/mac og derefter kopiere hele DrømmeappenData-mappen over fra den gamle computer til den nye - det er den mappe der indeholder ens drømme, temaer, symboler og så videre.
 
 Måneikonet er hentet fra Gallery Yopriceille og er gratis og til fri afbenyttelse - tak til dem.
 
 Drømmeforståelsen er baseret på Jes Bertelsens og Jungs teorier, og især er følgende bøger blevet brugt:
+
 Jes Bertelsen, Dybdepsykologi 2 - Genfødelsens psykologi, Borgen, 1979.
+
 Jes Bertelsen, Drømme, Chakrasymboler og Meditation, Borgen, 1982.

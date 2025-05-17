@@ -189,23 +189,26 @@ public class Stats {
         series.setName(name); // skal sættes til havdenten navnet jo er!
         switch (xakse) {
             case "dage":
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM");
                 while (!fra.isAfter(til)) {
                     int value = getBoolStatsPerDag(statsMap, fra);
-                    series.getData().add(new XYChart.Data<>(""+fra.getDayOfMonth(), value));
+                    String label = fra.format(formatter);
+                    series.getData().add(new XYChart.Data<>(label, value));
                     fra = fra.plusDays(1);
                 }
                 break;
             case "uger":
                 while (fra.get(WeekFields.ISO.weekOfYear()) <= til.get(WeekFields.ISO.weekOfYear())) {
                     int value = getBoolStatsPerUge(statsMap, fra);
-                    series.getData().add(new XYChart.Data<>(""+fra.get(WeekFields.ISO.weekOfYear()), value));
+                    String ugeLabel = fra.get(WeekFields.ISO.weekOfYear()) + "\n" + fra.getYear();
+                    series.getData().add(new XYChart.Data<>(ugeLabel, value));
                     fra = fra.plusWeeks(1);
                 }
                 break;
             case "måneder":
                 while (fra.getMonthValue() <= til.getMonthValue()) {
                     int value = getBoolStatsPerM(statsMap, fra);
-                    series.getData().add(new XYChart.Data<>(monthTranslator.get(fra.getMonthValue()), value));
+                    series.getData().add(new XYChart.Data<>(monthTranslator.get(fra.getMonthValue()) + "\n" + fra.getYear(), value));
                     fra = fra.plusMonths(1);
                 }
                 break;

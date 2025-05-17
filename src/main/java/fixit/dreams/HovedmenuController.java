@@ -189,7 +189,7 @@ public class HovedmenuController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(650);
+                label.setMaxWidth(670);
                 // Dynamisk justering baseret på ListView'ens bredde
                 // "param" er her ListView'en selv
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {

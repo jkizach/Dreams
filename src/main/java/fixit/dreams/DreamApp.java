@@ -16,12 +16,12 @@ public class DreamApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
-        Locale.setDefault(new Locale("da", "DK"));
+        //Locale.setDefault(Locale.forLanguageTag("DK"));
         FXMLLoader fxmlLoader = new FXMLLoader(DreamApp.class.getResource("hovedmenu.fxml"));
         stage.setOnCloseRequest(event -> handleWindowClose());
         scene = new Scene(fxmlLoader.load(), 1000, 800);
         scene.getStylesheets().add(getClass().getResource("currentTema.css").toExternalForm());
-        stage.setTitle("Drømmeappen 1.1");
+        stage.setTitle("Drømmeappen 1.2");
         stage.setMinWidth(650);
         stage.setMinHeight(550);
         stage.setScene(scene);
