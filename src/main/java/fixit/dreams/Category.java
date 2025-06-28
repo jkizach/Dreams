@@ -29,6 +29,10 @@ public class Category {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setSymbols(TreeSet<String> symbols) {
         this.symbols = symbols;
     }
@@ -85,12 +89,14 @@ public class Category {
 
     public void updateAllCCBs() {
         for (CheckComboBox<String> combo : ccbDream) {
+            combo.setTitle(this.getName());
             combo.getCheckModel().clearChecks();
             combo.getItems().clear();
             combo.getItems().addAll(getSymbolsForDisplay());
             combo.setShowCheckedCount(true);
         }
         for (CheckComboBox<String> combo : ccbFilter) {
+            combo.setTitle(this.getName());
             combo.getCheckModel().clearChecks();
             combo.getItems().clear();
             combo.getItems().addAll(getSymbolsForDisplay());

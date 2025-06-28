@@ -2,7 +2,6 @@ package fixit.dreams;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.TreeSet;
 import java.util.UUID;
 
 public class Dream {

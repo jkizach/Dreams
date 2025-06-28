@@ -45,7 +45,7 @@ public class HovedmenuController {
     private ColorPicker baggrundAPicker, baggrundBPicker, baggrundCPicker, baggrundDPicker, tekstAPicker, tekstBPicker, tekstCPicker, kantPicker;
 
     @FXML
-    private Button deleteDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap, eksportBtn;
+    private Button deleteDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap, eksportBtn, skiftNavnKnap;
 
     @FXML
     private DatePicker newDreamDate, fromDatePicker, toDatePicker;
@@ -54,10 +54,10 @@ public class HovedmenuController {
     public Tab analyseTab;
 
     @FXML
-    private TextField tfNytTemaNavn, tfNytSymbol, tfNyKategori;
+    private TextField tfNytTemaNavn, tfNytSymbol, tfNyKategori, tfNytNavn;
 
     @FXML
-    private ComboBox<String> cbKategoriRemove, cbKategoriAdd, cbTemaer, cbFonts;
+    private ComboBox<String> cbKategoriRemove, cbKategoriAdd, cbTemaer, cbFonts, cbKategoriNavn;
 
     @FXML
     private VBox fjernSymbolVbox = new VBox();
@@ -162,14 +162,12 @@ public class HovedmenuController {
             if (temp) {
                 Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "tempTema.css");
                 File cssFile = cssPath.toFile();
-                //File tempFile = new File("src/main/resources/fixit/dreams/tempTema.css");
                 scene.getStylesheets().clear();
                 scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
                 scene.getRoot().applyCss();
             } else {
                 Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
                 File cssFile = cssPath.toFile();
-                //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
                 scene.getStylesheets().clear();
                 scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
                 scene.getRoot().applyCss();
@@ -236,6 +234,7 @@ public class HovedmenuController {
 
         cbKategoriRemove.setItems(kategoriLabels);
         cbKategoriAdd.setItems(kategoriLabels);
+        cbKategoriNavn.setItems(kategoriLabels);
 
         cbTemaer.setItems(temaer);
         cbTemaer.setValue(userService.getTemaNavn());
@@ -430,6 +429,22 @@ public class HovedmenuController {
         if (!tfNyKategori.getText().trim().isEmpty() && userService.okToAddNewUserDefinedCat()) {
             userService.addNyKategori(tfNyKategori.getText());
             tfNyKategori.clear();
+        }
+    }
+
+    @FXML
+    public void handleSkiftNavnKnap(){
+        if (!tfNytNavn.getText().trim().isEmpty() && cbKategoriNavn.getValue() != null) {
+            String displayText = userService.renameKategori(tfNytNavn.getText(),cbKategoriNavn.getValue());
+            tfNytNavn.setText(displayText);
+            if (displayText.startsWith("Navn æ")) {
+
+            }
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+                tfNytNavn.setText("Nyt navn");
+            }));
+            timeline.setCycleCount(1);
+            timeline.play();
         }
     }
 

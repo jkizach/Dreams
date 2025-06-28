@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
 
 public class UserService extends ServiceMother {
     private Tema tempTema;
@@ -158,6 +157,36 @@ public class UserService extends ServiceMother {
         user.addCategory(kategoriNavn);
         kategorier.clear();
         kategorier.addAll(user.getKategoriLabels());
+    }
+
+    public String renameKategori(String nytNavn, String gammeltNavn) {
+        char first = nytNavn.charAt(0);
+        if (Character.isLowerCase(first)) {
+            nytNavn = nytNavn.substring(0, 1).toUpperCase() + nytNavn.substring(1);
+        }
+        for (Category c : user.getCategories()) {
+            if (c.getName().equals(nytNavn)) {
+                return "Navnet findes allerede!";
+            }
+        }
+        for (Category c : user.getCategories()) {
+            if (c.getName().equals(gammeltNavn)) {
+                c.setName(nytNavn);
+                c.updateAllCCBs();
+            }
+        }
+        // Loop gennem alle drømmene og ændr kategorinavnet!
+        for (Dream d : user.getDreams().values()) {
+            for (CategoryDTO dto : d.getCategories()) {
+                if (dto.name.equals(gammeltNavn)) {
+                    dto.name = nytNavn;
+                }
+            }
+        }
+        user.refreshKategoriLabels();
+        user.genberegnStatsPlease();
+        refreshDreamList();
+        return "Navn ændret!";
     }
 
     public Boolean okToAddNewUserDefinedCat() {

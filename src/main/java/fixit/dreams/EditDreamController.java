@@ -91,7 +91,7 @@ public class EditDreamController {
             if (!ccb.getCheckModel().getCheckedItems().isEmpty()) {
                 TreeSet<String> newsymbols = new TreeSet<String>(ccb.getCheckModel().getCheckedItems());
 
-                // Her skal jeg tjekke om ccb.getTitle() overhovedet er i dream.getCategories()!! Ellers skal den tilføjes..
+                // Her skal jeg tjekke om ccb.getTitle() overhovedet er i dream.getCategories()!! Ellers skal den tilføjes...
                 boolean found = dream.getCategories().stream()
                         .anyMatch(category -> category.name.equals(ccb.getTitle()));
 
