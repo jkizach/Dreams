@@ -14,7 +14,7 @@ public class CSSUpdater {
     private static final Path CURRENT_PATH = APP_DATA_PATH.resolve("currentTema.css");
 
     // Sørg for at kopiere CSS-filerne, hvis de ikke allerede findes i appens mappe
-    static {
+    public static void init() {
         try {
             if (Files.notExists(APP_DATA_PATH)) {
                 Files.createDirectories(APP_DATA_PATH);
