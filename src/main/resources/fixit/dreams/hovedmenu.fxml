@@ -301,6 +301,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Tilføj symbol" GridPane.valignment="BOTTOM">
@@ -326,6 +328,10 @@
                               <TextField fx:id="tfNyKategori" maxWidth="220.0" prefHeight="37.0" prefWidth="220.0" promptText="Navn" GridPane.rowIndex="5" />
                               <Button fx:id="addNyKategoriKnap" mnemonicParsing="false" onAction="#handleAddNyKategoriKnap" prefHeight="25.0" prefWidth="100.0" text="Tilføj" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
                               <VBox fx:id="fjernSymbolVbox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="260.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label text="Ændr symbolkategorinavn" GridPane.rowIndex="6" GridPane.valignment="BOTTOM" />
+                              <TextField fx:id="tfNytNavn" maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="260.0" promptText="Nyt navn" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <ComboBox fx:id="cbKategoriNavn" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="7" />
+                              <Button fx:id="skiftNavnKnap" mnemonicParsing="false" onAction="#handleSkiftNavnKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
                            </children>
                         </GridPane>
                         <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">

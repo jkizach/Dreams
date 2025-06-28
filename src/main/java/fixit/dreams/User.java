@@ -117,6 +117,13 @@ class User {
         return kategoriLabels;
     }
 
+    public void refreshKategoriLabels() {
+        kategoriLabels.clear();
+        for (Category cat : categories) {
+            kategoriLabels.add(cat.getName());
+        }
+    }
+
     public String getForetrukneTemaNavn() {
         return foretrukneTema;
     }
@@ -168,6 +175,8 @@ class User {
     public void statsErGenberegnet() {
         skalStatsGenberegnes.set(false);
     }
+
+    public void genberegnStatsPlease() {skalStatsGenberegnes.set(true);}
 
     public boolean skalStatsGenberegnes() {
         return skalStatsGenberegnes.get();
