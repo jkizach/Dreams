@@ -379,3 +379,110 @@
 .spinner .decrement-arrow-button:hover:pressed {
     -fx-background-color: -fx-alternativbg-background;
 }
+
+.chart-series-line.series0 { /* For den første serie */
+    -fx-stroke: #F6ae2d;
+}
+
+.chart-legend-item-symbol.series0 {
+    -fx-background-color: #F6ae2d;
+}
+
+.chart-series-line.series1 {
+    -fx-stroke: #006837;
+    -fx-stroke-dash-array: 5 5;
+}
+
+.chart-legend-item-symbol.series1 {
+    -fx-background-color: #006837;
+}
+
+.chart-series-line.series2 {
+    -fx-stroke: #0d00a4;
+    -fx-stroke-dash-array: 3 7;
+}
+
+.chart-legend-item-symbol.series2 {
+    -fx-background-color: #0d00a4;
+}
+
+.chart-series-line.series3 {
+    -fx-stroke: #3cf6da;
+    -fx-stroke-dash-array: 9 9;
+}
+
+.chart-legend-item-symbol.series3 {
+    -fx-background-color: #3cf6da;
+}
+
+.chart-series-line.series4 {
+    -fx-stroke: #d81159;
+    -fx-stroke-dash-array: 4 8;
+}
+
+.chart-legend-item-symbol.series4 {
+    -fx-background-color: #d81159;
+}
+
+.chart-series-line.series5 {
+    -fx-stroke: #e9ff70;
+    -fx-stroke-dash-array: 2 9;
+}
+
+.chart-legend-item-symbol.series5 {
+    -fx-background-color: #e9ff70;
+}
+
+.chart-series-line.series6 {
+    -fx-stroke: #3c0606;
+    -fx-stroke-dash-array: 8 8;
+}
+
+.chart-legend-item-symbol.series6 {
+    -fx-background-color: #3c0606;
+}
+
+.chart-series-line.series7 {
+    -fx-stroke: #F24D19;
+    -fx-stroke-dash-array: 10 10;
+}
+
+.chart-legend-item-symbol.series7 {
+    -fx-background-color: #F24D19;
+}
+
+.chart-series-line.series8 {
+    -fx-stroke: #64df31;
+    -fx-stroke-dash-array: 6 12;
+}
+
+.chart-legend-item-symbol.series8 {
+    -fx-background-color: #64df31;
+}
+
+.chart-series-line.series9 {
+    -fx-stroke: #ff69eb;
+    -fx-stroke-dash-array: 4 7;
+}
+
+.chart-legend-item-symbol.series9 {
+    -fx-background-color: #ff69eb;
+}
+
+.chart-series-line.series10 {
+    -fx-stroke: #49b6ff;
+    -fx-stroke-dash-array: 2 5;
+}
+
+.chart-legend-item-symbol.series10 {
+    -fx-background-color: #49b6ff;
+}
+
+.chart-series-line.series11 {
+    -fx-stroke: #feea00;
+    -fx-stroke-dash-array: 8 13;
+}
+
+.chart-legend-item-symbol.series11 {
+    -fx-background-color: #feea00;
+}
