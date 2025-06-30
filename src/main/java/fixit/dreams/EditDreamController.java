@@ -118,7 +118,7 @@ public class EditDreamController {
         dream.setMareridt(mareridtEdit.isSelected());
         dream.setKollektiv(kollektivEdit.isSelected());
         dream.setAdvarsel(advarselEdit.isSelected());
-        dream.setOmpraksis(arketypiskEdit.isSelected());
+        dream.setOmpraksis(praksisEdit.isSelected());
         dream.setPraktiserer(praktisererEdit.isSelected());
         dream.setArketypisk(arketypiskEdit.isSelected());
         dream.setModsat(modsatEdit.isSelected());

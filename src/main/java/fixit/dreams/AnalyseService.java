@@ -253,7 +253,7 @@ public class AnalyseService extends ServiceMother{
     }
 
     public int[] getTalBinary(LocalDate fra, LocalDate til) {
-        stats.getTalCatStats(fra,til);
+        //stats.getTalCatStats(fra,til);
         return(stats.getTalBinary(fra, til));
     }
 

@@ -3,6 +3,7 @@ package fixit.dreams;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -264,7 +265,10 @@ public class AnalyseController {
             Label lbl = new Label();
             Label vals = new Label();
             lbl.setText(binaries.get(i));
+            vals.setAlignment(Pos.CENTER_RIGHT);
+            vals.setMaxWidth(Double.MAX_VALUE);
             vals.setText(String.valueOf(values[i]));
+
 
             if ((!binaries.get(i).equals("Advarsel")||analyseService.usingAdvarsel()) && (!binaries.get(i).equals("Kollektiv")||analyseService.usingKollektiv())) {
                 talVboxBinary.getChildren().add(lbl);
