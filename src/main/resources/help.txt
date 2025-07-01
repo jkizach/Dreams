@@ -45,6 +45,8 @@ Under det finder man "Tilføj symbol". Her kan man vælge en symbolkategori, og 
 
 Hvis man vil tilføje en helt ny symbolkategori (Kropssteder, Temaer, Lyde...) så skriver man bare navnet på kategorien i feltet "Navn" og trykker på "Tilføj". Bemærk at der kun kan tilføjes 3 nye kategorier, og at de ikke kan slettes igen - så brug den med omtanke.
 
+Under "Ændr symbolkategorinavn" kan man vælge én af symbolkategorierne og så give den et nyt navn. Det kan man bruge hvis man har oprettet sin egen kategori og er utilfreds med navnet. Men man kan også ændre de indbyggede kategorier, hvis man nu ikke vil fx holde øje med dyr, eller chakraer. Så kan man skifte navnet og holde øje med nogle andre symboler.
+
 Nederst i højre side er der to bokse hvor man kan gøre kollektiv og advarsel synlige eller usynlige i appen. Så aktiver dem, hvis du har kollektive drømme, eller advarselsdrømme.
 
 5. Analyse-fanerne
