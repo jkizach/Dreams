@@ -10,11 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.CheckComboBox;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 
 class User {
     private static User instans = null;
