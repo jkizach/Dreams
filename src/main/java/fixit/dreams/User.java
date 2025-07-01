@@ -65,6 +65,7 @@ class User {
         if (loadedUserDTO != null) {
             System.out.println("Load userDTO virkede...");
             this.foretrukneTema = loadedUserDTO.foretrukneTema;
+            System.out.println(foretrukneTema);
             this.visAdvarsel = loadedUserDTO.visAdvarsel;
             this.visKollektiv = loadedUserDTO.visKollektiv;
 
