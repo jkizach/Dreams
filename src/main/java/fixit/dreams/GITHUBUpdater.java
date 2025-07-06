@@ -32,6 +32,10 @@ public class GITHUBUpdater {
             try {
                 HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_API_URL).openConnection();
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
+                conn.setRequestProperty("User-Agent", "Dreams-Updater");
+
+                int responseCode = conn.getResponseCode();
+                log("GitHub response code: " + responseCode);
 
                 ObjectMapper mapper = new ObjectMapper();
                 Map<?, ?> json = mapper.readValue(conn.getInputStream(), Map.class);
@@ -51,7 +55,11 @@ public class GITHUBUpdater {
                         alert.showAndWait().ifPresent(response -> {
                             if (response == ok) {
                                 try {
-                                    Desktop.getDesktop().browse(new URI(htmlUrl));
+                                    if (Desktop.isDesktopSupported()) {
+                                        Desktop.getDesktop().browse(new URI(htmlUrl));
+                                    } else {
+                                        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + htmlUrl);
+                                    }
                                 } catch (Exception ex) {
                                     ex.printStackTrace();
                                 }
@@ -61,7 +69,7 @@ public class GITHUBUpdater {
                 }
 
             } catch (Exception e) {
-                System.out.println("Opdateringstjek mislykkedes: " + e.getMessage());
+                log("Opdateringstjek mislykkedes: " + e.getMessage());
             }
         }).start();
     }
@@ -88,6 +96,16 @@ public class GITHUBUpdater {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void log(String message) {
+        try {
+            Files.writeString(
+                    Paths.get(System.getProperty("user.home"), "drømmeapp-updater-log.txt"),
+                    LocalDate.now() + " - " + message + System.lineSeparator(),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND
+            );
+        } catch (IOException ignored) {}
     }
 }
 

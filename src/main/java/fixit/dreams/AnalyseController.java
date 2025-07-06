@@ -1,5 +1,6 @@
 package fixit.dreams;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -65,12 +66,14 @@ public class AnalyseController {
 
         user.skalStatsGenberegnes.addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                analyseService.updateStats();
-                updateGuiDates();
-                loadTalData();
-                kollektiv.setVisible(user.isVisKollektiv());
-                advarsel.setVisible(user.isVisAdvarsel());
-                analyseService.updateForloeb();
+                Platform.runLater(() -> {
+                    analyseService.updateStats();
+                    updateGuiDates();
+                    loadTalData();
+                    kollektiv.setVisible(user.isVisKollektiv());
+                    advarsel.setVisible(user.isVisAdvarsel());
+                    analyseService.updateForloeb();
+                });
             }
         });
 
@@ -268,7 +271,6 @@ public class AnalyseController {
             vals.setAlignment(Pos.CENTER_RIGHT);
             vals.setMaxWidth(Double.MAX_VALUE);
             vals.setText(String.valueOf(values[i]));
-
 
             if ((!binaries.get(i).equals("Advarsel")||analyseService.usingAdvarsel()) && (!binaries.get(i).equals("Kollektiv")||analyseService.usingKollektiv())) {
                 talVboxBinary.getChildren().add(lbl);

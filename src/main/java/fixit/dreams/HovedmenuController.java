@@ -254,8 +254,8 @@ public class HovedmenuController {
             }
         });
 
-        /* check for updates */
-        GITHUBUpdater.checkForUpdateIfNeeded();
+        /* check for updates -- virker ikke, så er udkommenteret */
+        // GITHUBUpdater.checkForUpdateIfNeeded();
 
     }
 
@@ -264,7 +264,6 @@ public class HovedmenuController {
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());
             vBoxSymboler.getChildren().add(ccb);
-            //ccb.setMaxWidth(280);
             ccb.setMaxWidth(Double.MAX_VALUE);
 
             ccb.setMinWidth(280);
