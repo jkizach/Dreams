@@ -88,27 +88,25 @@ public class EditDreamController {
     private void saveDream(ActionEvent event) {
         // Gemmer valgene fra checkcomboboxene
         for (CheckComboBox<String> ccb : editCCBs) {
-            if (!ccb.getCheckModel().getCheckedItems().isEmpty()) {
-                TreeSet<String> newsymbols = new TreeSet<String>(ccb.getCheckModel().getCheckedItems());
 
-                // Her skal jeg tjekke om ccb.getTitle() overhovedet er i dream.getCategories()!! Ellers skal den tilføjes...
-                boolean found = dream.getCategories().stream()
-                        .anyMatch(category -> category.name.equals(ccb.getTitle()));
+            TreeSet<String> newsymbols = new TreeSet<String>(ccb.getCheckModel().getCheckedItems());
+            // Her skal jeg tjekke om ccb.getTitle() overhovedet er i dream.getCategories()!! Ellers skal den tilføjes...
+            boolean found = dream.getCategories().stream()
+                    .anyMatch(category -> category.name.equals(ccb.getTitle()));
 
-                if (!found) {
-                    CategoryDTO theNewOnenew = new CategoryDTO();
-                    theNewOnenew.name = ccb.getTitle();
-                    dream.addCategoryDTO(theNewOnenew);
-                }
+            if (!found) {
+                CategoryDTO theNewOnenew = new CategoryDTO();
+                theNewOnenew.name = ccb.getTitle();
+                dream.addCategoryDTO(theNewOnenew);
+            }
 
-                for (CategoryDTO cdto : dream.getCategories()) {
-                    if (cdto.name.equals(ccb.getTitle())) {
-                        cdto.symbols = newsymbols;
-                        break;
-                    }
+            for (CategoryDTO cdto : dream.getCategories()) {
+                if (cdto.name.equals(ccb.getTitle())) {
+                    cdto.symbols = newsymbols;
                 }
             }
         }
+
 
         dream.setDagrest(editDagrest.getText());
         dream.setIndhold(editSkrivefelt.getText());
