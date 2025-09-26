@@ -8,7 +8,10 @@ Run package script
 Check at den rigtige version står i nedenstående script.
 
 MacOS:
-jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.3.1 --vendor "ITfix"  --icon src/main/resources/moona.icns
+  Silicon:
+    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.3.1 --vendor "ITfix"  --icon src/main/resources/moona.icns
+  Intel:
+   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.3.1 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64
 
 Windows OS:
-jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.3.1 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE"
+  jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.3.1 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE"
