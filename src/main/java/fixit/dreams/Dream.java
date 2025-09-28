@@ -10,6 +10,7 @@ public class Dream {
     private ArrayList<CategoryDTO> categories;
     private String indhold;
     private String dagrest;
+    private String tolkning;
 
     private LocalDate dato;
 
@@ -29,6 +30,7 @@ public class Dream {
         this.categories = new ArrayList<>(data.categories);
         this.indhold = data.indhold;
         this.dagrest = data.dagrest;
+        this.tolkning = (data.tolkning != null)? data.tolkning : "";
         this.dato = data.dato;
         this.lucid = data.lucid;
         this.praktiserer = data.praktiserer;
@@ -50,6 +52,14 @@ public class Dream {
 
     public String getDagrest() {
         return dagrest;
+    }
+
+    public String getTolkning() {
+        return tolkning;
+    }
+
+    public void setTolkning(String tolkning) {
+        this.tolkning = tolkning;
     }
 
     public Boolean getLucid() {

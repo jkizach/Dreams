@@ -26,7 +26,7 @@ public class EditDreamController {
     }
 
     @FXML
-    private TextArea editDagrest, editSkrivefelt;
+    private TextArea editDagrest, editSkrivefelt, editTolkning;
 
     @FXML
     private DatePicker dpEditDream;
@@ -80,6 +80,7 @@ public class EditDreamController {
         advarselEdit.setSelected(dream.getAdvarsel());
         praksisEdit.setSelected(dream.getOmpraksis());
         editDagrest.setText(dream.getDagrest());
+        editTolkning.setText(dream.getTolkning());
         editSkrivefelt.setText(dream.getIndhold());
         dpEditDream.setValue(dream.getDato());
     }
@@ -109,6 +110,7 @@ public class EditDreamController {
 
 
         dream.setDagrest(editDagrest.getText());
+        dream.setTolkning(editTolkning.getText());
         dream.setIndhold(editSkrivefelt.getText());
         dream.setDato(dpEditDream.getValue());
 

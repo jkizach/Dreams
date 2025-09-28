@@ -35,7 +35,7 @@ public class AnalyseService extends ServiceMother{
         for (Dream d : user.getDreams().values()) {
             for (CategoryDTO c : d.getCategories()) {
                 if (c.name.equals("Forløb") && !c.symbols.isEmpty()) {
-                    DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                    DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                     forloeb.add(dto);
                     break;
                 }
@@ -60,7 +60,7 @@ public class AnalyseService extends ServiceMother{
 
         for (Dream d : user.getDreams().values()) {
             if (datoer.contains(d.getDato())) {
-                DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                 forloebDreams.add(dto);
             }
         }
@@ -167,7 +167,7 @@ public class AnalyseService extends ServiceMother{
         if (!useData) {
             for (Dream d : user.getDreams().values()) {
                 if (isInRange(d.getDato(), data.fra, data.til)) {
-                    DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                    DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(),d.getDato());
                     filteredDreams.add(dto);
                 }
             }
@@ -199,7 +199,7 @@ public class AnalyseService extends ServiceMother{
                         if (d.getAdvarsel() == data.advarsel && d.getArketypisk() == data.arketypisk && d.getMareridt() == data.mareridt &&
                         d.getKollektiv() == data.kollektiv && d.getModsat() == data.modsat && d.getLucid() == data.lucid &&
                         d.getPraktiserer() == data.praktiserer && d.getOmpraksis() == data.praksis) {
-                            DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                            DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                         }
 
@@ -208,7 +208,7 @@ public class AnalyseService extends ServiceMother{
                         // CBer først:
                         if ((data.lucid && d.getLucid())|(data.praksis && d.getOmpraksis())|(data.advarsel && d.getAdvarsel())|(data.arketypisk && d.getArketypisk())|
                         (data.kollektiv && d.getKollektiv())|(data.modsat && d.getModsat())|(data.mareridt && d.getMareridt())|(data.praktiserer && d.getPraktiserer())) {
-                            DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                            DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                             continue;
                         }
@@ -220,7 +220,7 @@ public class AnalyseService extends ServiceMother{
                                     for (CategoryDTO dto : d.getCategories()) {
                                         if (dto.name.equals(c.getName())) {
                                             if (dto.symbols.contains(symbol)) {
-                                                DreamDTO addme = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getDato());
+                                                DreamDTO addme = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                                                 filteredDreams.add(addme);
                                                 continue outer;
                                             }

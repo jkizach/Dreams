@@ -3,6 +3,7 @@ package fixit.dreams;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,7 +40,7 @@ public class HovedmenuController {
     private FileChooser fileChooser = new FileChooser();
 
     @FXML
-    private TextArea skriveFelt, dagrestFelt;
+    private TextArea skriveFelt, dagrestFelt, tolkningFelt;
 
     @FXML
     private ColorPicker baggrundAPicker, baggrundBPicker, baggrundCPicker, baggrundDPicker, tekstAPicker, tekstBPicker, tekstCPicker, kantPicker;
@@ -54,7 +55,7 @@ public class HovedmenuController {
     public Tab analyseTab;
 
     @FXML
-    private TextField tfNytTemaNavn, tfNytSymbol, tfNyKategori, tfNytNavn;
+    private TextField tfNytTemaNavn, tfNytSymbol, tfNyKategori, tfNytNavn, searchField;
 
     @FXML
     private ComboBox<String> cbKategoriRemove, cbKategoriAdd, cbTemaer, cbFonts, cbKategoriNavn;
@@ -183,6 +184,10 @@ public class HovedmenuController {
         setTema(userService.getCurrentTema());
         temaer = userService.getTemaerForDisplay();
 
+        // Geminis 4-trins raket til en søgefunktion...
+        //ObservableList<DreamDTO> allDreams = userService.getDreamsForDisplay();
+        FilteredList<DreamDTO> filteredDreams = new FilteredList<>(userService.getDreamsForDisplay(), p -> true);
+
         dreamListView.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
             private final Label label = new Label();
             {
@@ -211,12 +216,34 @@ public class HovedmenuController {
         user.dreamEdited.addListener((obs, oldVal, newVal) -> {
             if (!newVal.isEmpty()) {
                 userService.updateDreamDTO();
-                dreamListView.setItems(userService.getDreamsForDisplay());
+                //dreamListView.setItems(userService.getDreamsForDisplay());
+                dreamListView.setItems(filteredDreams);
             }
         });
 
         user.addVbox(vBoxSymboler);
-        dreamListView.setItems(userService.getDreamsForDisplay());
+        //dreamListView.setItems(userService.getDreamsForDisplay());
+        dreamListView.setItems(filteredDreams);
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Logikken til at filtrere, som beskrevet før
+            filteredDreams.setPredicate(dream -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true; // Nulstil: vis alt
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+                String content = dream.getVisbartIndhold();
+
+                // Tjek om indholdet matcher søgeordet
+                return content != null && content.toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+
+        searchField.setContextMenu(new ContextMenu());
+        skriveFelt.setContextMenu(new ContextMenu());
+        dagrestFelt.setContextMenu(new ContextMenu());
+        tolkningFelt.setContextMenu(new ContextMenu());
 
         settingsIcon.setImage(iconb);
 
@@ -259,6 +286,11 @@ public class HovedmenuController {
 
     }
 
+    @FXML
+    private void resetSearchField() {
+        searchField.clear();
+    }
+
     private void loadCCBs() {
         for (Category c : userService.getCats()) {
             CheckComboBox<String> ccb = new CheckComboBox<>();
@@ -294,6 +326,7 @@ public class HovedmenuController {
 
             dreamData.indhold = skriveFelt.getText();
             dreamData.dagrest = dagrestFelt.getText();
+            dreamData.tolkning = tolkningFelt.getText();
             dreamData.dato = newDreamDate.getValue();
 
             userService.addDream(dreamData);

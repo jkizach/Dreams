@@ -15,6 +15,7 @@ public class DreamData {
     public boolean advarsel;
     public String indhold;
     public String dagrest;
+    public String tolkning;
     public LocalDate dato;
 }
 

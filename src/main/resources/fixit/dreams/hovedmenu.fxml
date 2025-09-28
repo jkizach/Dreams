@@ -85,12 +85,20 @@
                               </CheckBox>
                               <Label text="Drømmejeget" />
                               <Label text="Drømmen" GridPane.columnIndex="1" />
-                              <Label text="Dagrest" GridPane.columnIndex="2">
-                                 <tooltip>
-                                    <Tooltip text="Skete der noget dagen før som du kan forbinde drømmen med?" />
-                                 </tooltip>
-                              </Label>
-                              <TextArea fx:id="dagrestFelt" prefHeight="105.0" prefWidth="210.0" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
+                              <TabPane GridPane.columnIndex="2" GridPane.rowSpan="2147483647">
+                                 <tabs>
+                                    <Tab closable="false" text="Dagrest">
+                                       <content>
+                                          <TextArea fx:id="dagrestFelt" prefHeight="105.0" prefWidth="210.0" wrapText="true" />
+                                       </content>
+                                    </Tab>
+                                    <Tab closable="false" text="Tolkning">
+                                       <content>
+                                          <TextArea fx:id="tolkningFelt" prefHeight="105.0" prefWidth="210.0" wrapText="true" />
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
                               <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false" GridPane.rowIndex="4" />
                               <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                            </children>
@@ -153,6 +161,21 @@
                         <ListView fx:id="dreamListView" editable="true" maxWidth="1.7976931348623157E308" prefHeight="675.0" prefWidth="690.0" styleClass="custom-list-view" GridPane.rowIndex="1" />
                         <VBox alignment="BOTTOM_CENTER" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
+                              <HBox>
+                                 <VBox.margin>
+                                    <Insets bottom="455.0" />
+                                 </VBox.margin>
+                                 <children>
+                                    <TextField fx:id="searchField" onContextMenuRequested="#resetSearchField" prefHeight="25.0" prefWidth="205.0" promptText="søg...">
+                                       <HBox.margin>
+                                          <Insets left="30.0" />
+                                       </HBox.margin>
+                                       <tooltip>
+                                          <Tooltip text="Der vises kun drømme som indeholder de ord du skriver - højreklik for at rydde feltet!" />
+                                       </tooltip>
+                                    </TextField>
+                                 </children>
+                              </HBox>
                               <Button mnemonicParsing="false" onAction="#handleEditDream" text="Rediger drøm">
                                  <tooltip>
                                     <Tooltip text="Rediger den valgte drøm i en nyt vindue" />

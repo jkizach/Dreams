@@ -130,6 +130,7 @@ public class IOutils {
             temp.categories = d.getCategories();
             temp.indhold = d.getIndhold();
             temp.dagrest = d.getDagrest();
+            temp.tolkning = d.getTolkning();
             temp.dato = d.getDato();
             temp.lucid = d.getLucid();
             temp.praktiserer = d.getPraktiserer();

@@ -4,6 +4,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -39,8 +41,20 @@
             <CheckBox fx:id="praksisEdit" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <CheckBox fx:id="mareridtEdit" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <CheckBox fx:id="advarselEdit" mnemonicParsing="false" text="Advarsel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Dagrest" GridPane.columnIndex="2" />
-            <TextArea fx:id="editDagrest" prefHeight="90.0" prefWidth="214.0" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
+            <TabPane GridPane.columnIndex="2" GridPane.rowSpan="2147483647">
+               <tabs>
+                  <Tab closable="false" text="Dagrest">
+                     <content>
+                        <TextArea fx:id="editDagrest" prefHeight="90.0" prefWidth="214.0" wrapText="true" />
+                     </content>
+                  </Tab>
+                  <Tab closable="false" text="Tolkning">
+                     <content>
+                        <TextArea fx:id="editTolkning" prefHeight="90.0" prefWidth="214.0" wrapText="true" />
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
          </children>
       </GridPane>
       <TextArea fx:id="editSkrivefelt" layoutX="21.0" layoutY="66.0" prefHeight="393.0" prefWidth="359.0" wrapText="true" />

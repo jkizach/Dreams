@@ -23,7 +23,7 @@ public class UserService extends ServiceMother {
     public void addDream(DreamData dreamData) {
         Dream dream = new Dream(dreamData);
         user.addDream(dream);
-        dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato())); // UUID med
+        dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getTolkning(), dream.getDato())); // UUID med
         sortDreamsByDate();
     }
 
@@ -39,6 +39,7 @@ public class UserService extends ServiceMother {
                 if (d.getId().equals(id)) {
                     d.setIndhold(user.getDream(id).getIndhold());
                     d.setDagrest(user.getDream(id).getDagrest());
+                    d.setTolkning(user.getDream(id).getTolkning());
                     d.setDato(user.getDream(id).getDato());
                     break;
                 }
@@ -58,7 +59,7 @@ public class UserService extends ServiceMother {
     private void refreshDreamList() {
         dreamDTOs.clear();
         for (Dream dream : user.getDreams().values()) {
-            dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato()));
+            dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getTolkning(), dream.getDato()));
         }
         sortDreamsByDate();
     }
@@ -67,7 +68,7 @@ public class UserService extends ServiceMother {
         dreamDTOs.clear();
         for (Dream dream : user.getDreams().values()) {
             if (isInRange(dream.getDato(), fra, til)) {
-                dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getDato()));
+                dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getTolkning(), dream.getDato()));
             }
         }
         sortDreamsByDate();

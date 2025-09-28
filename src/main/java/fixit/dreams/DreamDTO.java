@@ -10,11 +10,13 @@ public class DreamDTO {
     private StringProperty indhold;
     private LocalDate dato;
     private StringProperty dagrest;
+    private StringProperty tolkning;
 
-    public DreamDTO(String id, String indhold, String dagrest, LocalDate dato) {
+    public DreamDTO(String id, String indhold, String dagrest, String tolkning, LocalDate dato) {
         this.id = id;
         this.indhold = new SimpleStringProperty(indhold);
         this.dagrest = new SimpleStringProperty(dagrest);
+        this.tolkning = new SimpleStringProperty(tolkning);
         this.dato = dato;
     }
 
@@ -38,6 +40,18 @@ public class DreamDTO {
         this.dagrest.set(dagrest);
     }
 
+    public String getTolkning() {
+        return tolkning.get();
+    }
+
+    public StringProperty tolkningProperty() {
+        return tolkning;
+    }
+
+    public void setTolkning(String tolkning) {
+        this.tolkning.set(tolkning);
+    }
+
     public LocalDate getDato() {
         return dato;
     }
@@ -51,8 +65,9 @@ public class DreamDTO {
     }
 
     public String getVisbartIndhold() {
-        String dg = (!dagrest.get().isEmpty()) ? "\nDAGREST: " + dagrest.get() + "\n": "\n";
-        return ("-------------------------------\n" + dato + "\n" + indhold.get() + dg);
+        String dg = (!dagrest.get().isEmpty()) ? "\n\nDAGREST: " + dagrest.get() + "\n": "\n";
+        String tl = (!tolkning.get().isEmpty()) ? "\nTOLKNING: " + tolkning.get() + "\n" : "";
+        return ("-------------------------------\n" + dato + "\n" + indhold.get() + dg + tl + "\n");
     }
 
     public String getMinimalIndhold() {
