@@ -72,7 +72,7 @@ public class DreamDTO {
 
     public String getMinimalIndhold() {
         String tekst = indhold.get();
-        int maxLen = 50;
+        int maxLen = 300;
         boolean trimmed = tekst.length() > maxLen;
 
         String visning = tekst.substring(0, Math.min(maxLen, tekst.length()));
