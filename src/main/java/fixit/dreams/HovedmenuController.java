@@ -282,7 +282,7 @@ public class HovedmenuController {
         });
 
         /* check for updates -- virker ikke, så er udkommenteret */
-        // GITHUBUpdater.checkForUpdateIfNeeded();
+        GITHUBUpdater.checkForUpdateIfNeeded();
 
     }
 
