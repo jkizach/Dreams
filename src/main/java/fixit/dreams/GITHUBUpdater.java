@@ -5,17 +5,27 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
+import javafx.stage.Window;
 
+import javax.net.ssl.*;
 import java.awt.Desktop;
 import java.io.*;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.security.Security;
+import java.security.cert.X509Certificate;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Map;
 
 public class GITHUBUpdater {
 
-    private static final String CURRENT_VERSION = "v1.2"; // skal sættes når jeg laver en nye MSI!
+    private static final String CURRENT_VERSION = "13"; // skal sættes når jeg laver en nye MSI!
     private static final String GITHUB_API_URL = "https://api.github.com/repos/jkizach/Dreams/releases/latest";
     private static final Path CONFIG_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "update.json");
 
@@ -27,22 +37,42 @@ public class GITHUBUpdater {
         }
     }
 
+    public static String readUrl(String urlString) throws IOException, InterruptedException {
+        // 1. Opret HttpClient (genbrugelig og trådsikker)
+        HttpClient client = HttpClient.newBuilder()
+                // Sæt denne linje til at følge alle omdirigeringer, herunder 303.
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .build();
+
+        // 2. Byg anmodningen (HttpRequest)
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlString))
+                .build();
+
+        // 3. Send anmodningen og modtag svaret som en String
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString() // Angiver, at svaret skal læses som en String
+        );
+
+        // 4. Tjek for succesfuld statuskode (f.eks. 200)
+        if (response.statusCode() == 200) {
+            return response.body();
+        } else {
+            throw new IOException("Fejl ved hentning af URL: Statuskode " + response.statusCode());
+        }
+    }
+
     private static void checkForUpdate() {
         new Thread(() -> {
             try {
-                HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_API_URL).openConnection();
-                conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
-                conn.setRequestProperty("User-Agent", "Dreams-Updater");
 
-                int responseCode = conn.getResponseCode();
-                log("GitHub response code: " + responseCode);
+                String htmlUrl = "https://github.com/jkizach/Dreams/releases/latest";
 
-                ObjectMapper mapper = new ObjectMapper();
-                Map<?, ?> json = mapper.readValue(conn.getInputStream(), Map.class);
+                String downloadUrl = "https://drive.google.com/uc?export=download&id=1Go7y6yCLC_lRZ9JIKKtl3xEjhc2WnLIt";
+                String latestVersion = readUrl(downloadUrl);
 
-                String latestVersion = (String) json.get("tag_name");
-                String htmlUrl = (String) json.get("html_url");
-
+                System.out.println(latestVersion);
                 if (!CURRENT_VERSION.equals(latestVersion)) {
                     Platform.runLater(() -> {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -51,6 +81,7 @@ public class GITHUBUpdater {
                         alert.setContentText("Der findes en ny version. Vil du hente den?");
                         ButtonType ok = new ButtonType("Download", ButtonBar.ButtonData.OK_DONE);
                         alert.getButtonTypes().setAll(ok, ButtonType.CANCEL);
+
 
                         alert.showAndWait().ifPresent(response -> {
                             if (response == ok) {
@@ -69,9 +100,12 @@ public class GITHUBUpdater {
                 }
 
             } catch (Exception e) {
-                log("Opdateringstjek mislykkedes: " + e.getMessage());
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                log("Opdateringstjek mislykkedes: " + e.getMessage() + sw);
             }
         }).start();
+
     }
 
     private static LocalDate readLastCheckedDate() {

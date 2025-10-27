@@ -226,12 +226,10 @@ public class HovedmenuController {
         dreamListView.setItems(filteredDreams);
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            // Logikken til at filtrere, som beskrevet før
             filteredDreams.setPredicate(dream -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true; // Nulstil: vis alt
                 }
-
                 String lowerCaseFilter = newValue.toLowerCase();
                 String content = dream.getVisbartIndhold();
 

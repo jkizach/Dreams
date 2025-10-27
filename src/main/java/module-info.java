@@ -6,6 +6,7 @@ module fixit.dreams {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.annotation;
     requires java.desktop;
+    requires java.net.http;
 
 
     opens fixit.dreams to javafx.fxml;
