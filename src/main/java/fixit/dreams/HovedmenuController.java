@@ -217,7 +217,12 @@ public class HovedmenuController {
             if (!newVal.isEmpty()) {
                 userService.updateDreamDTO();
                 //dreamListView.setItems(userService.getDreamsForDisplay());
-                dreamListView.setItems(filteredDreams);
+                //dreamListView.setItems(filteredDreams);
+                if (!searchField.getText().isEmpty()) {
+                    String st = searchField.getText();
+                    searchField.clear();
+                    searchField.setText(st);
+                };
             }
         });
 
