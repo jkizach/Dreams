@@ -9,9 +9,10 @@ Check at den rigtige version står i nedenstående script.
 
 MacOS:
   Silicon:
-    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.3.1 --vendor "ITfix"  --icon src/main/resources/moona.icns
+    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns
   Intel:
-   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.3.1 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64
+   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64
 
 Windows OS:
-  jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.3.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.3.1 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE"
+    OBS: Placer c#-programmet updater.exe i mappen target før koden her køres:
+  jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.4 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE"

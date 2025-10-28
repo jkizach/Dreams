@@ -16,7 +16,7 @@ Indhold
 
 1. Ny drøm
 Her kan man skrive sin drøm i det store skrivefelt, og sætte datoen for drømmen (den starter med dagens dato).
-Der er også et lille felt til dagresten.
+Der er også et lille felt til dagresten og et til tolkning.
 
 Så er der 8 bokse hvor man kan krydse af om drømmen fx var lucid, handlede om meditation osv. To af boksene (kollektiv og advarsel) er skjulte som udgangspunkt, men man kan gøre dem synlige i indstillingerne.
 I højre side er der 5 symbolkategorier, hvor man kan holde styr på hvilke symboler der forekommer i drømmen: Arketyper, Chakraer, Farver, Dyr og Personer.
@@ -29,7 +29,7 @@ Når drømmen er skrevet og alle symboler er markeret trykker man på "Gem drøm
 Under den her fane er der 4 nye faner hvor man kan se statistik og søge i sine drømme. De beskrives til sidst i den her tekst.
 
 3. Drømme
-Her ser man en liste over alle sine drømme, og kan så slette eller redigere en drøm. Man kan også gemme hele listen som en txt-fil. Hvis man ændrer datoerne (til og fra) så viser listen kun de drømme der er mellem datoerne (begge inklusive).
+Her ser man en liste over alle sine drømme, og kan så slette eller redigere en drøm. Man kan også gemme hele listen som en txt-fil. Hvis man ændrer datoerne (til og fra) så viser listen kun de drømme der er mellem datoerne (begge inklusive). Der er også et søgefelt, så man kan lede efter bestemte ord.
 
 4. Indstillinger (tandhjulet)
 Her kan man ændre udseende og indhold.
