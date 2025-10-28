@@ -37,6 +37,7 @@ public class GITHUBUpdater {
         }
     }
 
+
     public static String readUrl(String urlString) throws IOException, InterruptedException {
         // 1. Opret HttpClient (genbrugelig og trådsikker)
         HttpClient client = HttpClient.newBuilder()
