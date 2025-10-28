@@ -5,27 +5,18 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Modality;
-import javafx.stage.Window;
 
 import javax.net.ssl.*;
 import java.awt.Desktop;
 import java.io.*;
 import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.security.Security;
-import java.security.cert.X509Certificate;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Map;
 
 public class GITHUBUpdater {
 
-    private static final String CURRENT_VERSION = "13"; // skal sættes når jeg laver en nye MSI!
+    private static final String CURRENT_VERSION = "v1.4"; // skal sættes når jeg laver en nye MSI!
     private static final String GITHUB_API_URL = "https://api.github.com/repos/jkizach/Dreams/releases/latest";
     private static final Path CONFIG_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "update.json");
 
@@ -37,77 +28,82 @@ public class GITHUBUpdater {
         }
     }
 
-
-    public static String readUrl(String urlString) throws IOException, InterruptedException {
-        // 1. Opret HttpClient (genbrugelig og trådsikker)
-        HttpClient client = HttpClient.newBuilder()
-                // Sæt denne linje til at følge alle omdirigeringer, herunder 303.
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .build();
-
-        // 2. Byg anmodningen (HttpRequest)
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(urlString))
-                .build();
-
-        // 3. Send anmodningen og modtag svaret som en String
-        HttpResponse<String> response = client.send(
-                request,
-                HttpResponse.BodyHandlers.ofString() // Angiver, at svaret skal læses som en String
-        );
-
-        // 4. Tjek for succesfuld statuskode (f.eks. 200)
-        if (response.statusCode() == 200) {
-            return response.body();
-        } else {
-            throw new IOException("Fejl ved hentning af URL: Statuskode " + response.statusCode());
-        }
-    }
-
     private static void checkForUpdate() {
         new Thread(() -> {
+            String latestVersion = null;
+            String htmlUrl = null;
+
             try {
+                // 1. Forsøg: direkte GitHub HTTP-kald ===
+                HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_API_URL).openConnection();
+                conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
+                conn.setRequestProperty("User-Agent", "Dreams-Updater");
 
-                String htmlUrl = "https://github.com/jkizach/Dreams/releases/latest";
+                int responseCode = conn.getResponseCode();
+                log("GitHub response code: " + responseCode);
 
-                String downloadUrl = "https://drive.google.com/uc?export=download&id=1Go7y6yCLC_lRZ9JIKKtl3xEjhc2WnLIt";
-                String latestVersion = readUrl(downloadUrl);
+                ObjectMapper mapper = new ObjectMapper();
+                Map<?, ?> json = mapper.readValue(conn.getInputStream(), Map.class);
 
-                System.out.println(latestVersion);
-                if (!CURRENT_VERSION.equals(latestVersion)) {
-                    Platform.runLater(() -> {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Opdatering tilgængelig");
-                        alert.setHeaderText("Ny version: " + latestVersion);
-                        alert.setContentText("Der findes en ny version. Vil du hente den?");
-                        ButtonType ok = new ButtonType("Download", ButtonBar.ButtonData.OK_DONE);
-                        alert.getButtonTypes().setAll(ok, ButtonType.CANCEL);
-
-
-                        alert.showAndWait().ifPresent(response -> {
-                            if (response == ok) {
-                                try {
-                                    if (Desktop.isDesktopSupported()) {
-                                        Desktop.getDesktop().browse(new URI(htmlUrl));
-                                    } else {
-                                        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + htmlUrl);
-                                    }
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
-                            }
-                        });
-                    });
-                }
+                latestVersion = (String) json.get("tag_name");
+                htmlUrl = (String) json.get("html_url");
 
             } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                log("Opdateringstjek mislykkedes: " + e.getMessage() + sw);
+                // 2. Fallback: brug updater.exe ===
+                log("GitHub kald fejlede (" + e.getMessage() + "), prøver updater.exe...");
+
+                try {
+                    Process process = new ProcessBuilder("app/updater.exe").start();
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream()));
+
+                    String output = reader.readLine(); // forventer fx {"version":"v1.3.2","url":"https://..."}
+
+                    log("Output fra updater: " + output);
+
+                    // Parse JSON-resultatet
+                    ObjectMapper mapper = new ObjectMapper();
+                    Map<?, ?> json = mapper.readValue(output, Map.class);
+
+                    latestVersion = (String) json.get("version");
+                    htmlUrl = (String) json.get("url");
+
+                } catch (Exception ex) {
+                    log("Updater.exe fejlede: " + ex.getMessage());
+                }
+            }
+
+            // 3. Hvis vi har fundet en ny version, vis dialog ===
+            if (latestVersion != null && htmlUrl != null && !CURRENT_VERSION.equals(latestVersion)) {
+                String finalLatestVersion = latestVersion;
+                String finalHtmlUrl = htmlUrl;
+
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Opdatering tilgængelig");
+                    alert.setHeaderText("Ny version: " + finalLatestVersion);
+                    alert.setContentText("Der findes en ny version. Vil du hente den?");
+                    ButtonType ok = new ButtonType("Download", ButtonBar.ButtonData.OK_DONE);
+                    alert.getButtonTypes().setAll(ok, ButtonType.CANCEL);
+
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == ok) {
+                            try {
+                                if (Desktop.isDesktopSupported()) {
+                                    Desktop.getDesktop().browse(new URI(finalHtmlUrl));
+                                } else {
+                                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + finalHtmlUrl);
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                });
             }
         }).start();
-
     }
+
 
     private static LocalDate readLastCheckedDate() {
         try {
