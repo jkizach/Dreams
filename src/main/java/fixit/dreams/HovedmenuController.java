@@ -222,6 +222,9 @@ public class HovedmenuController {
                     String st = searchField.getText();
                     searchField.clear();
                     searchField.setText(st);
+                } else {
+                    searchField.setText("sort");
+                    searchField.clear();
                 };
             }
         });
