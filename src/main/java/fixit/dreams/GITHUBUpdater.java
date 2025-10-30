@@ -40,7 +40,7 @@ public class GITHUBUpdater {
                 conn.setRequestProperty("User-Agent", "Dreams-Updater");
 
                 int responseCode = conn.getResponseCode();
-                log("GitHub response code: " + responseCode);
+                //log("GitHub response code: " + responseCode);
 
                 ObjectMapper mapper = new ObjectMapper();
                 Map<?, ?> json = mapper.readValue(conn.getInputStream(), Map.class);
@@ -50,7 +50,7 @@ public class GITHUBUpdater {
 
             } catch (Exception e) {
                 // 2. Fallback: brug updater.exe ===
-                log("GitHub kald fejlede (" + e.getMessage() + "), prøver updater.exe...");
+                //log("GitHub kald fejlede (" + e.getMessage() + "), prøver updater.exe...");
 
                 try {
                     Process process = new ProcessBuilder("app/updater.exe").start();
@@ -59,7 +59,7 @@ public class GITHUBUpdater {
 
                     String output = reader.readLine(); // forventer fx {"version":"v1.3.2","url":"https://..."}
 
-                    log("Output fra updater: " + output);
+                    //log("Output fra updater: " + output);
 
                     // Parse JSON-resultatet
                     ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +69,7 @@ public class GITHUBUpdater {
                     htmlUrl = (String) json.get("url");
 
                 } catch (Exception ex) {
-                    log("Updater.exe fejlede: " + ex.getMessage());
+                    //log("Updater.exe fejlede: " + ex.getMessage());
                 }
             }
 
