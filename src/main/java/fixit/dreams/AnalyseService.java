@@ -104,7 +104,6 @@ public class AnalyseService extends ServiceMother{
             }
         }
 
-
         if (indat.lucid) {
             outdat.add(stats.makeBoolXY(stats.getLucidStats(), indat.fra, indat.til, indat.xakse,"lucid"));
         }

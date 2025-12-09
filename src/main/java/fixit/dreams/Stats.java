@@ -166,7 +166,7 @@ public class Stats {
                 }
                 break;
             case "uger":
-                while (fra.get(WeekFields.ISO.weekOfYear()) <= til.get(WeekFields.ISO.weekOfYear())) {
+                while (!fra.isAfter(til)) {
                     TreeMap<String, Integer> temp = getStatsPerUge(statsMap, fra);
                     String ugeLabel = fra.get(WeekFields.ISO.weekOfYear()) + "\n" + fra.getYear();
                     series.getData().add(new XYChart.Data<>(ugeLabel, temp.getOrDefault(symbol, 0)));
@@ -174,7 +174,7 @@ public class Stats {
                 }
                 break;
             case "måneder":
-                while (fra.getMonthValue() <= til.getMonthValue()) {
+                while (!fra.isAfter(til)) {
                     TreeMap<String, Integer> temp = getStatsPerM(statsMap, fra);
                     series.getData().add(new XYChart.Data<>(monthTranslator.get(fra.getMonthValue()) + "\n" + fra.getYear(), temp.getOrDefault(symbol, 0)));
                     fra = fra.plusMonths(1);
@@ -186,7 +186,7 @@ public class Stats {
 
     public XYChart.Series<String, Number> makeBoolXY(Map<String, Integer> statsMap, LocalDate fra, LocalDate til, String xakse, String name) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName(name); // skal sættes til havdenten navnet jo er!
+        series.setName(name); // skal sættes til hvadenten navnet jo er!
         switch (xakse) {
             case "dage":
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM");
