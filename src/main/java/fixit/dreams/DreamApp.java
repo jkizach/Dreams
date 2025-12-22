@@ -54,6 +54,14 @@ public class DreamApp extends Application {
     }
 
     public static void main(String[] args) {
+        if (!SingleInstanceLock.acquireLock()) {
+            System.out.println("Appen kører allerede!");
+            System.exit(0);
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            SingleInstanceLock.releaseLock();
+        }));
         launch();
     }
 }
