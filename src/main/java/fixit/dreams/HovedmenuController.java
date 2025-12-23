@@ -349,6 +349,7 @@ public class HovedmenuController {
     private void resetNewDreamTab() {
         skriveFelt.clear();
         dagrestFelt.clear();
+        tolkningFelt.clear();
         newDreamDate.setValue(LocalDate.now());
 
         List<CheckBox> cbs = Arrays.asList(
