@@ -16,3 +16,7 @@ MacOS:
 Windows OS:
     OBS: Placer c#-programmet updater.exe i mappen target før koden her køres:
   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.4 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE"
+
+Windows - nu med splash:
+    OBS: Både c#-programmet updater.exe og splash.png skal kopieres ind i Target først!
+jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.4 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"

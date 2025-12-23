@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -38,6 +39,12 @@ public class DreamApp extends Application {
         stage.setScene(scene);
         stage.getIcons().add(icon);
         stage.show();
+
+        // Test af splash-screen lukning!
+        SplashScreen splash = SplashScreen.getSplashScreen();
+        if (splash != null) {
+            splash.close();
+        }
     }
 
     private void handleWindowClose() {
