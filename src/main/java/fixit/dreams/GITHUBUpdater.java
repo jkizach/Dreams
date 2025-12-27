@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class GITHUBUpdater {
 
-    private static final String CURRENT_VERSION = "v1.4"; // skal sættes når jeg laver en nye MSI!
+    private static final String CURRENT_VERSION = "v1.5"; // skal sættes når jeg laver en nye MSI!
     private static final String GITHUB_API_URL = "https://api.github.com/repos/jkizach/Dreams/releases/latest";
     private static final Path CONFIG_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "update.json");
 

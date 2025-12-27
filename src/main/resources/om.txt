@@ -1,4 +1,4 @@
-Drømmeappen 1.4
+Drømmeappen 1.5
 
 Den er udviklet af Johannes Kizach med stor hjælp fra Søren Munk og er til fri afbenyttelse - man kan downloade en installer fra github her:
 https://github.com/jkizach/Dreams/releases/latest
