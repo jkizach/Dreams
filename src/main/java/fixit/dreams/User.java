@@ -245,7 +245,7 @@ class User {
         categories.add(forl);
 
         Category pers = new Category("Personer");
-        pers.addSymbols(List.of("Jes", "Bob Moore"));
+        pers.addSymbols(List.of());
         categories.add(pers);
 
         for (Category cat : categories) {
