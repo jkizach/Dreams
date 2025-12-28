@@ -9,9 +9,9 @@ Check at den rigtige version står i nedenstående script.
 
 MacOS:
   Silicon:
-    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns
+    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.5.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.5 --vendor "ITfix"  --icon src/main/resources/moona.icns --java-options  "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
   Intel:
-   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64
+   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64 --java-options "-splash:app/splash.png"
 
 Windows OS:
     OBS: Placer c#-programmet updater.exe i mappen target før koden her køres:

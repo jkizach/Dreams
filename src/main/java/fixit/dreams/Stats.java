@@ -198,7 +198,7 @@ public class Stats {
                 }
                 break;
             case "uger":
-                while (fra.get(WeekFields.ISO.weekOfYear()) <= til.get(WeekFields.ISO.weekOfYear())) {
+                while (!fra.isAfter(til)) {
                     int value = getBoolStatsPerUge(statsMap, fra);
                     String ugeLabel = fra.get(WeekFields.ISO.weekOfYear()) + "\n" + fra.getYear();
                     series.getData().add(new XYChart.Data<>(ugeLabel, value));
@@ -206,7 +206,7 @@ public class Stats {
                 }
                 break;
             case "måneder":
-                while (fra.getMonthValue() <= til.getMonthValue()) {
+                while (!fra.isAfter(til)) {
                     int value = getBoolStatsPerM(statsMap, fra);
                     series.getData().add(new XYChart.Data<>(monthTranslator.get(fra.getMonthValue()) + "\n" + fra.getYear(), value));
                     fra = fra.plusMonths(1);
