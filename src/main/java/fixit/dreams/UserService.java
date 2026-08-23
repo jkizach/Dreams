@@ -161,6 +161,9 @@ public class UserService extends ServiceMother {
     }
 
     public String renameKategori(String nytNavn, String gammeltNavn) {
+        if (gammeltNavn.equals("Forløb")) {
+            return "Kan ikke omdøbes!";
+        }
         char first = nytNavn.charAt(0);
         if (Character.isLowerCase(first)) {
             nytNavn = nytNavn.substring(0, 1).toUpperCase() + nytNavn.substring(1);

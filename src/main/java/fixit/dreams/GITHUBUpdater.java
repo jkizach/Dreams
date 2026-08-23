@@ -29,13 +29,15 @@ public class GITHUBUpdater {
     }
 
     private static void checkForUpdate() {
-        new Thread(() -> {
+        Thread updaterThread = new Thread(() -> {
             String latestVersion = null;
             String htmlUrl = null;
 
             try {
                 // 1. Forsøg: direkte GitHub HTTP-kald ===
                 HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_API_URL).openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
                 conn.setRequestProperty("User-Agent", "Dreams-Updater");
 
@@ -101,7 +103,9 @@ public class GITHUBUpdater {
                     });
                 });
             }
-        }).start();
+        });
+        updaterThread.setDaemon(true);
+        updaterThread.start();
     }
 
 

@@ -28,7 +28,8 @@ class User {
     protected BooleanProperty skalStatsGenberegnes = new SimpleBooleanProperty(false);
     protected StringProperty dreamEdited = new SimpleStringProperty("tom");
 
-    private ArrayList<VBox> vboxes = new ArrayList<>();
+    private ArrayList<VBox> dreamVboxes = new ArrayList<>();
+    private ArrayList<VBox> filterVboxes = new ArrayList<>();
 
     private User() {
         UserDTO loadedUserDTO = IOutils.loadUser();
@@ -209,22 +210,35 @@ class User {
         skalStatsGenberegnes.set(true);
     }
 
-    public void addVbox(VBox vbox) {
-        vboxes.add(vbox);
+    public void addDreamVbox(VBox vbox) {
+        dreamVboxes.add(vbox);
+    }
+
+    public void addFilterVbox(VBox vbox) {
+        filterVboxes.add(vbox);
     }
 
     public void updateVboxes() {
-        for (VBox vbox : vboxes) {
-            CheckComboBox<String> ccb = new CheckComboBox<>();
-            ccb.getItems().addAll(categories.getLast().getSymbols());
+        for (VBox vbox : dreamVboxes) {
+            CheckComboBox<String> ccb = newCCBFor(categories.getLast());
             vbox.getChildren().add(ccb);
-            ccb.setMaxWidth(Double.MAX_VALUE);
-            ccb.setMinWidth(280);
-            ccb.setTitle(categories.getLast().getName());
-            ccb.setShowCheckedCount(true);
             categories.getLast().addDreamCCB(ccb);
+        }
+        for (VBox vbox : filterVboxes) {
+            CheckComboBox<String> ccb = newCCBFor(categories.getLast());
+            vbox.getChildren().add(ccb);
             categories.getLast().addFilterCCB(ccb);
         }
+    }
+
+    private CheckComboBox<String> newCCBFor(Category category) {
+        CheckComboBox<String> ccb = new CheckComboBox<>();
+        ccb.getItems().addAll(category.getSymbols());
+        ccb.setMaxWidth(Double.MAX_VALUE);
+        ccb.setMinWidth(280);
+        ccb.setTitle(category.getName());
+        ccb.setShowCheckedCount(true);
+        return ccb;
     }
 
     public void setDreamEdited(String dreamId) {

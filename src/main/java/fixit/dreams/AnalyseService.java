@@ -182,13 +182,18 @@ public class AnalyseService extends ServiceMother{
                         for (Category c : user.getCategories()) {
                             if (c.getccbFilterSelections() != null) {
                                 for (String symbol : c.getccbFilterSelections().symbols) {
-                                    // Hvis alle matcher så go on!
+                                    // Hvis alle matcher så go on! Findes der slet ingen CategoryDTO for kategorien
+                                    // på drømmen (fx en kategori tilføjet efter drømmen blev oprettet), tæller
+                                    // det som "matcher ikke" - ellers vil den stille springe filteret over.
+                                    boolean matcher = false;
                                     for (CategoryDTO dto : d.getCategories()) {
                                         if (dto.name.equals(c.getName())) {
-                                            if (!dto.symbols.contains(symbol)) {
-                                                continue outer;
-                                            }
+                                            matcher = dto.symbols.contains(symbol);
+                                            break;
                                         }
+                                    }
+                                    if (!matcher) {
+                                        continue outer;
                                     }
                                 }
                             }

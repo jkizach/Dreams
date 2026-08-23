@@ -235,7 +235,7 @@ public class HovedmenuController {
             }
         });
 
-        user.addVbox(vBoxSymboler);
+        user.addDreamVbox(vBoxSymboler);
         //dreamListView.setItems(userService.getDreamsForDisplay());
         dreamListView.setItems(filteredDreams);
 
@@ -321,7 +321,7 @@ public class HovedmenuController {
 
     @FXML
     private void handleAddDream() {
-        if (!skriveFelt.getText().isEmpty()) {
+        if (!skriveFelt.getText().isEmpty() && newDreamDate.getValue() != null) {
             DreamData dreamData = new DreamData();
             dreamData.categories = new ArrayList<>();
 

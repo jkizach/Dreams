@@ -87,6 +87,9 @@ public class EditDreamController {
 
     @FXML
     private void saveDream(ActionEvent event) {
+        if (dpEditDream.getValue() == null) {
+            return;
+        }
         // Gemmer valgene fra checkcomboboxene
         for (CheckComboBox<String> ccb : editCCBs) {
 

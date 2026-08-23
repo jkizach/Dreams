@@ -83,7 +83,7 @@ public class AnalyseController {
         });
 
 
-        user.addVbox(vboxTilCCBAnalyse);
+        user.addFilterVbox(vboxTilCCBAnalyse);
 
         loadCCBs();
 
