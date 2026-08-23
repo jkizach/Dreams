@@ -81,5 +81,9 @@ public class DreamDTO {
         }
         return ("----------------------\n" + dato + "\n" + visning + "\n");
     }
+
+    public String getFuldeIndhold() {
+        return ("----------------------\n" + dato + "\n" + indhold.get() + "\n");
+    }
 }
 

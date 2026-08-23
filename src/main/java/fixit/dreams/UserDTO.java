@@ -1,19 +1,12 @@
 package fixit.dreams;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.paint.Color;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
+import java.time.LocalDate;
 
 public class UserDTO {
     public String foretrukneTema;
     public boolean visAdvarsel;
     public boolean visKollektiv;
-
+    public LocalDate startFromThisDate;
 
     public UserDTO() {}
 
@@ -21,6 +14,7 @@ public class UserDTO {
         this.foretrukneTema = user.getForetrukneTemaNavn();
         this.visAdvarsel = user.isVisAdvarsel();
         this.visKollektiv = user.isVisKollektiv();
+        this.startFromThisDate = user.getStartFromThisDate();
 
     }
 
@@ -29,6 +23,7 @@ public class UserDTO {
         user.setForetrukneTema(this.foretrukneTema);
         user.setVisAdvarsel(this.visAdvarsel);
         user.setVisKollektiv(this.visKollektiv);
+        user.setStartFromThisDate(this.startFromThisDate);
         return user;
     }
 

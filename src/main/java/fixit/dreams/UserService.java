@@ -235,15 +235,21 @@ public class UserService extends ServiceMother {
         return user.isVisKollektiv();
     }
 
+    public LocalDate getStartDate() {
+        return user.getStartFromThisDate();
+    }
+
     public LocalDate getFirstDreamDate() {
-        LocalDate firstDate = LocalDate.now();
-        for (Dream d : user.getDreams().values()) {
-            LocalDate date = d.getDato();
-            if (firstDate.isAfter(date)) {
-                firstDate = date;
-            }
-        }
-        return firstDate;
+        return user.getFirstDreamDate();
+    }
+
+    public boolean harDrømme() {
+        return !user.getDreams().isEmpty();
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        user.setStartFromThisDate(startDate);
+        user.genberegnStatsPlease();
     }
 
     private boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {

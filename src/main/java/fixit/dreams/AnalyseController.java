@@ -34,7 +34,10 @@ public class AnalyseController {
     private VBox vboxTilCCBAnalyse, talVboxBinary, talVboxBinaryNumbers, talVboxCatOne, talVboxCatTwo;
 
     @FXML
-    private ToggleButton tgDays, tgMonths, tgWeeks;
+    private ToggleButton tgDays, tgMonths, tgWeeks, tgForloebKort, tgForloebLangt;
+
+    @FXML
+    private ToggleGroup forloebVisningGroup;
 
     @FXML
     private ListView<DreamDTO> filterListe, forloebListe, forloebValgListe;
@@ -56,6 +59,8 @@ public class AnalyseController {
 
     @FXML
     private Label lblForloebDream, antalDreamsLblTal;
+
+    private boolean visLangtForloeb = false;
 
     @FXML
     public void initialize() {
@@ -153,9 +158,16 @@ public class AnalyseController {
                 setGraphic(null);
                 setText(null);
                 if (!empty && dream != null) {
-                    label.setText(dream.getMinimalIndhold());
+                    label.setText(visLangtForloeb ? dream.getFuldeIndhold() : dream.getMinimalIndhold());
                     setGraphic(label);
                 }
+            }
+        });
+
+        // Sørg for at der altid er præcis ét toggle valgt (Kort/Langt) i forløbsfanen
+        forloebVisningGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle == null) {
+                oldToggle.setSelected(true);
             }
         });
 
@@ -187,7 +199,7 @@ public class AnalyseController {
 
     private void setGuiDates() {
         for (DatePicker dp : List.of(dpFraGraf,dpFromPie,dpFromTal)) {
-            dp.setValue(analyseService.getFirstDreamDate());
+            dp.setValue(analyseService.getStartDate());
         }
         for (DatePicker dp : List.of(dpTilGraf,dpToPie,dpToTal)) {
             dp.setValue(LocalDate.now());
@@ -196,7 +208,7 @@ public class AnalyseController {
 
     private void updateGuiDates() {
         for (DatePicker dp : List.of(dpFraGraf,dpFromPie,dpFromTal)) {
-            dp.setValue(analyseService.getFirstDreamDate());
+            dp.setValue(analyseService.getStartDate());
         }
     }
 
@@ -376,6 +388,12 @@ public class AnalyseController {
             analyseService.refreshForloebDreams(forloebValgListe.getSelectionModel().getSelectedItem().getDato(), daysSpinner.getValue(), months);
         }
 
+    }
+
+    @FXML
+    private void onForloebVisningChanged() {
+        visLangtForloeb = tgForloebLangt.isSelected();
+        forloebValgListe.refresh();
     }
 
     @FXML

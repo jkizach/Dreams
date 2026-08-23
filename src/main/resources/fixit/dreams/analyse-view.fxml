@@ -262,8 +262,17 @@
                               <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Forløbsdrømme" />
-                                    <ListView fx:id="forloebValgListe" onMouseClicked="#onSelectForloebDream" prefHeight="526.0" prefWidth="315.0" styleClass="custom-list-view" />
+                                    <ListView fx:id="forloebValgListe" onMouseClicked="#onSelectForloebDream" prefHeight="592.0" prefWidth="317.0" styleClass="custom-list-view" />
                                     <Label fx:id="lblForloebDream" alignment="CENTER" prefHeight="17.0" prefWidth="284.0" text="Ingen drøm valgt endnu" />
+                                    <HBox>
+                                       <fx:define>
+                                          <ToggleGroup fx:id="forloebVisningGroup" />
+                                       </fx:define>
+                                       <children>
+                                          <ToggleButton fx:id="tgForloebKort" mnemonicParsing="false" onAction="#onForloebVisningChanged" selected="true" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Kort" toggleGroup="$forloebVisningGroup" />
+                                          <ToggleButton fx:id="tgForloebLangt" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onForloebVisningChanged" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;" text="Langt" toggleGroup="$forloebVisningGroup" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                               <VBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="701.0" prefWidth="653.0" spacing="10.0" HBox.hgrow="ALWAYS">

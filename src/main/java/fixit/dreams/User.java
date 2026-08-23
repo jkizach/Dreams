@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.CheckComboBox;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ class User {
     private HashMap<String,Tema> temaer;
     private boolean visAdvarsel = false;
     private boolean visKollektiv = false;
+    private LocalDate startFromThisDate = null;
     protected BooleanProperty skalStatsGenberegnes = new SimpleBooleanProperty(false);
     protected StringProperty dreamEdited = new SimpleStringProperty("tom");
 
@@ -65,14 +67,24 @@ class User {
         if (loadedUserDTO != null) {
             System.out.println("Load userDTO virkede...");
             this.foretrukneTema = loadedUserDTO.foretrukneTema;
-            System.out.println(foretrukneTema);
             this.visAdvarsel = loadedUserDTO.visAdvarsel;
             this.visKollektiv = loadedUserDTO.visKollektiv;
-
+            this.startFromThisDate = (loadedUserDTO.startFromThisDate != null) ? loadedUserDTO.startFromThisDate : getFirstDreamDate();
 
         } else {
             System.out.println("Ingen user loaded...");
+            this.startFromThisDate = getFirstDreamDate();
          }
+    }
+
+    public LocalDate getFirstDreamDate() {
+        LocalDate earliest = LocalDate.now();
+        for (Dream d : dreams.values()) {
+            if (earliest.isAfter(d.getDato())) {
+                earliest = d.getDato();
+            }
+        }
+        return earliest;
     }
 
     public static synchronized User getInstance()
@@ -251,5 +263,13 @@ class User {
         for (Category cat : categories) {
             kategoriLabels.add(cat.getName());
         }
+    }
+
+    public LocalDate getStartFromThisDate() {
+        return startFromThisDate;
+    }
+
+    public void setStartFromThisDate(LocalDate startFromThisDate) {
+        this.startFromThisDate = startFromThisDate;
     }
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,7 @@ public class HovedmenuController {
     private Button deleteDream, seTemaKnap, gemNytTemaKnap, addSymbolKnap, addNyKategoriKnap, eksportBtn, skiftNavnKnap;
 
     @FXML
-    private DatePicker newDreamDate, fromDatePicker, toDatePicker;
+    private DatePicker newDreamDate, fromDatePicker, toDatePicker, startDatoPicker;
 
     @FXML
     public Tab analyseTab;
@@ -74,6 +75,11 @@ public class HovedmenuController {
 
     @FXML
     private Tab settingsTab;
+
+    @FXML
+    private Label lblForsteDrom;
+
+    private static final DateTimeFormatter DATO_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @FXML
     private ImageView settingsIcon;
@@ -258,7 +264,9 @@ public class HovedmenuController {
 
         newDreamDate.setValue(LocalDate.now());
         toDatePicker.setValue(LocalDate.now());
-        fromDatePicker.setValue(userService.getFirstDreamDate());
+        fromDatePicker.setValue(userService.getStartDate());
+        startDatoPicker.setValue(userService.getStartDate());
+        updateForsteDromLabel();
 
         // Og kunne man så lave et Søren-trick med Categories her i stedet? vv
         loadCCBs();
@@ -337,7 +345,27 @@ public class HovedmenuController {
 
             userService.addDream(dreamData);
             resetNewDreamTab();
-            fromDatePicker.setValue(userService.getFirstDreamDate());
+            fromDatePicker.setValue(userService.getStartDate());
+            updateForsteDromLabel();
+        }
+    }
+
+    private void updateForsteDromLabel() {
+        boolean harDrømme = userService.harDrømme();
+        lblForsteDrom.setVisible(harDrømme);
+        lblForsteDrom.setManaged(harDrømme);
+        if (harDrømme) {
+            lblForsteDrom.setText("Første drøm: " + userService.getFirstDreamDate().format(DATO_FORMAT));
+        }
+    }
+
+    @FXML
+    private void handleGemStartDato() {
+        LocalDate valgtDato = startDatoPicker.getValue();
+        if (valgtDato != null) {
+            userService.setStartDate(valgtDato);
+            fromDatePicker.setValue(valgtDato);
+            filtrerDreamList();
         }
     }
 
@@ -546,7 +574,8 @@ public class HovedmenuController {
             } else {
                 String id = dreamListView.getSelectionModel().getSelectedItem().getId();
                 userService.deleteDream(id);
-                fromDatePicker.setValue(userService.getFirstDreamDate());
+                fromDatePicker.setValue(userService.getStartDate());
+                updateForsteDromLabel();
                 userService.refreshDreamList(fromDatePicker.getValue(),toDatePicker.getValue());
                 deleteDream.setText("Slet drøm");
                 deleteButtonPressed = false;

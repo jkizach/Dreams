@@ -54,6 +54,7 @@ public class IOutils {
         try {
             UserDTO userDTO = objectMapper.readValue(FILE_PATH_USER.toFile(), UserDTO.class);
             System.out.println("User indlæst fra JSON!");
+            System.out.println(userDTO.startFromThisDate);
             return userDTO;
         } catch (IOException e) {
             e.printStackTrace();

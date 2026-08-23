@@ -148,8 +148,8 @@ public class AnalyseService extends ServiceMother{
         user.statsErGenberegnet();
     }
 
-    public LocalDate getFirstDreamDate() {
-        return stats.getFirstDream();
+    public LocalDate getStartDate() {
+        return user.getStartFromThisDate();
     }
 
     public ObservableList<DreamDTO> getFilteredDreams() {

@@ -360,16 +360,39 @@
                         <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <Separator prefHeight="5.0" prefWidth="489.0" />
-                              <CheckBox fx:id="kollektivStyrer" mnemonicParsing="false" onAction="#handleCbStyrerKol" text="Vis checkboks: Kollektiv">
-                                 <tooltip>
-                                    <Tooltip text="Vælg om kollektive drømme skal registreres eller ej" />
-                                 </tooltip>
-                              </CheckBox>
-                              <CheckBox fx:id="advarselStyrer" mnemonicParsing="false" onAction="#handleCbStyrerAdv" text="Vis checkboks: Advarsel">
-                                 <tooltip>
-                                    <Tooltip text="Vælg om advarselsdrømme skal registreres eller ej" />
-                                 </tooltip>
-                              </CheckBox>
+                              <HBox spacing="50.0">
+                                 <children>
+                                    <VBox layoutX="156.0" layoutY="10.0" spacing="10.0">
+                                       <children>
+                                          <Label text="Indstil startdato:" />
+                                          <DatePicker fx:id="startDatoPicker" prefHeight="25.0" prefWidth="273.0" />
+                                          <Label fx:id="lblForsteDrom" style="-fx-font-style: italic;" text="Første drøm: " />
+                                          <HBox alignment="TOP_RIGHT">
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <children>
+                                                <Button fx:id="gemDatoKnap" mnemonicParsing="false" onAction="#handleGemStartDato" text="Gem dato" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <CheckBox fx:id="kollektivStyrer" mnemonicParsing="false" onAction="#handleCbStyrerKol" text="Vis checkboks: Kollektiv">
+                                             <tooltip>
+                                                <Tooltip text="Vælg om kollektive drømme skal registreres eller ej" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="advarselStyrer" mnemonicParsing="false" onAction="#handleCbStyrerAdv" text="Vis checkboks: Advarsel">
+                                             <tooltip>
+                                                <Tooltip text="Vælg om advarselsdrømme skal registreres eller ej" />
+                                             </tooltip>
+                                          </CheckBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
