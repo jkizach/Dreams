@@ -48,7 +48,7 @@ public class EditDreamController {
     }
 
     private void loadCCBs() {
-        for (Category c : user.getCategories()) {
+        for (Category c : user.getUiCategories()) {
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());
             vboxEditDream.getChildren().add(ccb);
@@ -71,14 +71,14 @@ public class EditDreamController {
                 }
             }
         }
-        lucidEdit.setSelected(dream.getLucid());
-        praktisererEdit.setSelected(dream.getPraktiserer());
-        modsatEdit.setSelected(dream.getModsat());
-        arketypiskEdit.setSelected(dream.getArketypisk());
-        mareridtEdit.setSelected(dream.getMareridt());
-        kollektivEdit.setSelected(dream.getKollektiv());
-        advarselEdit.setSelected(dream.getAdvarsel());
-        praksisEdit.setSelected(dream.getOmpraksis());
+        lucidEdit.setSelected(dream.hasFlag("Lucid"));
+        praktisererEdit.setSelected(dream.hasFlag("Praktiserer"));
+        modsatEdit.setSelected(dream.hasFlag("Modsatkønnet"));
+        arketypiskEdit.setSelected(dream.hasFlag("Arketypisk"));
+        mareridtEdit.setSelected(dream.hasFlag("Mareridt"));
+        kollektivEdit.setSelected(dream.hasFlag("Kollektiv"));
+        advarselEdit.setSelected(dream.hasFlag("Advarsel"));
+        praksisEdit.setSelected(dream.hasFlag("Om praksis"));
         editDagrest.setText(dream.getDagrest());
         editTolkning.setText(dream.getTolkning());
         editSkrivefelt.setText(dream.getIndhold());
@@ -117,14 +117,10 @@ public class EditDreamController {
         dream.setIndhold(editSkrivefelt.getText());
         dream.setDato(dpEditDream.getValue());
 
-        dream.setLucid(lucidEdit.isSelected());
-        dream.setMareridt(mareridtEdit.isSelected());
-        dream.setKollektiv(kollektivEdit.isSelected());
-        dream.setAdvarsel(advarselEdit.isSelected());
-        dream.setOmpraksis(praksisEdit.isSelected());
-        dream.setPraktiserer(praktisererEdit.isSelected());
-        dream.setArketypisk(arketypiskEdit.isSelected());
-        dream.setModsat(modsatEdit.isSelected());
+        dream.setCategory(Category.buildFlagsCategoryDTO(
+                lucidEdit.isSelected(), praktisererEdit.isSelected(), modsatEdit.isSelected(), arketypiskEdit.isSelected(),
+                praksisEdit.isSelected(), mareridtEdit.isSelected(), advarselEdit.isSelected(), kollektivEdit.isSelected()
+        ));
 
         user.addDream(dream);
 

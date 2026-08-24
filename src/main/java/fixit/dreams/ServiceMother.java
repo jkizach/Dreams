@@ -35,7 +35,7 @@ public class ServiceMother {
     }
 
     public ArrayList<Category> getCats() {
-        return user.getCategories();
+        return user.getUiCategories();
     }
 
     protected boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {

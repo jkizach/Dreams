@@ -10,7 +10,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 public class DreamApp extends Application {
@@ -27,7 +26,7 @@ public class DreamApp extends Application {
         //scene.getStylesheets().add(getClass().getResource("currentTema.css").toExternalForm());
         CSSUpdater.init();
 
-        Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
+        Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
         File cssFile = cssPath.toFile();
         scene.getStylesheets().clear();
         scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources

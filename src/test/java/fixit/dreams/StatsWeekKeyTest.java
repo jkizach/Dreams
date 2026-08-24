@@ -24,11 +24,11 @@ class StatsWeekKeyTest {
     private Dream lucidDreamOn(LocalDate dato) {
         DreamData data = new DreamData();
         data.categories = new ArrayList<>();
+        data.categories.add(Category.buildFlagsCategoryDTO(true, false, false, false, false, false, false, false));
         data.indhold = "test";
         data.dagrest = "";
         data.tolkning = "";
         data.dato = dato;
-        data.lucid = true;
         return new Dream(data);
     }
 
@@ -41,8 +41,8 @@ class StatsWeekKeyTest {
 
         Stats stats = new Stats();
 
-        int countViaDecDato = stats.getBoolStatsPerUge(stats.getLucidStats(), LocalDate.of(2024, 12, 30));
-        int countViaJanDato = stats.getBoolStatsPerUge(stats.getLucidStats(), LocalDate.of(2025, 1, 2));
+        int countViaDecDato = stats.getBoolStatsPerUge(stats.getFlagStats("Lucid"),LocalDate.of(2024, 12, 30));
+        int countViaJanDato = stats.getBoolStatsPerUge(stats.getFlagStats("Lucid"),LocalDate.of(2025, 1, 2));
 
         assertEquals(2, countViaDecDato, "Begge drømme skal tælles i samme uge-bucket");
         assertEquals(2, countViaJanDato, "Begge drømme skal tælles i samme uge-bucket");
@@ -56,8 +56,8 @@ class StatsWeekKeyTest {
 
         Stats stats = new Stats();
 
-        int nytårsBucket = stats.getBoolStatsPerUge(stats.getLucidStats(), LocalDate.of(2024, 12, 30));
-        int decemberBucket = stats.getBoolStatsPerUge(stats.getLucidStats(), LocalDate.of(2024, 12, 20));
+        int nytårsBucket = stats.getBoolStatsPerUge(stats.getFlagStats("Lucid"),LocalDate.of(2024, 12, 30));
+        int decemberBucket = stats.getBoolStatsPerUge(stats.getFlagStats("Lucid"),LocalDate.of(2024, 12, 20));
 
         assertEquals(1, nytårsBucket, "Kun én drøm hører til i årsskifte-ugen");
         assertEquals(1, decemberBucket, "Den tidligere december-drøm hører til i sin egen uge");

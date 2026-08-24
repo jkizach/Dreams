@@ -12,17 +12,6 @@ public class Stats {
     protected User user;
     private TreeMap<String,StatsDO> categoryStats;
 
-    private Map<String, Integer> lucidStats;
-    private Map<String, Integer> praktisererStats;
-    private Map<String, Integer> modsatStats;
-    private Map<String, Integer> kollektivStats;
-    private Map<String, Integer> arketypiskStats;
-    private Map<String, Integer> praksisStats;
-    private Map<String, Integer> mareridtStats;
-    private Map<String, Integer> advarselStats;
-
-    ArrayList<Map<String, Integer>> binaryStats;
-
     private LocalDate firstDream;
 
     private Map<Integer,String> monthTranslator;
@@ -30,25 +19,6 @@ public class Stats {
     public Stats() {
         this.user = User.getInstance();
         this.categoryStats = new TreeMap<>();
-
-        this.lucidStats = new HashMap<>();
-        this.praktisererStats = new HashMap<>();
-        this.modsatStats = new HashMap<>();
-        this.kollektivStats = new HashMap<>();
-        this.arketypiskStats = new HashMap<>();
-        this.praksisStats = new HashMap<>();
-        this.mareridtStats = new HashMap<>();
-        this.advarselStats = new HashMap<>();
-
-        this.binaryStats = new ArrayList<>();
-        binaryStats.add(lucidStats);
-        binaryStats.add(praktisererStats);
-        binaryStats.add(modsatStats);
-        binaryStats.add(arketypiskStats);
-        binaryStats.add(praksisStats);
-        binaryStats.add(mareridtStats);
-        binaryStats.add(advarselStats);
-        binaryStats.add(kollektivStats);
 
         this.monthTranslator = new HashMap<>();
         calculateStats();
@@ -93,20 +63,10 @@ public class Stats {
     }
 
     private void updateStats(String key, Dream dream) {
-        // her skal der i stedet loopes gennem listen af CategoryDTO i hver drøm... men hvad så med stats?
+        // loopes gennem listen af CategoryDTO i hver drøm - inkl. "Kvaliteter" (de tidligere binære flag)
         for (CategoryDTO cat : dream.getCategories()) {
-            //categoryStats.putIfAbsent(cat.name, new StatsDO(cat.name)); // jeg tror at den her skal flyttes til CalculateStats og skal bruge user.Cats!
             categoryStats.get(cat.name).updateStatsDO(key,cat);
         }
-
-        lucidStats.put(key, lucidStats.getOrDefault(key, 0) + (dream.getLucid() ? 1 : 0));
-        praktisererStats.put(key, praktisererStats.getOrDefault(key, 0) + (dream.getPraktiserer() ? 1: 0));
-        modsatStats.put(key, modsatStats.getOrDefault(key, 0) + (dream.getModsat() ? 1 : 0));
-        kollektivStats.put(key, kollektivStats.getOrDefault(key, 0) + (dream.getKollektiv() ? 1 : 0));
-        arketypiskStats.put(key, arketypiskStats.getOrDefault(key, 0) + (dream.getArketypisk() ? 1 : 0));
-        praksisStats.put(key, praksisStats.getOrDefault(key, 0) + (dream.getOmpraksis() ? 1 : 0));
-        mareridtStats.put(key, mareridtStats.getOrDefault(key, 0) + (dream.getMareridt() ? 1 : 0));
-        advarselStats.put(key, advarselStats.getOrDefault(key, 0) + (dream.getAdvarsel() ? 1 : 0));
     }
 
     public TreeMap<String, Integer> getStatsPerDag(TreeMap<String, TreeMap<String, Integer>> statsMap, LocalDate date) {
@@ -141,14 +101,6 @@ public class Stats {
 
     private void clearAll() {
         this.categoryStats.clear();
-        this.lucidStats.clear();
-        this.praktisererStats.clear();
-        this.modsatStats.clear();
-        this.kollektivStats.clear();
-        this.arketypiskStats.clear();
-        this.praksisStats.clear();
-        this.mareridtStats.clear();
-        this.advarselStats.clear();
     }
 
 
@@ -217,13 +169,19 @@ public class Stats {
     }
 
     public int[] getTalBinary(LocalDate fra, LocalDate til) {
-        int[] out = new int[8];
-        while (!fra.isAfter(til)) {
-            for (int i = 0; i < 8; i++) {
-                int value = getBoolStatsPerDag(binaryStats.get(i), fra);
-                out[i] += value;
+        List<String> symbols = Category.FLAGS_SYMBOLS_IN_ORDER;
+        List<Map<String, Integer>> statsPerSymbol = new ArrayList<>();
+        for (String symbol : symbols) {
+            statsPerSymbol.add(getFlagStats(symbol));
+        }
+
+        int[] out = new int[symbols.size()];
+        LocalDate loopVar = fra;
+        while (!loopVar.isAfter(til)) {
+            for (int i = 0; i < symbols.size(); i++) {
+                out[i] += getBoolStatsPerDag(statsPerSymbol.get(i), loopVar);
             }
-            fra = fra.plusDays(1);
+            loopVar = loopVar.plusDays(1);
         }
         return out;
     }
@@ -234,7 +192,7 @@ public class Stats {
         // Nej jeg skal loope gennem StatsDO og SÅ for hver køre et dato-while-loop!
 
         // Kunne jeg loope gennem user.getCategories().getName() og så bruge det som key i mine statsCats?
-        for (Category category : user.getCategories()) {
+        for (Category category : user.getUiCategories()) {
             TreeMap<String, Integer> totals = new TreeMap<>();
             LocalDate loopVar = fra;
             while (!loopVar.isAfter(til)) {
@@ -250,36 +208,18 @@ public class Stats {
     }
 
 
-    public Map<String, Integer> getLucidStats() {
-        return lucidStats;
-    }
-
-    public Map<String, Integer> getPraktisererStats() {
-        return praktisererStats;
-    }
-
-    public Map<String, Integer> getModsatStats() {
-        return modsatStats;
-    }
-
-    public Map<String, Integer> getKollektivStats() {
-        return kollektivStats;
-    }
-
-    public Map<String, Integer> getArketypiskStats() {
-        return arketypiskStats;
-    }
-
-    public Map<String, Integer> getPraksisStats() {
-        return praksisStats;
-    }
-
-    public Map<String, Integer> getMareridtStats() {
-        return mareridtStats;
-    }
-
-    public Map<String, Integer> getAdvarselStats() {
-        return advarselStats;
+    public Map<String, Integer> getFlagStats(String symbol) {
+        Map<String, Integer> out = new HashMap<>();
+        StatsDO kvaliteter = categoryStats.get(Category.FLAGS_CATEGORY_NAME);
+        if (kvaliteter != null) {
+            for (Map.Entry<String, TreeMap<String, Integer>> entry : kvaliteter.getCatStats().entrySet()) {
+                Integer value = entry.getValue().get(symbol);
+                if (value != null) {
+                    out.put(entry.getKey(), value);
+                }
+            }
+        }
+        return out;
     }
 
     public TreeMap<String, TreeMap<String, Integer>> getCategoryStats(String name) {

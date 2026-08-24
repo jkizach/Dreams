@@ -6,35 +6,19 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class IOutils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Base folder (Documents/Drømmeappen) - burde virke både på pc og mac
-    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData");
-
-    // Alle filstier er nu relative til appDataPath
-    private static final Path FILE_PATH_USER = APP_DATA_PATH.resolve("user.json");
-    private static final Path FILE_PATH_TEMA = APP_DATA_PATH.resolve("temaer.json");
-    private static final Path FILE_PATH_CAT = APP_DATA_PATH.resolve("cats.json");
-    private static final Path FILE_PATH_DREAM = APP_DATA_PATH.resolve("dreams.json");
+    // Alle filstier er relative til AppPaths.APP_DATA_PATH
+    private static final Path FILE_PATH_USER = AppPaths.APP_DATA_PATH.resolve("user.json");
+    private static final Path FILE_PATH_TEMA = AppPaths.APP_DATA_PATH.resolve("temaer.json");
+    private static final Path FILE_PATH_CAT = AppPaths.APP_DATA_PATH.resolve("cats.json");
+    private static final Path FILE_PATH_DREAM = AppPaths.APP_DATA_PATH.resolve("dreams.json");
     private static final String TXT_PATH_OM = "om.txt";
     private static final String TXT_PATH_HELP = "help.txt";
-
-    // Sørg for at mappen findes før alt andet
-    static {
-        try {
-            if (Files.notExists(APP_DATA_PATH)) {
-                Files.createDirectories(APP_DATA_PATH);
-            }
-        } catch (IOException e) {
-            e.printStackTrace(); // Eller log til bruger
-        }
-    }
 
     static {
         objectMapper.registerModule(new JavaTimeModule()); // Registrér JavaTimeModule
@@ -128,19 +112,12 @@ public class IOutils {
         List<DreamData> saveMe = new ArrayList<>();
         for (Dream d : dreams.values()) {
             DreamData temp = new DreamData();
+            temp.id = d.getId();
             temp.categories = d.getCategories();
             temp.indhold = d.getIndhold();
             temp.dagrest = d.getDagrest();
             temp.tolkning = d.getTolkning();
             temp.dato = d.getDato();
-            temp.lucid = d.getLucid();
-            temp.praktiserer = d.getPraktiserer();
-            temp.modsat = d.getModsat();
-            temp.arketypisk = d.getArketypisk();
-            temp.ompraksis = d.getOmpraksis();
-            temp.mareridt = d.getMareridt();
-            temp.kollektiv = d.getKollektiv();
-            temp.advarsel = d.getAdvarsel();
 
             saveMe.add(temp);
         }

@@ -9,16 +9,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CSSUpdater {
-    private static final Path APP_DATA_PATH = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData");
-    private static final Path TEMP_PATH = APP_DATA_PATH.resolve("tempTema.css");
-    private static final Path CURRENT_PATH = APP_DATA_PATH.resolve("currentTema.css");
+    private static final Path TEMP_PATH = AppPaths.APP_DATA_PATH.resolve("tempTema.css");
+    private static final Path CURRENT_PATH = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
 
     // Sørg for at kopiere CSS-filerne, hvis de ikke allerede findes i appens mappe
     public static void init() {
         try {
-            if (Files.notExists(APP_DATA_PATH)) {
-                Files.createDirectories(APP_DATA_PATH);
-            }
             // Kopier "currentTema.css" og "tempTema.css" fra resources til appens mappe, hvis de ikke findes
             copyCssIfNotExists("fixit/dreams/currentTema.css", CURRENT_PATH);
             copyCssIfNotExists("fixit/dreams/tempTema.css", TEMP_PATH);

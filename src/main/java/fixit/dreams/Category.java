@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class Category {
+    public static final String FLAGS_CATEGORY_NAME = "Kvaliteter";
+    public static final List<String> FLAGS_SYMBOLS_IN_ORDER = List.of(
+            "Lucid", "Praktiserer", "Modsatkønnet", "Arketypisk", "Om praksis", "Mareridt", "Advarsel", "Kollektiv");
+
     private TreeSet<String> symbols;
     private ArrayList<String> customOrder;
     private boolean hasCustomOrder;
@@ -18,11 +22,34 @@ public class Category {
 
     public Category(String name) {
         this.name = name;
-        hasCustomOrder = (List.of("Chakraer", "Forløb").contains(name));
+        hasCustomOrder = (List.of("Chakraer", "Forløb", FLAGS_CATEGORY_NAME).contains(name));
         symbols = new TreeSet<>();
         ccbDream = new ArrayList<>();
         ccbFilter = new ArrayList<>();
         customOrder = new ArrayList<>();
+    }
+
+    public boolean isFlagsCategory() {
+        return FLAGS_CATEGORY_NAME.equals(name);
+    }
+
+    // Bygger CategoryDTO'en for "Kvaliteter" direkte fra de 8 checkboxes' tilstand -
+    // ikke via ccbDream/getccbDreamSelections(), da denne kategori bevidst IKKE har en CheckComboBox i UI'et.
+    public static CategoryDTO buildFlagsCategoryDTO(boolean lucid, boolean praktiserer, boolean modsat, boolean arketypisk,
+                                                      boolean ompraksis, boolean mareridt, boolean advarsel, boolean kollektiv) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.name = FLAGS_CATEGORY_NAME;
+        dto.symbols = new TreeSet<>();
+        if (lucid) dto.symbols.add("Lucid");
+        if (praktiserer) dto.symbols.add("Praktiserer");
+        if (modsat) dto.symbols.add("Modsatkønnet");
+        if (arketypisk) dto.symbols.add("Arketypisk");
+        if (ompraksis) dto.symbols.add("Om praksis");
+        if (mareridt) dto.symbols.add("Mareridt");
+        if (advarsel) dto.symbols.add("Advarsel");
+        if (kollektiv) dto.symbols.add("Kollektiv");
+        dto.customOrder = new ArrayList<>(FLAGS_SYMBOLS_IN_ORDER);
+        return dto;
     }
 
     public String getName() {

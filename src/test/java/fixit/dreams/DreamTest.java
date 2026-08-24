@@ -12,18 +12,11 @@ class DreamTest {
     private DreamData fullDreamData() {
         DreamData data = new DreamData();
         data.categories = new ArrayList<>();
+        data.categories.add(Category.buildFlagsCategoryDTO(true, true, false, true, false, false, false, true));
         data.indhold = "Jeg fløj over en skov";
         data.dagrest = "Så en fugl i dag";
         data.tolkning = "Frihed";
         data.dato = LocalDate.of(2026, 3, 15);
-        data.lucid = true;
-        data.praktiserer = true;
-        data.modsat = false;
-        data.arketypisk = true;
-        data.ompraksis = false;
-        data.mareridt = false;
-        data.kollektiv = true;
-        data.advarsel = false;
         return data;
     }
 
@@ -36,14 +29,24 @@ class DreamTest {
         assertEquals(data.dagrest, dream.getDagrest());
         assertEquals(data.tolkning, dream.getTolkning());
         assertEquals(data.dato, dream.getDato());
-        assertEquals(data.lucid, dream.getLucid());
-        assertEquals(data.praktiserer, dream.getPraktiserer());
-        assertEquals(data.modsat, dream.getModsat());
-        assertEquals(data.arketypisk, dream.getArketypisk());
-        assertEquals(data.ompraksis, dream.getOmpraksis());
-        assertEquals(data.mareridt, dream.getMareridt());
-        assertEquals(data.kollektiv, dream.getKollektiv());
-        assertEquals(data.advarsel, dream.getAdvarsel());
+        assertTrue(dream.hasFlag("Lucid"));
+        assertTrue(dream.hasFlag("Praktiserer"));
+        assertFalse(dream.hasFlag("Modsatkønnet"));
+        assertTrue(dream.hasFlag("Arketypisk"));
+        assertFalse(dream.hasFlag("Om praksis"));
+        assertFalse(dream.hasFlag("Mareridt"));
+        assertTrue(dream.hasFlag("Kollektiv"));
+        assertFalse(dream.hasFlag("Advarsel"));
+    }
+
+    @Test
+    void id_genbruges_fra_dreamdata_naar_sat() {
+        DreamData data = fullDreamData();
+        data.id = "fast-id-123";
+
+        Dream dream = new Dream(data);
+
+        assertEquals("fast-id-123", dream.getId());
     }
 
     @Test

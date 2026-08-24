@@ -34,12 +34,11 @@ class StatsTest {
     private void addDream(User user, LocalDate dato, boolean lucid, boolean mareridt, CategoryDTO... categories) {
         DreamData data = new DreamData();
         data.categories = new ArrayList<>(List.of(categories));
+        data.categories.add(Category.buildFlagsCategoryDTO(lucid, false, false, false, false, mareridt, false, false));
         data.indhold = "test";
         data.dagrest = "";
         data.tolkning = "";
         data.dato = dato;
-        data.lucid = lucid;
-        data.mareridt = mareridt;
         user.addDream(new Dream(data));
     }
 
@@ -61,26 +60,26 @@ class StatsTest {
     @Test
     void getBoolStatsPerDag_taeller_kun_den_praecise_dag() {
         Stats stats = buildFixtureStats();
-        assertEquals(1, stats.getBoolStatsPerDag(stats.getLucidStats(), D1));
-        assertEquals(0, stats.getBoolStatsPerDag(stats.getLucidStats(), D2));
+        assertEquals(1, stats.getBoolStatsPerDag(stats.getFlagStats("Lucid"), D1));
+        assertEquals(0, stats.getBoolStatsPerDag(stats.getFlagStats("Lucid"), D2));
     }
 
     @Test
     void getBoolStatsPerUge_slar_dromme_i_samme_iso_uge_sammen() {
         Stats stats = buildFixtureStats();
         // D1 og D2 ligger i samme ISO-uge: 1 lucid (D1) + 1 mareridt (D2)
-        assertEquals(1, stats.getBoolStatsPerUge(stats.getLucidStats(), D1));
-        assertEquals(1, stats.getBoolStatsPerUge(stats.getMareridtStats(), D1));
+        assertEquals(1, stats.getBoolStatsPerUge(stats.getFlagStats("Lucid"), D1));
+        assertEquals(1, stats.getBoolStatsPerUge(stats.getFlagStats("Mareridt"), D1));
         // D3 ligger i en anden uge for sig selv
-        assertEquals(1, stats.getBoolStatsPerUge(stats.getLucidStats(), D3));
+        assertEquals(1, stats.getBoolStatsPerUge(stats.getFlagStats("Lucid"), D3));
     }
 
     @Test
     void getBoolStatsPerM_slar_hele_maneden_sammen() {
         Stats stats = buildFixtureStats();
         // Januar: D1(lucid) + D3(lucid) = 2, D4 ligger i februar
-        assertEquals(2, stats.getBoolStatsPerM(stats.getLucidStats(), D1));
-        assertEquals(0, stats.getBoolStatsPerM(stats.getLucidStats(), D4));
+        assertEquals(2, stats.getBoolStatsPerM(stats.getFlagStats("Lucid"), D1));
+        assertEquals(0, stats.getBoolStatsPerM(stats.getFlagStats("Lucid"), D4));
     }
 
     @Test

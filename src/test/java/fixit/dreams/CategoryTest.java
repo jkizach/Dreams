@@ -102,4 +102,31 @@ class CategoryTest {
     void getName_returnerer_konstruktor_navn() {
         assertEquals("Farver", new Category("Farver").getName());
     }
+
+    @Test
+    void isFlagsCategory_er_sand_kun_for_kvaliteter() {
+        assertTrue(new Category("Kvaliteter").isFlagsCategory());
+        assertFalse(new Category("Farver").isFlagsCategory());
+    }
+
+    @Test
+    void hasCustomOrder_er_sand_for_kvaliteter() {
+        assertTrue(new Category("Kvaliteter").hasCustomOrder());
+    }
+
+    @Test
+    void buildFlagsCategoryDTO_indeholder_kun_de_afkrydsede_symboler() {
+        CategoryDTO dto = Category.buildFlagsCategoryDTO(true, false, false, false, false, true, false, false);
+
+        assertEquals("Kvaliteter", dto.name);
+        assertEquals(2, dto.symbols.size());
+        assertTrue(dto.symbols.contains("Lucid"));
+        assertTrue(dto.symbols.contains("Mareridt"));
+    }
+
+    @Test
+    void buildFlagsCategoryDTO_uden_flag_giver_tomme_symboler() {
+        CategoryDTO dto = Category.buildFlagsCategoryDTO(false, false, false, false, false, false, false, false);
+        assertTrue(dto.symbols.isEmpty());
+    }
 }

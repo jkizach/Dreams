@@ -23,7 +23,6 @@ import org.controlsfx.control.CheckComboBox;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -167,13 +166,13 @@ public class HovedmenuController {
         Scene scene = DreamApp.getCurrentScene();
         if (scene != null) {
             if (temp) {
-                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "tempTema.css");
+                Path cssPath = AppPaths.APP_DATA_PATH.resolve("tempTema.css");
                 File cssFile = cssPath.toFile();
                 scene.getStylesheets().clear();
                 scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
                 scene.getRoot().applyCss();
             } else {
-                Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
+                Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
                 File cssFile = cssPath.toFile();
                 scene.getStylesheets().clear();
                 scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
@@ -329,14 +328,10 @@ public class HovedmenuController {
                 dreamData.categories.add(c.getccbDreamSelections());
             }
 
-            dreamData.lucid = lucid.isSelected();
-            dreamData.praktiserer = praktiserer.isSelected();
-            dreamData.modsat = modsat.isSelected();
-            dreamData.arketypisk = arketypisk.isSelected();
-            dreamData.ompraksis = praksis.isSelected();
-            dreamData.mareridt = mareridt.isSelected();
-            dreamData.kollektiv = kollektiv.isSelected();
-            dreamData.advarsel = advarsel.isSelected();
+            dreamData.categories.add(Category.buildFlagsCategoryDTO(
+                    lucid.isSelected(), praktiserer.isSelected(), modsat.isSelected(), arketypisk.isSelected(),
+                    praksis.isSelected(), mareridt.isSelected(), advarsel.isSelected(), kollektiv.isSelected()
+            ));
 
             dreamData.indhold = skriveFelt.getText();
             dreamData.dagrest = dagrestFelt.getText();
@@ -613,7 +608,7 @@ public class HovedmenuController {
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
             //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
-            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
+            Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
             File cssFile = cssPath.toFile();
             root.getStylesheets().clear();
             root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
@@ -643,7 +638,7 @@ public class HovedmenuController {
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
             //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
-            Path cssPath = Paths.get(System.getProperty("user.home"), "Documents", "DrømmeappenData", "currentTema.css");
+            Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
             File cssFile = cssPath.toFile();
             root.getStylesheets().clear();
             root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources

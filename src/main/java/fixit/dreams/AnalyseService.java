@@ -93,8 +93,8 @@ public class AnalyseService extends ServiceMother{
         ArrayList<XYChart.Series<String, Number>> outdat = new ArrayList<>();
 
         // Det kan nu gøres smartere!!! Med StatsDO osv... for alle checkmodels er tilgængelige
-        // i user.getCategories() -- getccbFilterSelections returnerer en CategoryDTO med et TreeMap med symboler og et navn
-        for (Category c : user.getCategories()) {
+        // i user.getUiCategories() -- getccbFilterSelections returnerer en CategoryDTO med et TreeMap med symboler og et navn
+        for (Category c : user.getUiCategories()) {
             if (c.getccbFilterSelections() != null) {
                 for (String symbol : c.getccbFilterSelections().symbols) {
                     outdat.add(stats.makeXY(stats.getCategoryStats(c.getName()), symbol, indat.fra, indat.til, indat.xakse));
@@ -103,35 +103,35 @@ public class AnalyseService extends ServiceMother{
         }
 
         if (indat.lucid) {
-            outdat.add(stats.makeBoolXY(stats.getLucidStats(), indat.fra, indat.til, indat.xakse,"lucid"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Lucid"), indat.fra, indat.til, indat.xakse,"lucid"));
         }
 
         if (indat.praktiserer) {
-            outdat.add(stats.makeBoolXY(stats.getPraktisererStats(), indat.fra, indat.til, indat.xakse, "praktiserer"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Praktiserer"), indat.fra, indat.til, indat.xakse, "praktiserer"));
         }
 
         if (indat.modsat) {
-            outdat.add(stats.makeBoolXY(stats.getModsatStats(), indat.fra, indat.til, indat.xakse, "modsatkønnet"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Modsatkønnet"), indat.fra, indat.til, indat.xakse, "modsatkønnet"));
         }
 
         if (indat.kollektiv) {
-            outdat.add(stats.makeBoolXY(stats.getKollektivStats(), indat.fra, indat.til, indat.xakse, "kollektiv"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Kollektiv"), indat.fra, indat.til, indat.xakse, "kollektiv"));
         }
 
         if (indat.arketypisk) {
-            outdat.add(stats.makeBoolXY(stats.getArketypiskStats(), indat.fra, indat.til, indat.xakse, "arketypisk"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Arketypisk"), indat.fra, indat.til, indat.xakse, "arketypisk"));
         }
 
         if (indat.praksis) {
-            outdat.add(stats.makeBoolXY(stats.getPraksisStats(), indat.fra, indat.til, indat.xakse, "om praksis"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Om praksis"), indat.fra, indat.til, indat.xakse, "om praksis"));
         }
 
         if (indat.mareridt) {
-            outdat.add(stats.makeBoolXY(stats.getMareridtStats(), indat.fra, indat.til, indat.xakse, "mareridt"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Mareridt"), indat.fra, indat.til, indat.xakse, "mareridt"));
         }
 
         if (indat.advarsel) {
-            outdat.add(stats.makeBoolXY(stats.getAdvarselStats(), indat.fra, indat.til, indat.xakse, "advarsel"));
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Advarsel"), indat.fra, indat.til, indat.xakse, "advarsel"));
         }
 
         return outdat;
@@ -173,7 +173,7 @@ public class AnalyseService extends ServiceMother{
                     if (andOr) {
                         // Check om drømmen matcher ift. Valget i CCBerne:
 
-                        for (Category c : user.getCategories()) {
+                        for (Category c : user.getUiCategories()) {
                             if (c.getccbFilterSelections() != null) {
                                 for (String symbol : c.getccbFilterSelections().symbols) {
                                     // Hvis alle matcher så go on! Findes der slet ingen CategoryDTO for kategorien
@@ -194,9 +194,9 @@ public class AnalyseService extends ServiceMother{
                         }
 
                         // Check om drømmen matcher ift. checkboxes
-                        if (d.getAdvarsel() == data.advarsel && d.getArketypisk() == data.arketypisk && d.getMareridt() == data.mareridt &&
-                        d.getKollektiv() == data.kollektiv && d.getModsat() == data.modsat && d.getLucid() == data.lucid &&
-                        d.getPraktiserer() == data.praktiserer && d.getOmpraksis() == data.praksis) {
+                        if (d.hasFlag("Advarsel") == data.advarsel && d.hasFlag("Arketypisk") == data.arketypisk && d.hasFlag("Mareridt") == data.mareridt &&
+                        d.hasFlag("Kollektiv") == data.kollektiv && d.hasFlag("Modsatkønnet") == data.modsat && d.hasFlag("Lucid") == data.lucid &&
+                        d.hasFlag("Praktiserer") == data.praktiserer && d.hasFlag("Om praksis") == data.praksis) {
                             DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                         }
@@ -204,14 +204,14 @@ public class AnalyseService extends ServiceMother{
                     } else {
                         // nu er det en ELLER-logik, så nu skal d tilføjes bare én kvalitet matcher:
                         // CBer først:
-                        if ((data.lucid && d.getLucid())|(data.praksis && d.getOmpraksis())|(data.advarsel && d.getAdvarsel())|(data.arketypisk && d.getArketypisk())|
-                        (data.kollektiv && d.getKollektiv())|(data.modsat && d.getModsat())|(data.mareridt && d.getMareridt())|(data.praktiserer && d.getPraktiserer())) {
+                        if ((data.lucid && d.hasFlag("Lucid"))|(data.praksis && d.hasFlag("Om praksis"))|(data.advarsel && d.hasFlag("Advarsel"))|(data.arketypisk && d.hasFlag("Arketypisk"))|
+                        (data.kollektiv && d.hasFlag("Kollektiv"))|(data.modsat && d.hasFlag("Modsatkønnet"))|(data.mareridt && d.hasFlag("Mareridt"))|(data.praktiserer && d.hasFlag("Praktiserer"))) {
                             DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                             continue;
                         }
                         // Check om drømmen matcher ift. Valget i CCBerne og her er match = tilføj!
-                        for (Category c : user.getCategories()) {
+                        for (Category c : user.getUiCategories()) {
                             if (c.getccbFilterSelections() != null) {
                                 for (String symbol : c.getccbFilterSelections().symbols) {
                                     // Hvis alle matcher så go on!

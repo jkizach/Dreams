@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 class User {
     private static User instans = null;
@@ -32,6 +33,8 @@ class User {
     private ArrayList<VBox> filterVboxes = new ArrayList<>();
 
     private User() {
+        SchemaMigrator.migrateIfNeeded();
+
         UserDTO loadedUserDTO = IOutils.loadUser();
         HashMap<String,Tema> loadedTemaer = IOutils.loadTemaer();
         ArrayList<Category> loadedCategories = IOutils.loadCategories();
@@ -49,7 +52,7 @@ class User {
         if (loadedCategories != null) {
             System.out.println("Categories loaded!");
             this.categories = loadedCategories;
-            for (Category cat : categories) {
+            for (Category cat : getUiCategories()) {
                 kategoriLabels.add(cat.getName());
             }
         } else {
@@ -136,9 +139,19 @@ class User {
 
     public void refreshKategoriLabels() {
         kategoriLabels.clear();
-        for (Category cat : categories) {
+        for (Category cat : getUiCategories()) {
             kategoriLabels.add(cat.getName());
         }
+    }
+
+    public ArrayList<Category> getUiCategories() {
+        ArrayList<Category> result = new ArrayList<>();
+        for (Category c : categories) {
+            if (!c.isFlagsCategory()) {
+                result.add(c);
+            }
+        }
+        return result;
     }
 
     public String getForetrukneTemaNavn() {
@@ -279,7 +292,12 @@ class User {
         pers.addSymbols(List.of());
         categories.add(pers);
 
-        for (Category cat : categories) {
+        Category kva = new Category(Category.FLAGS_CATEGORY_NAME);
+        kva.setSymbols(new TreeSet<>(Category.FLAGS_SYMBOLS_IN_ORDER));
+        kva.setCustomOrder(new ArrayList<>(Category.FLAGS_SYMBOLS_IN_ORDER));
+        categories.add(kva);
+
+        for (Category cat : getUiCategories()) {
             kategoriLabels.add(cat.getName());
         }
     }

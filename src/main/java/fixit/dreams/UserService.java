@@ -199,7 +199,7 @@ public class UserService extends ServiceMother {
     }
 
     public Boolean okToAddNewUserDefinedCat() {
-        return user.getCategories().size() <= 8;
+        return user.getUiCategories().size() <= 8;
     }
 
     public void fjernSymbol(String kategorien, String symbolet) {

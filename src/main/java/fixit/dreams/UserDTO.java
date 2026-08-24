@@ -7,6 +7,7 @@ public class UserDTO {
     public boolean visAdvarsel;
     public boolean visKollektiv;
     public LocalDate startFromThisDate;
+    public int schemaVersion;
 
     public UserDTO() {}
 
@@ -15,6 +16,7 @@ public class UserDTO {
         this.visAdvarsel = user.isVisAdvarsel();
         this.visKollektiv = user.isVisKollektiv();
         this.startFromThisDate = user.getStartFromThisDate();
+        this.schemaVersion = SchemaMigrator.CURRENT_SCHEMA_VERSION;
 
     }
 
