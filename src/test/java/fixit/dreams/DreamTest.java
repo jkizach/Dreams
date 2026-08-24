@@ -2,6 +2,7 @@ package fixit.dreams;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -67,6 +68,38 @@ class DreamTest {
 
         assertNotNull(first.getId());
         assertNotEquals(first.getId(), second.getId());
+    }
+
+    @Test
+    void constructor_stempler_updatedAt_med_nu_hvis_ikke_sat() {
+        Instant before = Instant.now();
+        Dream dream = new Dream(fullDreamData());
+        Instant after = Instant.now();
+
+        assertNotNull(dream.getUpdatedAt());
+        assertFalse(dream.getUpdatedAt().isBefore(before));
+        assertFalse(dream.getUpdatedAt().isAfter(after));
+    }
+
+    @Test
+    void constructor_genbruger_updatedAt_fra_dreamdata_naar_sat() {
+        DreamData data = fullDreamData();
+        data.updatedAt = Instant.parse("2020-01-01T00:00:00Z");
+
+        Dream dream = new Dream(data);
+
+        assertEquals(Instant.parse("2020-01-01T00:00:00Z"), dream.getUpdatedAt());
+    }
+
+    @Test
+    void touch_opdaterer_updatedAt_til_nu() {
+        DreamData data = fullDreamData();
+        data.updatedAt = Instant.parse("2020-01-01T00:00:00Z");
+        Dream dream = new Dream(data);
+
+        dream.touch();
+
+        assertTrue(dream.getUpdatedAt().isAfter(Instant.parse("2020-01-01T00:00:00Z")));
     }
 
     @Test

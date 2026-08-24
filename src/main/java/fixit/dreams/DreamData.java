@@ -1,5 +1,6 @@
 package fixit.dreams;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,4 +11,5 @@ public class DreamData {
     public String dagrest;
     public String tolkning;
     public LocalDate dato;
+    public Instant updatedAt;
 }

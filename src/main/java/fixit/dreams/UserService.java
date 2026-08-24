@@ -189,6 +189,7 @@ public class UserService extends ServiceMother {
             for (CategoryDTO dto : d.getCategories()) {
                 if (dto.name.equals(gammeltNavn)) {
                     dto.name = nytNavn;
+                    d.touch();
                 }
             }
         }
@@ -216,7 +217,9 @@ public class UserService extends ServiceMother {
         for (Dream d : user.getDreams().values()) {
             for (CategoryDTO cdto : d.getCategories()) {
                 if (cdto.name.equals(kategorien)) {
-                    cdto.symbols.remove(symbolet);
+                    if (cdto.symbols.remove(symbolet)) {
+                        d.touch();
+                    }
                     break;
                 }
             }

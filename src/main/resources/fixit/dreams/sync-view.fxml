@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="380.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.SyncController">
+   <children>
+      <Label layoutX="20.0" layoutY="16.0" style="-fx-font-weight: bold;" text="Sky-synkronisering" />
+
+      <VBox fx:id="loggedOutBox" layoutX="20.0" layoutY="50.0" prefWidth="340.0" spacing="10.0">
+         <children>
+            <Label text="Opret en konto eller log ind for at synkronisere dine drømme på tværs af computere. Helt valgfrit - appen virker fint uden." wrapText="true" />
+            <Label text="Email" />
+            <TextField fx:id="emailField" />
+            <Label text="Adgangskode" />
+            <PasswordField fx:id="passwordField" />
+            <Button fx:id="signUpBtn" mnemonicParsing="false" onAction="#handleSignUp" text="Opret konto" />
+            <Button fx:id="signInBtn" mnemonicParsing="false" onAction="#handleSignIn" text="Log ind" />
+         </children>
+      </VBox>
+
+      <VBox fx:id="loggedInBox" layoutX="20.0" layoutY="50.0" managed="false" prefWidth="340.0" spacing="10.0" visible="false">
+         <children>
+            <Label fx:id="loggedInEmailLbl" text="Logget ind som:" wrapText="true" />
+            <Label fx:id="lastSyncedLbl" text="Sidst synkroniseret: aldrig" />
+            <CheckBox fx:id="syncEnabledBox" mnemonicParsing="false" onAction="#handleToggleSyncEnabled" text="Synkroniser automatisk" />
+            <Button fx:id="syncNowBtn" mnemonicParsing="false" onAction="#handleSyncNow" text="Synkroniser nu" />
+            <Button fx:id="logoutBtn" mnemonicParsing="false" onAction="#handleLogout" text="Log ud (behold lokale data)" />
+         </children>
+      </VBox>
+
+      <Label fx:id="statusLbl" layoutX="20.0" layoutY="310.0" prefWidth="340.0" text="" wrapText="true" />
+      <Button layoutX="280.0" layoutY="345.0" mnemonicParsing="false" onAction="#closePopup" text="Luk" />
+   </children>
+</AnchorPane>

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -17,7 +18,7 @@ import java.util.UUID;
 // læser dem - så migrationen er uafhængig af hvordan de typede klasser (DreamData osv.) ser ud
 // lige nu, og gammel data ikke stille tabes når felter fjernes fra dem.
 class SchemaMigrator {
-    static final int CURRENT_SCHEMA_VERSION = 1;
+    static final int CURRENT_SCHEMA_VERSION = 2;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,6 +39,9 @@ class SchemaMigrator {
         if (onDiskVersion < 1) {
             migrateV0ToV1();
         }
+        if (onDiskVersion < 2) {
+            migrateV1ToV2();
+        }
 
         writeRawSchemaVersion(CURRENT_SCHEMA_VERSION);
     }
@@ -45,6 +49,34 @@ class SchemaMigrator {
     private static void migrateV0ToV1() {
         migrateDreamsV0ToV1();
         migrateCatsV0ToV1();
+    }
+
+    // Stempler enhver drøm uden updatedAt med nu-tidspunktet - forudsætning for at kunne
+    // afgøre hvilken version af en drøm der er nyest ved fremtidig cloud-synkronisering.
+    private static void migrateV1ToV2() {
+        if (Files.notExists(FILE_PATH_DREAM)) {
+            return;
+        }
+        try {
+            JsonNode root = objectMapper.readTree(FILE_PATH_DREAM.toFile());
+            if (!(root instanceof ArrayNode dreams)) {
+                return;
+            }
+
+            String now = Instant.now().toString();
+            for (JsonNode node : dreams) {
+                if (!(node instanceof ObjectNode dream)) {
+                    continue;
+                }
+                if (!dream.hasNonNull("updatedAt") || dream.get("updatedAt").asText("").isBlank()) {
+                    dream.put("updatedAt", now);
+                }
+            }
+
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_DREAM.toFile(), dreams);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Løfter gamle drømme (flade booleans, intet id) til det nye format: stabilt id +

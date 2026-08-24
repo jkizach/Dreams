@@ -283,6 +283,7 @@
                                  <children>
                                     <Button mnemonicParsing="false" onAction="#clickBtnOmHelp" text="Om appen" />
                                     <Button mnemonicParsing="false" onAction="#clickBtnOmHelp" text="Hjælp" />
+                                    <Button mnemonicParsing="false" onAction="#handleOpenSyncPopup" text="Sky-synkronisering" />
                                  </children>
                               </HBox>
                               <Separator prefHeight="5.0" prefWidth="489.0" />

@@ -53,6 +53,13 @@ public class DreamApp extends Application {
         IOutils.saveTemaer(tempo.getTemaer());
         IOutils.saveCategories(tempo.getCategories());
         IOutils.saveDreams(tempo.getDreams());
+
+        // Cloud-sync: push evt. ændringer til skyen (kun hvis brugeren har slået det til).
+        // Baggrunds-/dæmon-tråd, må aldrig forsinke eller blokere vindueslukning - hvis appen
+        // lukkes hurtigere end pushet når at blive færdigt, fanges det op ved næste sync.
+        Thread pushThread = new Thread(() -> new SyncService(tempo).pushOnCloseIfEnabled());
+        pushThread.setDaemon(true);
+        pushThread.start();
     }
 
     public static Scene getCurrentScene() {

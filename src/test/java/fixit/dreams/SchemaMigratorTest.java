@@ -134,6 +134,37 @@ class SchemaMigratorTest {
     }
 
     @Test
+    void migrerer_v1_dream_uden_updatedAt_til_v2() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":1}
+                """);
+        Files.writeString(dreamsJson, """
+                [{"id":"abc-123","categories":[],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05"}]
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        JsonNode dream = mapper.readTree(dreamsJson.toFile()).get(0);
+        assertTrue(dream.hasNonNull("updatedAt"));
+        assertFalse(dream.get("updatedAt").asText().isBlank());
+    }
+
+    @Test
+    void bevarer_eksisterende_updatedAt_ved_v1_til_v2_migration() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":1}
+                """);
+        Files.writeString(dreamsJson, """
+                [{"id":"abc-123","categories":[],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05","updatedAt":"2020-01-01T00:00:00Z"}]
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        JsonNode dream = mapper.readTree(dreamsJson.toFile()).get(0);
+        assertEquals("2020-01-01T00:00:00Z", dream.get("updatedAt").asText());
+    }
+
+    @Test
     void efter_migration_kan_dream_indlaeses_med_korrekte_flag_via_userinstans() throws IOException {
         writeOldFormatFixtures();
 

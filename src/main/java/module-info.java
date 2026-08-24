@@ -11,4 +11,8 @@ module fixit.dreams {
 
     opens fixit.dreams to javafx.fxml;
     exports fixit.dreams;
+
+    // SyncController (fx:controller) lever i fixit.dreams selv, ikke her - fixit.dreams.sync
+    // eksporteres udelukkende så Jackson kan reflektere over SyncDTO's public felter.
+    exports fixit.dreams.sync;
 }

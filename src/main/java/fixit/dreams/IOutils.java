@@ -3,9 +3,11 @@ package fixit.dreams;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fixit.dreams.sync.SyncDTO;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -17,6 +19,7 @@ public class IOutils {
     private static final Path FILE_PATH_TEMA = AppPaths.APP_DATA_PATH.resolve("temaer.json");
     private static final Path FILE_PATH_CAT = AppPaths.APP_DATA_PATH.resolve("cats.json");
     private static final Path FILE_PATH_DREAM = AppPaths.APP_DATA_PATH.resolve("dreams.json");
+    private static final Path FILE_PATH_SYNC = AppPaths.APP_DATA_PATH.resolve("sync.json");
     private static final String TXT_PATH_OM = "om.txt";
     private static final String TXT_PATH_HELP = "help.txt";
 
@@ -118,6 +121,7 @@ public class IOutils {
             temp.dagrest = d.getDagrest();
             temp.tolkning = d.getTolkning();
             temp.dato = d.getDato();
+            temp.updatedAt = d.getUpdatedAt();
 
             saveMe.add(temp);
         }
@@ -152,6 +156,31 @@ public class IOutils {
             e.printStackTrace();
         }
         return loadedDreams;
+    }
+
+    public static void saveSync(SyncDTO sync) {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_SYNC.toFile(), sync);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static SyncDTO loadSync() {
+        try {
+            return objectMapper.readValue(FILE_PATH_SYNC.toFile(), SyncDTO.class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    // Sletter sync.json fuldstændigt - bruges ved "log ud", rører aldrig de øvrige datafiler.
+    public static void deleteSync() {
+        try {
+            Files.deleteIfExists(FILE_PATH_SYNC);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void eksporterDreamlist(List<DreamDTO> dreams, String filNavn) {

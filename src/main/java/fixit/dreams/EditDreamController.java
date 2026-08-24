@@ -121,6 +121,7 @@ public class EditDreamController {
                 lucidEdit.isSelected(), praktisererEdit.isSelected(), modsatEdit.isSelected(), arketypiskEdit.isSelected(),
                 praksisEdit.isSelected(), mareridtEdit.isSelected(), advarselEdit.isSelected(), kollektivEdit.isSelected()
         ));
+        dream.touch();
 
         user.addDream(dream);
 

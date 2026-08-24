@@ -1,5 +1,6 @@
 package fixit.dreams;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -13,6 +14,7 @@ public class Dream {
     private String tolkning;
 
     private LocalDate dato;
+    private Instant updatedAt;
 
     public Dream() {} //jackson
 
@@ -23,6 +25,7 @@ public class Dream {
         this.dagrest = data.dagrest;
         this.tolkning = (data.tolkning != null)? data.tolkning : "";
         this.dato = data.dato;
+        this.updatedAt = (data.updatedAt != null) ? data.updatedAt : Instant.now();
     }
 
     public String getId() {
@@ -47,6 +50,16 @@ public class Dream {
 
     public LocalDate getDato() {
         return dato;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    // Kaldes af enhver kode-sti der reelt ændrer drømmens indhold (ikke ved indlæsning fra disk) -
+    // giver cloud-synkronisering et tidsstempel at afgøre "nyeste vinder" ud fra.
+    public void touch() {
+        this.updatedAt = Instant.now();
     }
 
     public void setIndhold(String indhold) {

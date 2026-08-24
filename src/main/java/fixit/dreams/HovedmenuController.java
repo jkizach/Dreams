@@ -2,6 +2,7 @@ package fixit.dreams;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -297,6 +298,18 @@ public class HovedmenuController {
         /* check for updates -- virker ikke, så er udkommenteret */
         GITHUBUpdater.checkForUpdateIfNeeded();
 
+        /* Cloud-sync: pull evt. nyere/manglende drømme fra skyen (kun hvis brugeren har slået
+           det til) - baggrundstråd, blokerer aldrig UI'et ved opstart. */
+        Thread pullThread = new Thread(() -> {
+            new SyncService(user).pullOnStartIfEnabled();
+            Platform.runLater(() -> {
+                userService.refreshDreamList(fromDatePicker.getValue(), toDatePicker.getValue());
+                updateForsteDromLabel();
+                user.genberegnStatsPlease();
+            });
+        });
+        pullThread.setDaemon(true);
+        pullThread.start();
     }
 
     @FXML
@@ -644,6 +657,32 @@ public class HovedmenuController {
             root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
             root.applyCss();
             popupStage.setTitle(type);
+            popupStage.getIcons().add(icon);
+
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* Loading af sky-synkroniserings-vinduet */
+    @FXML
+    private void handleOpenSyncPopup() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("sync-view.fxml"));
+            Parent root = fxmlLoader.load();
+
+            Stage popupStage = new Stage();
+
+            Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setScene(new Scene(root));
+            Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
+            File cssFile = cssPath.toFile();
+            root.getStylesheets().clear();
+            root.getStylesheets().add(cssFile.toURI().toString());
+            root.applyCss();
+            popupStage.setTitle("Sky-synkronisering");
             popupStage.getIcons().add(icon);
 
             popupStage.showAndWait();
