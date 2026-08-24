@@ -38,6 +38,9 @@ public class ServiceMother {
         return user.getCategories();
     }
 
+    protected boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {
+        return (date.isEqual(start) || date.isAfter(start)) && (date.isEqual(end) || date.isBefore(end));
+    }
 
 }
 

@@ -110,7 +110,7 @@ public class HovedmenuController {
 
         for (Category c : userService.getCats()) {
             if (valgteKategori.equals(c.getName())) {
-                fjernSymbolCCB.getItems().addAll(c.getSymbols());
+                fjernSymbolCCB.getItems().addAll(c.getSymbolsForDisplay());
                 break;
             }
         }
@@ -504,9 +504,6 @@ public class HovedmenuController {
         if (!tfNytNavn.getText().trim().isEmpty() && cbKategoriNavn.getValue() != null) {
             String displayText = userService.renameKategori(tfNytNavn.getText(),cbKategoriNavn.getValue());
             tfNytNavn.setText(displayText);
-            if (displayText.startsWith("Navn æ")) {
-
-            }
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
                 tfNytNavn.setText("Nyt navn");
             }));

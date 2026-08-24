@@ -62,8 +62,9 @@ public class Category {
     }
 
     public void addSymbol(String symbol) {
-        symbols.add(symbol);
-        if (hasCustomOrder) customOrder.add(symbol);
+        if (symbols.add(symbol) && hasCustomOrder) {
+            customOrder.add(symbol);
+        }
     }
 
     public void addSymbols(List<String> symbols) {

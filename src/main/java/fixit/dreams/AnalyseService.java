@@ -7,8 +7,6 @@ import javafx.scene.chart.XYChart;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -139,10 +137,6 @@ public class AnalyseService extends ServiceMother{
         return outdat;
     }
 
-    private boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {
-        return (date.isEqual(start) || date.isAfter(start)) && (date.isEqual(end) || date.isBefore(end));
-    }
-
     public void updateStats() {
         stats.calculateStats();
         user.statsErGenberegnet();
@@ -267,31 +261,18 @@ public class AnalyseService extends ServiceMother{
 
         // Kan en ny kat være null her?
         for (TreeMap<String,Integer> data : totalStats) {
-            ArrayList<String> temp = new ArrayList<>();
+            List<Map.Entry<String, Integer>> entries = new ArrayList<>(data.entrySet());
+            // Sorter efter tallet, ikke den formaterede streng...
+            entries.sort((a, b) -> Integer.compare(b.getValue(), a.getValue())); // Omvendt orden
 
-            for (Map.Entry<String, Integer> entry : data.entrySet()) {
+            ArrayList<String> temp = new ArrayList<>();
+            for (Map.Entry<String, Integer> entry : entries) {
                 temp.add(String.format("%-22s %3d", entry.getKey(), entry.getValue()));
             }
-
-            // Sorter temp efter tallet...
-            temp.sort((a, b) -> {
-                int valueA = extractNumber(a);
-                int valueB = extractNumber(b);
-                return Integer.compare(valueB, valueA); // Omvendt orden
-            });
 
             outDat.add(temp);
         }
         return outDat;
-    }
-
-    private static int extractNumber(String input) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(input);
-        if (matcher.find()) {
-            return Integer.parseInt(matcher.group());
-        }
-        throw new IllegalArgumentException("Intet tal fundet i strengen: " + input);
     }
 
     public String getForloebStage(String id) {

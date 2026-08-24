@@ -65,7 +65,7 @@ public class Stats {
         for (Dream dream : user.getDreams().values()) {
             LocalDate date = dream.getDato();
             YearMonth monthKey = YearMonth.from(date);
-            String weekKey = "" + date.getYear() + date.get(WeekFields.ISO.weekOfYear());
+            String weekKey = date.get(WeekFields.ISO.weekBasedYear()) + "-" + date.get(WeekFields.ISO.weekOfWeekBasedYear());
 
             // Check om earliest date skal ændres:
             if (firstDream.isAfter(date)) firstDream = date;
@@ -114,7 +114,7 @@ public class Stats {
     }
 
     public TreeMap<String, Integer> getStatsPerUge(TreeMap<String, TreeMap<String, Integer>> statsMap, LocalDate date) {
-        String weekKey = "" + date.getYear() + date.get(WeekFields.ISO.weekOfYear());
+        String weekKey = date.get(WeekFields.ISO.weekBasedYear()) + "-" + date.get(WeekFields.ISO.weekOfWeekBasedYear());
         return statsMap.getOrDefault(weekKey, new TreeMap<>());
     }
 
@@ -127,7 +127,7 @@ public class Stats {
     }
 
     public int getBoolStatsPerUge(Map<String, Integer> statsMap, LocalDate date) {
-        String weekKey = "" + date.getYear() + date.get(WeekFields.ISO.weekOfYear());
+        String weekKey = date.get(WeekFields.ISO.weekBasedYear()) + "-" + date.get(WeekFields.ISO.weekOfWeekBasedYear());
         return statsMap.getOrDefault(weekKey, 0);
     }
 

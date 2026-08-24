@@ -155,6 +155,11 @@ public class UserService extends ServiceMother {
         if (Character.isLowerCase(first)) {
             kategoriNavn = kategoriNavn.substring(0, 1).toUpperCase() + kategoriNavn.substring(1);
         }
+        for (Category c : user.getCategories()) {
+            if (c.getName().equals(kategoriNavn)) {
+                return;
+            }
+        }
         user.addCategory(kategoriNavn);
         kategorier.clear();
         kategorier.addAll(user.getKategoriLabels());
@@ -253,10 +258,6 @@ public class UserService extends ServiceMother {
     public void setStartDate(LocalDate startDate) {
         user.setStartFromThisDate(startDate);
         user.genberegnStatsPlease();
-    }
-
-    private boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {
-        return (date.isEqual(start) || date.isAfter(start)) && (date.isEqual(end) || date.isBefore(end));
     }
 }
 
