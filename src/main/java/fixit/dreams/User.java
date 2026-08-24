@@ -96,6 +96,11 @@ class User {
         return instans;
     }
 
+    // test-only seam; package-private, usynlig uden for fixit.dreams
+    static synchronized void resetForTests() {
+        instans = null;
+    }
+
 
     private void addPredefinedThemes() {
         Tema darkGreen = new Tema(Color.web("#1a1a1a"),Color.web("#62cd84"),Color.web("#262626"),Color.web("#333333"),
