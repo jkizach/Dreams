@@ -13,4 +13,5 @@ public class FilterDTO {
     public boolean mareridt;
     public boolean kollektiv;
     public boolean advarsel;
+    public boolean holografisk;
 }

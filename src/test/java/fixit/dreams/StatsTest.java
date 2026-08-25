@@ -34,7 +34,7 @@ class StatsTest {
     private void addDream(User user, LocalDate dato, boolean lucid, boolean mareridt, CategoryDTO... categories) {
         DreamData data = new DreamData();
         data.categories = new ArrayList<>(List.of(categories));
-        data.categories.add(Category.buildFlagsCategoryDTO(lucid, false, false, false, false, mareridt, false, false));
+        data.categories.add(Category.buildFlagsCategoryDTO(lucid, false, false, false, false, mareridt, false, false, false));
         data.indhold = "test";
         data.dagrest = "";
         data.tolkning = "";
@@ -87,7 +87,7 @@ class StatsTest {
         Stats stats = buildFixtureStats();
         int[] result = stats.getTalBinary(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31));
 
-        // Rækkefølge fra Stats-konstruktøren: lucid, praktiserer, modsat, arketypisk, praksis, mareridt, advarsel, kollektiv
+        // Rækkefølge fra Category.FLAGS_SYMBOLS_IN_ORDER: lucid, praktiserer, modsat, arketypisk, praksis, mareridt, advarsel, kollektiv, holografisk
         assertEquals(2, result[0], "lucid: D1 + D3");
         assertEquals(2, result[5], "mareridt: D2 + D3");
         assertEquals(0, result[1]);
@@ -96,6 +96,7 @@ class StatsTest {
         assertEquals(0, result[4]);
         assertEquals(0, result[6]);
         assertEquals(0, result[7]);
+        assertEquals(0, result[8]);
     }
 
     @Test

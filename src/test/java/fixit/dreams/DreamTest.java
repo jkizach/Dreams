@@ -13,7 +13,7 @@ class DreamTest {
     private DreamData fullDreamData() {
         DreamData data = new DreamData();
         data.categories = new ArrayList<>();
-        data.categories.add(Category.buildFlagsCategoryDTO(true, true, false, true, false, false, false, true));
+        data.categories.add(Category.buildFlagsCategoryDTO(true, true, false, true, false, false, false, true, true));
         data.indhold = "Jeg fløj over en skov";
         data.dagrest = "Så en fugl i dag";
         data.tolkning = "Frihed";
@@ -38,6 +38,7 @@ class DreamTest {
         assertFalse(dream.hasFlag("Mareridt"));
         assertTrue(dream.hasFlag("Kollektiv"));
         assertFalse(dream.hasFlag("Advarsel"));
+        assertTrue(dream.hasFlag("Holografisk"));
     }
 
     @Test

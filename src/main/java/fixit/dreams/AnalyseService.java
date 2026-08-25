@@ -134,6 +134,10 @@ public class AnalyseService extends ServiceMother{
             outdat.add(stats.makeBoolXY(stats.getFlagStats("Advarsel"), indat.fra, indat.til, indat.xakse, "advarsel"));
         }
 
+        if (indat.holografisk) {
+            outdat.add(stats.makeBoolXY(stats.getFlagStats("Holografisk"), indat.fra, indat.til, indat.xakse, "holografisk"));
+        }
+
         return outdat;
     }
 
@@ -196,7 +200,7 @@ public class AnalyseService extends ServiceMother{
                         // Check om drømmen matcher ift. checkboxes
                         if (d.hasFlag("Advarsel") == data.advarsel && d.hasFlag("Arketypisk") == data.arketypisk && d.hasFlag("Mareridt") == data.mareridt &&
                         d.hasFlag("Kollektiv") == data.kollektiv && d.hasFlag("Modsatkønnet") == data.modsat && d.hasFlag("Lucid") == data.lucid &&
-                        d.hasFlag("Praktiserer") == data.praktiserer && d.hasFlag("Om praksis") == data.praksis) {
+                        d.hasFlag("Praktiserer") == data.praktiserer && d.hasFlag("Om praksis") == data.praksis && d.hasFlag("Holografisk") == data.holografisk) {
                             DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                         }
@@ -205,7 +209,8 @@ public class AnalyseService extends ServiceMother{
                         // nu er det en ELLER-logik, så nu skal d tilføjes bare én kvalitet matcher:
                         // CBer først:
                         if ((data.lucid && d.hasFlag("Lucid"))|(data.praksis && d.hasFlag("Om praksis"))|(data.advarsel && d.hasFlag("Advarsel"))|(data.arketypisk && d.hasFlag("Arketypisk"))|
-                        (data.kollektiv && d.hasFlag("Kollektiv"))|(data.modsat && d.hasFlag("Modsatkønnet"))|(data.mareridt && d.hasFlag("Mareridt"))|(data.praktiserer && d.hasFlag("Praktiserer"))) {
+                        (data.kollektiv && d.hasFlag("Kollektiv"))|(data.modsat && d.hasFlag("Modsatkønnet"))|(data.mareridt && d.hasFlag("Mareridt"))|(data.praktiserer && d.hasFlag("Praktiserer"))|
+                        (data.holografisk && d.hasFlag("Holografisk"))) {
                             DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                             continue;
@@ -248,6 +253,10 @@ public class AnalyseService extends ServiceMother{
 
     public boolean usingAdvarsel() {
         return user.isVisAdvarsel();
+    }
+
+    public boolean usingHolografisk() {
+        return user.isVisHolografisk();
     }
 
     public int[] getTalBinary(LocalDate fra, LocalDate til) {

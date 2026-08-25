@@ -49,7 +49,7 @@ public class AnalyseController {
     private ComboBox<String> comboPieKategorier;
 
     @FXML
-    private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel;
+    private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel, holografisk;
 
     @FXML
     private Button btnVisGraf, btnAndOr, btnForloebVisListe, btnForloebPlus;
@@ -76,7 +76,11 @@ public class AnalyseController {
                     updateGuiDates();
                     loadTalData();
                     kollektiv.setVisible(user.isVisKollektiv());
+                    kollektiv.setManaged(user.isVisKollektiv());
                     advarsel.setVisible(user.isVisAdvarsel());
+                    advarsel.setManaged(user.isVisAdvarsel());
+                    holografisk.setVisible(user.isVisHolografisk());
+                    holografisk.setManaged(user.isVisHolografisk());
                     analyseService.updateForloeb();
                 });
             }
@@ -90,7 +94,11 @@ public class AnalyseController {
         kategoriLabels = user.getKategoriLabels();
 
         kollektiv.setVisible(user.isVisKollektiv());
+        kollektiv.setManaged(user.isVisKollektiv());
         advarsel.setVisible(user.isVisAdvarsel());
+        advarsel.setManaged(user.isVisAdvarsel());
+        holografisk.setVisible(user.isVisHolografisk());
+        holografisk.setManaged(user.isVisHolografisk());
 
         setGuiDates();
 
@@ -225,6 +233,7 @@ public class AnalyseController {
         data.mareridt = mareridt.isSelected();
         data.kollektiv = kollektiv.isSelected();
         data.advarsel = advarsel.isSelected();
+        data.holografisk = holografisk.isSelected();
 
         filterListe.getItems().clear();
 
@@ -270,7 +279,7 @@ public class AnalyseController {
 
     @FXML
     public void loadTalData() {
-        List<String> binaries = new ArrayList<>(List.of("Lucid", "Praktiserer", "Modsatkønnet", "Arketypisk", "Om praksis", "Mareridt","Advarsel","Kollektiv"));
+        List<String> binaries = new ArrayList<>(Category.FLAGS_SYMBOLS_IN_ORDER);
 
         talVboxBinary.getChildren().clear();
         talVboxBinaryNumbers.getChildren().clear();
@@ -284,7 +293,8 @@ public class AnalyseController {
             vals.setMaxWidth(Double.MAX_VALUE);
             vals.setText(String.valueOf(values[i]));
 
-            if ((!binaries.get(i).equals("Advarsel")||analyseService.usingAdvarsel()) && (!binaries.get(i).equals("Kollektiv")||analyseService.usingKollektiv())) {
+            if ((!binaries.get(i).equals("Advarsel")||analyseService.usingAdvarsel()) && (!binaries.get(i).equals("Kollektiv")||analyseService.usingKollektiv())
+                    && (!binaries.get(i).equals("Holografisk")||analyseService.usingHolografisk())) {
                 talVboxBinary.getChildren().add(lbl);
                 talVboxBinaryNumbers.getChildren().add(vals);
             }
@@ -340,6 +350,7 @@ public class AnalyseController {
         data.mareridt = mareridt.isSelected();
         data.kollektiv = kollektiv.isSelected();
         data.advarsel = advarsel.isSelected();
+        data.holografisk = holografisk.isSelected();
         data.praksis = praksis.isSelected();
         data.xakse = dayWeekOrMonth();
 

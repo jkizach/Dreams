@@ -101,6 +101,7 @@
                               </TabPane>
                               <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false" GridPane.rowIndex="4" />
                               <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" visible="false" GridPane.rowIndex="5" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" />
@@ -388,6 +389,11 @@
                                           <CheckBox fx:id="advarselStyrer" mnemonicParsing="false" onAction="#handleCbStyrerAdv" text="Vis checkboks: Advarsel">
                                              <tooltip>
                                                 <Tooltip text="Vælg om advarselsdrømme skal registreres eller ej" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="holografiskStyrer" mnemonicParsing="false" onAction="#handleCbStyrerHolo" text="Vis checkboks: Holografisk">
+                                             <tooltip>
+                                                <Tooltip text="Vælg om holografiske drømme skal registreres eller ej" />
                                              </tooltip>
                                           </CheckBox>
                                        </children>

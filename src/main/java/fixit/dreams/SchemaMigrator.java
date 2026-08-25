@@ -123,7 +123,7 @@ class SchemaMigrator {
 
                 if (!harAlleredeKvaliteter) {
                     CategoryDTO kvaliteter = Category.buildFlagsCategoryDTO(
-                            lucid, praktiserer, modsat, arketypisk, ompraksis, mareridt, advarsel, kollektiv);
+                            lucid, praktiserer, modsat, arketypisk, ompraksis, mareridt, advarsel, kollektiv, false);
                     categories.add(objectMapper.valueToTree(kvaliteter));
                 }
 

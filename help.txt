@@ -17,7 +17,7 @@ Indhold
 1. Ny drøm
 Her kan man skrive sin drøm i det store skrivefelt, og sætte datoen for drømmen (den starter med dagens dato).
 Der er også et lille felt til dagresten. 
-Så er der 8 bokse hvor man kan krydse af om drømmen fx var lucid, handlede om meditation osv. To af boksene (kollektiv og advarsel) er skjulte som udgangspunkt, men man kan gøre dem synlige i indstillingerne.
+Så er der 9 bokse hvor man kan krydse af om drømmen fx var lucid, handlede om meditation osv. Tre af boksene (kollektiv, advarsel og holografisk) er skjulte som udgangspunkt, men man kan gøre dem synlige i indstillingerne.
 I højre side er der 5 symbolkategorier, hvor man kan holde styr på hvilke symboler der forekommer i drømmen: Arketyper, Chakraer, Farver, Dyr og Personer.
 Man kan selv tilføje eller fjerne symboler, og tilføje op til 3 nye symbolkategorier. Fx kunne man tilføje Kropssteder, hvis det er noget man kan bruge, eller Temaer, eller hvad man nu synes er vigtigt.
 
@@ -43,7 +43,7 @@ Under det finder man "Tilføj symbol". Her kan man vælge en symbolkategori, og 
 
 Hvis man vil tilføje en helt ny symbolkategori (Kropssteder, Temaer, Lyde...) så skriver man bare navnet på kategorien i feltet "Navn" og trykker på "Tilføj". Bemærk at der kun kan tilføjes 3 nye kategorier, og at de ikke kan slettes igen - så brug den med omtanke.
 
-Nederst i højre side er der to bokse hvor man kan gøre kollektiv og advarsel synlige eller usynlige i appen. Så aktiver dem, hvis du har kollektive drømme, eller advarselsdrømme.
+Nederst i højre side er der tre bokse hvor man kan gøre kollektiv, advarsel og holografisk synlige eller usynlige i appen. Så aktiver dem, hvis du har kollektive drømme, advarselsdrømme eller holografiske drømme.
 
 5. Analyse-fanerne
 5.1 Tal

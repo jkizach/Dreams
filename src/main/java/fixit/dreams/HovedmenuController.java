@@ -71,7 +71,7 @@ public class HovedmenuController {
     private VBox vBoxSymboler = new VBox();
 
     @FXML
-    private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel, kollektivStyrer, advarselStyrer;
+    private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel, holografisk, kollektivStyrer, advarselStyrer, holografiskStyrer;
 
     @FXML
     private Tab settingsTab;
@@ -281,11 +281,16 @@ public class HovedmenuController {
         cbTemaer.setValue(userService.getTemaNavn());
         cbFonts.getItems().addAll("Courier New", "Source Code Pro");
 
-        /* ADVARSEL OG KOLLEKTIV - VIS ELLER EJ */
+        /* ADVARSEL, KOLLEKTIV OG HOLOGRAFISK - VIS ELLER EJ */
         kollektiv.setVisible(userService.isVisKollektiv());
+        kollektiv.setManaged(userService.isVisKollektiv());
         advarsel.setVisible(userService.isVisAdvarsel());
+        advarsel.setManaged(userService.isVisAdvarsel());
+        holografisk.setVisible(userService.isVisHolografisk());
+        holografisk.setManaged(userService.isVisHolografisk());
         kollektivStyrer.setSelected(userService.isVisKollektiv());
         advarselStyrer.setSelected(userService.isVisAdvarsel());
+        holografiskStyrer.setSelected(userService.isVisHolografisk());
 
         /* ANALYSETAB */
         analyseTab.setOnSelectionChanged(event -> {
@@ -343,7 +348,8 @@ public class HovedmenuController {
 
             dreamData.categories.add(Category.buildFlagsCategoryDTO(
                     lucid.isSelected(), praktiserer.isSelected(), modsat.isSelected(), arketypisk.isSelected(),
-                    praksis.isSelected(), mareridt.isSelected(), advarsel.isSelected(), kollektiv.isSelected()
+                    praksis.isSelected(), mareridt.isSelected(), advarsel.isSelected(), kollektiv.isSelected(),
+                    holografisk.isSelected()
             ));
 
             dreamData.indhold = skriveFelt.getText();
@@ -389,7 +395,7 @@ public class HovedmenuController {
         newDreamDate.setValue(LocalDate.now());
 
         List<CheckBox> cbs = Arrays.asList(
-                lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel
+                lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel, holografisk
         );
         for (CheckBox cb : cbs) {
             cb.setSelected(false);
@@ -535,24 +541,26 @@ public class HovedmenuController {
 
     @FXML
     public void handleCbStyrerAdv() {
-        if (advarselStyrer.isSelected()) {
-            advarsel.setVisible(true);
-            userService.setVisAdvarsel(true);
-        } else {
-            advarsel.setVisible(false);
-            userService.setVisAdvarsel(false);
-        }
+        boolean vis = advarselStyrer.isSelected();
+        advarsel.setVisible(vis);
+        advarsel.setManaged(vis);
+        userService.setVisAdvarsel(vis);
     }
 
     @FXML
     public void handleCbStyrerKol() {
-        if (kollektivStyrer.isSelected()) {
-            kollektiv.setVisible(true);
-            userService.setVisKollektiv(true);
-        } else {
-            kollektiv.setVisible(false);
-            userService.setVisKollektiv(false);
-        }
+        boolean vis = kollektivStyrer.isSelected();
+        kollektiv.setVisible(vis);
+        kollektiv.setManaged(vis);
+        userService.setVisKollektiv(vis);
+    }
+
+    @FXML
+    public void handleCbStyrerHolo() {
+        boolean vis = holografiskStyrer.isSelected();
+        holografisk.setVisible(vis);
+        holografisk.setManaged(vis);
+        userService.setVisHolografisk(vis);
     }
 
     private void updateKategoriCCB(String ccb) {

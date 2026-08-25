@@ -116,7 +116,7 @@ class CategoryTest {
 
     @Test
     void buildFlagsCategoryDTO_indeholder_kun_de_afkrydsede_symboler() {
-        CategoryDTO dto = Category.buildFlagsCategoryDTO(true, false, false, false, false, true, false, false);
+        CategoryDTO dto = Category.buildFlagsCategoryDTO(true, false, false, false, false, true, false, false, false);
 
         assertEquals("Kvaliteter", dto.name);
         assertEquals(2, dto.symbols.size());
@@ -126,7 +126,15 @@ class CategoryTest {
 
     @Test
     void buildFlagsCategoryDTO_uden_flag_giver_tomme_symboler() {
-        CategoryDTO dto = Category.buildFlagsCategoryDTO(false, false, false, false, false, false, false, false);
+        CategoryDTO dto = Category.buildFlagsCategoryDTO(false, false, false, false, false, false, false, false, false);
         assertTrue(dto.symbols.isEmpty());
+    }
+
+    @Test
+    void buildFlagsCategoryDTO_inkluderer_holografisk() {
+        CategoryDTO dto = Category.buildFlagsCategoryDTO(false, false, false, false, false, false, false, false, true);
+
+        assertEquals(1, dto.symbols.size());
+        assertTrue(dto.symbols.contains("Holografisk"));
     }
 }

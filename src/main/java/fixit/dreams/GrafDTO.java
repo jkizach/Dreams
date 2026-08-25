@@ -14,5 +14,6 @@ public class GrafDTO {
     public boolean mareridt;
     public boolean kollektiv;
     public boolean advarsel;
+    public boolean holografisk;
     public String xakse;
 }

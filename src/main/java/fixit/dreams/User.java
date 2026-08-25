@@ -25,6 +25,7 @@ class User {
     private HashMap<String,Tema> temaer;
     private boolean visAdvarsel = false;
     private boolean visKollektiv = false;
+    private boolean visHolografisk = false;
     private LocalDate startFromThisDate = null;
     protected BooleanProperty skalStatsGenberegnes = new SimpleBooleanProperty(false);
     protected StringProperty dreamEdited = new SimpleStringProperty("tom");
@@ -73,6 +74,7 @@ class User {
             this.foretrukneTema = loadedUserDTO.foretrukneTema;
             this.visAdvarsel = loadedUserDTO.visAdvarsel;
             this.visKollektiv = loadedUserDTO.visKollektiv;
+            this.visHolografisk = loadedUserDTO.visHolografisk;
             this.startFromThisDate = (loadedUserDTO.startFromThisDate != null) ? loadedUserDTO.startFromThisDate : getFirstDreamDate();
 
         } else {
@@ -200,6 +202,14 @@ class User {
 
     public void setVisKollektiv(boolean visKollektiv) {
         this.visKollektiv = visKollektiv;
+    }
+
+    public boolean isVisHolografisk() {
+        return visHolografisk;
+    }
+
+    public void setVisHolografisk(boolean visHolografisk) {
+        this.visHolografisk = visHolografisk;
     }
 
     public void statsErGenberegnet() {

@@ -24,7 +24,7 @@ class StatsWeekKeyTest {
     private Dream lucidDreamOn(LocalDate dato) {
         DreamData data = new DreamData();
         data.categories = new ArrayList<>();
-        data.categories.add(Category.buildFlagsCategoryDTO(true, false, false, false, false, false, false, false));
+        data.categories.add(Category.buildFlagsCategoryDTO(true, false, false, false, false, false, false, false, false));
         data.indhold = "test";
         data.dagrest = "";
         data.tolkning = "";

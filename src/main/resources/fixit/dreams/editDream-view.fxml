@@ -37,6 +37,7 @@
             <CheckBox fx:id="praktisererEdit" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="1" />
             <CheckBox fx:id="modsatEdit" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="2" />
             <CheckBox fx:id="kollektivEdit" mnemonicParsing="false" text="Kollektiv" GridPane.rowIndex="3" />
+            <CheckBox fx:id="holografiskEdit" mnemonicParsing="false" text="Holografisk" GridPane.rowIndex="4" />
             <CheckBox fx:id="arketypiskEdit" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1" />
             <CheckBox fx:id="praksisEdit" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <CheckBox fx:id="mareridtEdit" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="2" />

@@ -11,7 +11,7 @@ import java.util.TreeSet;
 public class Category {
     public static final String FLAGS_CATEGORY_NAME = "Kvaliteter";
     public static final List<String> FLAGS_SYMBOLS_IN_ORDER = List.of(
-            "Lucid", "Praktiserer", "Modsatkønnet", "Arketypisk", "Om praksis", "Mareridt", "Advarsel", "Kollektiv");
+            "Lucid", "Praktiserer", "Modsatkønnet", "Arketypisk", "Om praksis", "Mareridt", "Advarsel", "Kollektiv", "Holografisk");
 
     private TreeSet<String> symbols;
     private ArrayList<String> customOrder;
@@ -33,10 +33,11 @@ public class Category {
         return FLAGS_CATEGORY_NAME.equals(name);
     }
 
-    // Bygger CategoryDTO'en for "Kvaliteter" direkte fra de 8 checkboxes' tilstand -
+    // Bygger CategoryDTO'en for "Kvaliteter" direkte fra de 9 checkboxes' tilstand -
     // ikke via ccbDream/getccbDreamSelections(), da denne kategori bevidst IKKE har en CheckComboBox i UI'et.
     public static CategoryDTO buildFlagsCategoryDTO(boolean lucid, boolean praktiserer, boolean modsat, boolean arketypisk,
-                                                      boolean ompraksis, boolean mareridt, boolean advarsel, boolean kollektiv) {
+                                                      boolean ompraksis, boolean mareridt, boolean advarsel, boolean kollektiv,
+                                                      boolean holografisk) {
         CategoryDTO dto = new CategoryDTO();
         dto.name = FLAGS_CATEGORY_NAME;
         dto.symbols = new TreeSet<>();
@@ -48,6 +49,7 @@ public class Category {
         if (mareridt) dto.symbols.add("Mareridt");
         if (advarsel) dto.symbols.add("Advarsel");
         if (kollektiv) dto.symbols.add("Kollektiv");
+        if (holografisk) dto.symbols.add("Holografisk");
         dto.customOrder = new ArrayList<>(FLAGS_SYMBOLS_IN_ORDER);
         return dto;
     }

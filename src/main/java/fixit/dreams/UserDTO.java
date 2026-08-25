@@ -6,6 +6,7 @@ public class UserDTO {
     public String foretrukneTema;
     public boolean visAdvarsel;
     public boolean visKollektiv;
+    public boolean visHolografisk;
     public LocalDate startFromThisDate;
     public int schemaVersion;
 
@@ -15,6 +16,7 @@ public class UserDTO {
         this.foretrukneTema = user.getForetrukneTemaNavn();
         this.visAdvarsel = user.isVisAdvarsel();
         this.visKollektiv = user.isVisKollektiv();
+        this.visHolografisk = user.isVisHolografisk();
         this.startFromThisDate = user.getStartFromThisDate();
         this.schemaVersion = SchemaMigrator.CURRENT_SCHEMA_VERSION;
 
@@ -25,6 +27,7 @@ public class UserDTO {
         user.setForetrukneTema(this.foretrukneTema);
         user.setVisAdvarsel(this.visAdvarsel);
         user.setVisKollektiv(this.visKollektiv);
+        user.setVisHolografisk(this.visHolografisk);
         user.setStartFromThisDate(this.startFromThisDate);
         return user;
     }

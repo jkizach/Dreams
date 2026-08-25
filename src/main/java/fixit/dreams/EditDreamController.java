@@ -35,16 +35,20 @@ public class EditDreamController {
     private VBox vboxEditDream = new VBox();
 
     @FXML
-    private CheckBox lucidEdit, praktisererEdit, modsatEdit, arketypiskEdit, praksisEdit, mareridtEdit, kollektivEdit, advarselEdit;
+    private CheckBox lucidEdit, praktisererEdit, modsatEdit, arketypiskEdit, praksisEdit, mareridtEdit, kollektivEdit, advarselEdit, holografiskEdit;
 
     @FXML
     public void initialize() {
         user = User.getInstance();
         loadCCBs();
 
-        // De to valgfri cber:
+        // De tre valgfri cber:
         kollektivEdit.setVisible(user.isVisKollektiv());
+        kollektivEdit.setManaged(user.isVisKollektiv());
         advarselEdit.setVisible(user.isVisAdvarsel());
+        advarselEdit.setManaged(user.isVisAdvarsel());
+        holografiskEdit.setVisible(user.isVisHolografisk());
+        holografiskEdit.setManaged(user.isVisHolografisk());
     }
 
     private void loadCCBs() {
@@ -78,6 +82,7 @@ public class EditDreamController {
         mareridtEdit.setSelected(dream.hasFlag("Mareridt"));
         kollektivEdit.setSelected(dream.hasFlag("Kollektiv"));
         advarselEdit.setSelected(dream.hasFlag("Advarsel"));
+        holografiskEdit.setSelected(dream.hasFlag("Holografisk"));
         praksisEdit.setSelected(dream.hasFlag("Om praksis"));
         editDagrest.setText(dream.getDagrest());
         editTolkning.setText(dream.getTolkning());
@@ -119,7 +124,8 @@ public class EditDreamController {
 
         dream.setCategory(Category.buildFlagsCategoryDTO(
                 lucidEdit.isSelected(), praktisererEdit.isSelected(), modsatEdit.isSelected(), arketypiskEdit.isSelected(),
-                praksisEdit.isSelected(), mareridtEdit.isSelected(), advarselEdit.isSelected(), kollektivEdit.isSelected()
+                praksisEdit.isSelected(), mareridtEdit.isSelected(), advarselEdit.isSelected(), kollektivEdit.isSelected(),
+                holografiskEdit.isSelected()
         ));
         dream.touch();
 

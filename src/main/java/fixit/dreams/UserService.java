@@ -238,12 +238,21 @@ public class UserService extends ServiceMother {
         user.skalStatsGenberegnes.set(true);
     }
 
+    public void setVisHolografisk(boolean b) {
+        user.setVisHolografisk(b);
+        user.skalStatsGenberegnes.set(true);
+    }
+
     public boolean isVisAdvarsel() {
         return user.isVisAdvarsel();
     }
 
     public boolean isVisKollektiv() {
         return user.isVisKollektiv();
+    }
+
+    public boolean isVisHolografisk() {
+        return user.isVisHolografisk();
     }
 
     public LocalDate getStartDate() {
