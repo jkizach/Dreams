@@ -306,6 +306,20 @@ public class AnalyseService extends ServiceMother{
         return outDat;
     }
 
+
+    /**
+     * Formaterer en kategoris antal drømme som fx "101 (13%)", hvor procenten er
+     * andelen af det samlede antal drømme i datointervallet. Der rundes til nærmeste
+     * hele procent, og halve rundes op. Er totalen 0, vises kun antallet.
+     */
+    public static String formatAntalOgAndel(int antal, int total) {
+        if (total <= 0) {
+            return String.valueOf(antal);
+        }
+        long procent = Math.round(antal * 100.0 / total);
+        return antal + " (" + procent + "%)";
+    }
+
     public String getForloebStage(String id) {
         String out = "";
         for (CategoryDTO c : user.getDream(id).getCategories()) {

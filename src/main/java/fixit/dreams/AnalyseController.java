@@ -9,6 +9,9 @@ import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.CheckComboBox;
 
@@ -332,23 +335,34 @@ public class AnalyseController {
 
         ArrayList<ArrayList<String>> statsForCats = analyseService.getTalCategories(dpFromTal.getValue(), dpToTal.getValue());
         ArrayList<Category> cats = analyseService.getCats();
+        int totalDrommeTal = analyseService.countDreams(dpFromTal.getValue(), dpToTal.getValue());
 
         int counter = 0;
 
         for (int i = 0; i < cats.size(); i++) {
-            Label lbl = new Label();
-            lbl.setText(cats.get(i).getName());
+            String katNavn = cats.get(i).getName();
+            int antalIKat = analyseService.countDreamsForKategori(katNavn, dpFromTal.getValue(), dpToTal.getValue());
+
+            // Navnet venstrejusteret, antal + andel højrejusteret på samme linje
+            Label lbl = new Label(katNavn);
+            Label andelLbl = new Label(AnalyseService.formatAntalOgAndel(antalIKat, totalDrommeTal));
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            HBox overskrift = new HBox(lbl, spacer, andelLbl);
+            overskrift.setAlignment(Pos.CENTER_LEFT);
+            overskrift.setMaxWidth(Double.MAX_VALUE);
+
             ListView<String> tv = new ListView<>();
             tv.getStyleClass().add("custom-list-view");
             tv.getItems().addAll(statsForCats.get(i));
             tv.addEventHandler(MOUSE_CLICKED, Event -> tv.getSelectionModel().clearSelection());
 
             if (counter < 4) {
-                talVboxCatOne.getChildren().add(lbl);
+                talVboxCatOne.getChildren().add(overskrift);
                 talVboxCatOne.getChildren().add(tv);
                 counter++;
             } else {
-                talVboxCatTwo.getChildren().add(lbl);
+                talVboxCatTwo.getChildren().add(overskrift);
                 talVboxCatTwo.getChildren().add(tv);
                 counter++;
             }
