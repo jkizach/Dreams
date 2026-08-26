@@ -35,4 +35,26 @@ class SyncMergeTest {
     void lokal_vinder_ved_ens_tidsstempler() {
         assertFalse(SyncMerge.cloudWins(EARLIER, EARLIER));
     }
+
+    @Test
+    void sky_er_ajour_ved_ens_tidsstempler() {
+        // Regressionstest: dette er netop tilfældet der tidligere fik hver uændret drøm
+        // genuploadet ved hver synkronisering, og udtømte Firestores skrive-kvote.
+        assertTrue(SyncMerge.cloudIsUpToDate(EARLIER, EARLIER));
+    }
+
+    @Test
+    void sky_er_ajour_naar_sky_er_nyere() {
+        assertTrue(SyncMerge.cloudIsUpToDate(EARLIER, LATER));
+    }
+
+    @Test
+    void sky_er_ikke_ajour_naar_lokal_er_nyere() {
+        assertFalse(SyncMerge.cloudIsUpToDate(LATER, EARLIER));
+    }
+
+    @Test
+    void sky_er_ikke_ajour_naar_sky_data_mangler() {
+        assertFalse(SyncMerge.cloudIsUpToDate(EARLIER, null));
+    }
 }

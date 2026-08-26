@@ -3,6 +3,7 @@ package fixit.dreams;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import fixit.dreams.sync.AuthResult;
+import fixit.dreams.sync.DreamFingerprint;
 import fixit.dreams.sync.FirebaseAuthClient;
 import fixit.dreams.sync.FirebaseAuthException;
 import fixit.dreams.sync.FirestoreClient;
@@ -12,7 +13,9 @@ import fixit.dreams.sync.SyncMerge;
 import fixit.dreams.sync.SyncObjectMapper;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 // Orkestrerer valgfri cloud-synkronisering af drømme. Ligger bevidst i fixit.dreams (ikke
 // fixit.dreams.sync) fordi den er tæt koblet til User/Dream/DreamData/IOutils - selve
@@ -76,12 +79,11 @@ public class SyncService {
     // lokale (eller helt mangler lokalt), og push'er lokale drømme der er nyere end skyen
     // (eller helt mangler i skyen). Stille no-op hvis sync ikke er sat op/slået fra.
     //
-    // Faresignalet er IKKE "er det her den første sync" (det udløses jo også helt normalt af
-    // fx log ud/log ind igen på samme maskine med samme, allerede-synkede data) - det er om
-    // lokale og sky-drømme slet IKKE deler nogen ID'er, selvom begge sider har drømme. Det er
-    // fingeraftrykket for to uafhængigt migrerede kopier (se SyncConflictException). Findes der
-    // bare ét overlappende ID, er det tydeligvis samme datasæt med inkrementelle ændringer, og
-    // der sammenkøres uden at spørge - uanset hvor mange drømme der er tilføjet på hver side.
+    // Faresignalet er IKKE "er det her den første sync", og heller ikke bare "ID'erne overlapper
+    // ikke" - begge dele sker jo helt normalt og ufarligt (fx log ud/log ind igen, eller en frisk
+    // installation hvor man har skrevet et par nye drømme inden man synkroniserer). Signalet er,
+    // at lokale drømme INDHOLDSMÆSSIGT allerede ligger i skyen under et andet ID: kun dét kan
+    // blive til dubletter ved en sammenkøring (se countLikelyDuplicates/SyncConflictException).
     public void syncNow(boolean confirmedMerge) throws SyncException {
         SyncDTO dto = IOutils.loadSync();
         if (dto == null || !dto.syncEnabled) {
@@ -94,8 +96,11 @@ public class SyncService {
         try {
             Map<String, JsonNode> cloudDreams = firestoreClient.listDocuments(idToken, dreamsPath);
 
-            if (!confirmedMerge && looksLikeIndependentCopies(cloudDreams)) {
-                throw new SyncConflictException(user.getDreams().size(), cloudDreams.size());
+            if (!confirmedMerge) {
+                int duplicates = countLikelyDuplicates(cloudDreams);
+                if (duplicates > 0) {
+                    throw new SyncConflictException(user.getDreams().size(), cloudDreams.size(), duplicates);
+                }
             }
 
             pullNewerDreams(cloudDreams);
@@ -108,16 +113,42 @@ public class SyncService {
         }
     }
 
-    private boolean looksLikeIndependentCopies(Map<String, JsonNode> cloudDreams) {
+    // Tæller lokale drømme der ville blive til dubletter ved en sammenkøring: samme indhold som
+    // en sky-drøm, men under et andet ID. 0 betyder at det er sikkert at køre sammen uden at
+    // spørge brugeren - enten fordi siderne deler lineage (ID-overlap), eller fordi de lokale
+    // drømme simpelthen er nye og ukendte for skyen.
+    private int countLikelyDuplicates(Map<String, JsonNode> cloudDreams) {
         if (user.getDreams().isEmpty() || cloudDreams.isEmpty()) {
-            return false;
+            return 0;
         }
         for (String cloudId : cloudDreams.keySet()) {
             if (user.getDreams().containsKey(cloudId)) {
-                return false; // mindst ét overlap - samme datasæt, ikke to uafhængige kopier
+                return 0; // mindst ét fælles ID - tydeligvis samme datasæt med inkrementelle ændringer
             }
         }
-        return true;
+
+        Set<String> cloudFingerprints = new HashSet<>();
+        for (JsonNode fields : cloudDreams.values()) {
+            String fp = DreamFingerprint.of(textOrNull(fields, "dato"), textOrNull(fields, "indhold"));
+            if (fp != null) {
+                cloudFingerprints.add(fp);
+            }
+        }
+
+        int duplicates = 0;
+        for (Dream d : user.getDreams().values()) {
+            String fp = DreamFingerprint.of(
+                    d.getDato() != null ? d.getDato().toString() : null, d.getIndhold());
+            if (fp != null && cloudFingerprints.contains(fp)) {
+                duplicates++;
+            }
+        }
+        return duplicates;
+    }
+
+    private String textOrNull(JsonNode fields, String felt) {
+        JsonNode node = fields.get(felt);
+        return (node == null || node.isNull()) ? null : node.asText();
     }
 
     // Best-effort variant til brug ved appstart - fejl logges kun, blokerer aldrig UI'et.
@@ -165,7 +196,7 @@ public class SyncService {
             JsonNode cloudFields = cloudDreams.get(d.getId());
             Instant cloudUpdatedAt = extractUpdatedAt(cloudFields);
 
-            boolean cloudIsCurrent = cloudFields != null && SyncMerge.cloudWins(d.getUpdatedAt(), cloudUpdatedAt);
+            boolean cloudIsCurrent = SyncMerge.cloudIsUpToDate(d.getUpdatedAt(), cloudUpdatedAt);
             if (cloudIsCurrent) {
                 continue; // skyen har allerede den nyeste/samme version - intet at sende
             }

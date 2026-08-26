@@ -159,11 +159,13 @@ public class SyncController {
 
     private void askAboutConflict(SyncConflictException e) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Data både lokalt og i skyen");
-        alert.setHeaderText("Der findes " + e.getLocalCount() + " drømme lokalt og " + e.getCloudCount() + " drømme i skyen.");
-        alert.setContentText("Dette kan ske hvis to maskiner uafhængigt har fået de samme drømme, uden at have "
-                + "synkroniseret sammen før - i så fald kan en automatisk sammenkøring skabe dubletter (samme "
-                + "drøm to gange). Vil du sammenkøre alligevel?");
+        alert.setTitle("Mulige dubletter");
+        alert.setHeaderText(e.getDuplicateCount() + " af dine " + e.getLocalCount()
+                + " lokale drømme ser ud til allerede at ligge i skyen.");
+        alert.setContentText("De har samme dato og indhold som drømme i skyen, men et andet ID - det sker hvis "
+                + "to maskiner uafhængigt har fået de samme drømme uden at have synkroniseret sammen før. "
+                + "Kører du sammen alligevel, bliver de gemt som dubletter (samme drøm to gange). "
+                + "Vil du sammenkøre alligevel?");
         ButtonType jaBtn = new ButtonType("Sammenkør alligevel", ButtonBar.ButtonData.OK_DONE);
         ButtonType annullerBtn = new ButtonType("Annuller", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(jaBtn, annullerBtn);

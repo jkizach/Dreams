@@ -13,4 +13,11 @@ public final class SyncMerge {
         if (cloudUpdatedAt == null) return false;
         return cloudUpdatedAt.isAfter(localUpdatedAt);
     }
+
+    // true hvis sky-versionen allerede er ajour (samme eller nyere end den lokale) - så er en
+    // push overflødig. Modsat cloudWins() skal ENS tidsstempler også tælle som "ajour" her,
+    // ellers genuploades hver eneste uændrede drøm ved hver eneste synkronisering.
+    public static boolean cloudIsUpToDate(Instant localUpdatedAt, Instant cloudUpdatedAt) {
+        return cloudUpdatedAt != null && !cloudUpdatedAt.isBefore(localUpdatedAt);
+    }
 }

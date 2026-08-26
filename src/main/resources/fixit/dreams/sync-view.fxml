@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="380.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.SyncController">
+<AnchorPane prefHeight="500.0" prefWidth="430.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.SyncController">
    <children>
       <Label layoutX="20.0" layoutY="16.0" style="-fx-font-weight: bold;" text="Sky-synkronisering" />
 
-      <VBox fx:id="loggedOutBox" layoutX="20.0" layoutY="50.0" prefWidth="340.0" spacing="10.0">
+      <VBox fx:id="loggedOutBox" layoutX="20.0" layoutY="50.0" prefWidth="390.0" spacing="10.0">
          <children>
             <Label text="Opret en konto eller log ind for at synkronisere dine drømme på tværs af computere. Helt valgfrit - appen virker fint uden." wrapText="true" />
             <Label text="Email" />
@@ -24,7 +24,7 @@
          </children>
       </VBox>
 
-      <VBox fx:id="loggedInBox" layoutX="20.0" layoutY="50.0" managed="false" prefWidth="340.0" spacing="10.0" visible="false">
+      <VBox fx:id="loggedInBox" layoutX="20.0" layoutY="50.0" managed="false" prefWidth="390.0" spacing="10.0" visible="false">
          <children>
             <Label fx:id="loggedInEmailLbl" text="Logget ind som:" wrapText="true" />
             <Label fx:id="lastSyncedLbl" text="Sidst synkroniseret: aldrig" />
@@ -34,7 +34,7 @@
          </children>
       </VBox>
 
-      <Label fx:id="statusLbl" layoutX="20.0" layoutY="310.0" prefWidth="340.0" text="" wrapText="true" />
-      <Button layoutX="280.0" layoutY="345.0" mnemonicParsing="false" onAction="#closePopup" text="Luk" />
+      <Label fx:id="statusLbl" layoutX="20.0" layoutY="390.0" minHeight="60.0" prefHeight="60.0" prefWidth="390.0" text="" wrapText="true" />
+      <Button layoutX="375.0" layoutY="451.0" mnemonicParsing="false" onAction="#closePopup" text="Luk" />
    </children>
 </AnchorPane>
