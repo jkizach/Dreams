@@ -125,4 +125,20 @@ class StatsTest {
         assertEquals(2, manedStats.get("rød"));
         assertEquals(2, manedStats.get("blå"));
     }
+
+    // En drøm kan bære et kategorinavn der ikke står i kategorilisten - fx midt i en omdoebning
+    // der er synkroniseret halvt igennem, hvor de omdoebte droemme er ankommet, men den nye
+    // kategoriliste endnu ikke er. Foer havde det vaeltet hele statistikken med en NPE.
+    @Test
+    void ukendt_kategorinavn_i_en_droem_vaelter_ikke_statistikken() {
+        User user = User.getInstance();
+        CategoryDTO ukendt = new CategoryDTO();
+        ukendt.name = "Væsner";
+        ukendt.symbols = new TreeSet<>(List.of("ork"));
+        addDream(user, D1, true, false, ukendt);
+
+        Stats stats = assertDoesNotThrow(Stats::new);
+
+        assertEquals(D1, stats.getFirstDream());
+    }
 }

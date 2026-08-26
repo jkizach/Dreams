@@ -65,7 +65,13 @@ public class Stats {
     private void updateStats(String key, Dream dream) {
         // loopes gennem listen af CategoryDTO i hver drøm - inkl. "Kvaliteter" (de tidligere binære flag)
         for (CategoryDTO cat : dream.getCategories()) {
-            categoryStats.get(cat.name).updateStatsDO(key,cat);
+            // computeIfAbsent, ikke get: en drøm kan bære et kategorinavn der ikke (længere)
+            // står i den lokale kategoriliste. Det sker under en omdøbning der er synkroniseret
+            // halvt igennem - drømmene og selve kategorilisten er hver sit dokument i skyen og
+            // ankommer ikke nødvendigvis samtidig. Et get() ville give en NPE og vælte hele
+            // statistikken. Posten er ikke i vejen: opslag sker altid på navne fra kategori-
+            // listen, så den ses ikke - og den forsvinder af sig selv når de to sider er enige.
+            categoryStats.computeIfAbsent(cat.name, StatsDO::new).updateStatsDO(key, cat);
         }
     }
 
