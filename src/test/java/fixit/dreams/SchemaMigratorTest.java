@@ -258,4 +258,39 @@ class SchemaMigratorTest {
 
         assertFalse(Files.exists(metaJson));
     }
+
+    // DEN RIGTIGE OPGRADERINGSVEJ for alle nuværende brugere: den released udgave (1.5) skriver
+    // slet ingen schemaVersion, så deres data er version 0 og skal hele vejen til 3 i ét spring,
+    // første gang de starter den nye udgave. Alle fire trin skal virke i samme kørsel.
+    @Test
+    void released_data_uden_versionsnummer_migreres_hele_vejen_til_v3() throws IOException {
+        writeOldFormatFixtures();
+
+        SchemaMigrator.migrateIfNeeded();
+
+        JsonNode dream = mapper.readTree(dreamsJson.toFile()).get(0);
+        assertTrue(dream.hasNonNull("id"), "v0 -> v1: drømmen skal have fået et stabilt id");
+        assertFalse(dream.has("lucid"), "v0 -> v1: de flade flag skal være væk");
+        assertTrue(dream.hasNonNull("updatedAt"), "v1 -> v2: drømmen skal have fået updatedAt");
+
+        MetaDTO meta = IOutils.loadMeta();
+        assertNotNull(meta.categories.updatedAt, "v2 -> v3: kategorierne skal have fået et stempel");
+        assertNotNull(meta.temaer.updatedAt);
+        assertNotNull(meta.settings.updatedAt);
+
+        assertEquals(3, mapper.readTree(userJson.toFile()).get("schemaVersion").asInt());
+    }
+
+    // Og anden opstart må ikke røre noget: uden dette ville stemplerne blive sat forfra hver
+    // gang, og den ene maskine ville altid se ud som den nyeste.
+    @Test
+    void anden_opstart_efter_fuld_migration_stempler_ikke_forfra() throws IOException {
+        writeOldFormatFixtures();
+        SchemaMigrator.migrateIfNeeded();
+        Instant foersteStempel = IOutils.loadMeta().categories.updatedAt;
+
+        SchemaMigrator.migrateIfNeeded();
+
+        assertEquals(foersteStempel, IOutils.loadMeta().categories.updatedAt);
+    }
 }
