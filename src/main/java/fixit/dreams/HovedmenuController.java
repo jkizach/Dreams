@@ -313,6 +313,18 @@ public class HovedmenuController {
                 userService.refreshDreamList(fromDatePicker.getValue(), toDatePicker.getValue());
                 updateForsteDromLabel();
                 user.genberegnStatsPlease();
+
+                // Drømmene er nu på plads i den kørende app, men hentede kategorier og temaer
+                // ligger kun på disken - de sidder for dybt i UI'et til at kunne skiftes ud
+                // midt i en session (se SyncService.overtagKategorierFraSkyen). Det skal
+                // brugeren have at vide, ellers ser det bare ud som om syncen ikke virkede.
+                if (user.harHentetMetaFraSkyen()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Hentet fra skyen");
+                    alert.setHeaderText("Kategorier eller temaer er hentet fra skyen.");
+                    alert.setContentText("De er gemt, men vises først når du starter appen igen.");
+                    alert.show();
+                }
             });
         });
         pullThread.setDaemon(true);

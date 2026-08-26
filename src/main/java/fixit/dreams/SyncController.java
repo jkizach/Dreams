@@ -134,7 +134,12 @@ public class SyncController {
                 syncService.syncNow(confirmedMerge);
                 Platform.runLater(() -> {
                     setButtonsDisabled(false);
-                    statusLbl.setText("Synkroniseret!");
+                    // Drømme hentes ind i den kørende app med det samme, men kategorier, temaer
+                    // og indstillinger skrives kun til disk - de sidder for dybt i UI'et til at
+                    // kunne skiftes ud midt i en session (se SyncService.overtagKategorierFraSkyen).
+                    statusLbl.setText(user.harHentetMetaFraSkyen()
+                            ? "Synkroniseret! Genstart appen for at se det hentede."
+                            : "Synkroniseret!");
                     refreshView();
                     user.genberegnStatsPlease();
                 });

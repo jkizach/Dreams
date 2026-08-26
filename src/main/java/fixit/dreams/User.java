@@ -30,6 +30,13 @@ class User {
     protected BooleanProperty skalStatsGenberegnes = new SimpleBooleanProperty(false);
     protected StringProperty dreamEdited = new SimpleStringProperty("tom");
 
+    // Sættes af cloud-syncen når kategorier, temaer eller indstillinger er HENTET fra skyen og
+    // skrevet direkte til disk. Så er det der ligger i denne User forældet, og må ikke gemmes
+    // hen over det hentede ved appluk - se DreamApp.handleWindowClose og SyncService.
+    private boolean kategorierHentetFraSkyen = false;
+    private boolean temaerHentetFraSkyen = false;
+    private boolean indstillingerHentetFraSkyen = false;
+
     private ArrayList<VBox> dreamVboxes = new ArrayList<>();
     private ArrayList<VBox> filterVboxes = new ArrayList<>();
 
@@ -220,6 +227,34 @@ class User {
 
     public boolean skalStatsGenberegnes() {
         return skalStatsGenberegnes.get();
+    }
+
+    public boolean harHentetMetaFraSkyen() {
+        return kategorierHentetFraSkyen || temaerHentetFraSkyen || indstillingerHentetFraSkyen;
+    }
+
+    public boolean harHentetKategorierFraSkyen() {
+        return kategorierHentetFraSkyen;
+    }
+
+    public boolean harHentetTemaerFraSkyen() {
+        return temaerHentetFraSkyen;
+    }
+
+    public boolean harHentetIndstillingerFraSkyen() {
+        return indstillingerHentetFraSkyen;
+    }
+
+    void markerKategorierHentetFraSkyen() {
+        kategorierHentetFraSkyen = true;
+    }
+
+    void markerTemaerHentetFraSkyen() {
+        temaerHentetFraSkyen = true;
+    }
+
+    void markerIndstillingerHentetFraSkyen() {
+        indstillingerHentetFraSkyen = true;
     }
 
     public ArrayList<Category> getCategories() {

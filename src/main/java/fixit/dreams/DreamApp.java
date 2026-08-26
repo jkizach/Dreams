@@ -49,9 +49,18 @@ public class DreamApp extends Application {
     private void handleWindowClose() {
         User tempo = User.getInstance();
         CSSUpdater.updateCSSVariables(tempo.getForetrukneTema().getTemaForCSSUpdater(),false);
-        IOutils.saveUser(tempo);
-        IOutils.saveTemaer(tempo.getTemaer());
-        IOutils.saveCategories(tempo.getCategories());
+        // Er kategorier/temaer/indstillinger hentet fra skyen i denne session, ligger den
+        // nyeste udgave allerede på disken - og den her i hukommelsen er den forældede.
+        // Så skal den netop IKKE gemmes hen over (se SyncService.overtagXFraSkyen).
+        if (!tempo.harHentetIndstillingerFraSkyen()) {
+            IOutils.saveUser(tempo);
+        }
+        if (!tempo.harHentetTemaerFraSkyen()) {
+            IOutils.saveTemaer(tempo.getTemaer());
+        }
+        if (!tempo.harHentetKategorierFraSkyen()) {
+            IOutils.saveCategories(tempo.getCategories());
+        }
         IOutils.saveDreams(tempo.getDreams());
 
         // Cloud-sync: push evt. ændringer til skyen (kun hvis brugeren har slået det til).

@@ -33,8 +33,13 @@ public class IOutils {
     }
 
     public static void saveUser(User user) {
+        saveUserDTO(new UserDTO(user)); // Konverter til DTO
+    }
+
+    // Gemmer indstillingerne direkte fra en DTO. Bruges af cloud-syncen, som skal kunne skrive
+    // en udgave hentet fra skyen til disk UDEN at gå gennem den kørende User (se SyncService).
+    public static void saveUserDTO(UserDTO userDTO) {
         try {
-            UserDTO userDTO = new UserDTO(user); // Konverter til DTO
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(userDTO);
             Files.writeString(FILE_PATH_USER, json);
             stampSettings(userDTO);
@@ -73,11 +78,7 @@ public class IOutils {
     public static HashMap<String,Tema> loadTemaer() {
         try {
             ArrayList<HashMap<String, String>> mapList = objectMapper.readValue(FILE_PATH_TEMA.toFile(), ArrayList.class);
-            HashMap<String,Tema> userTema = new HashMap<>();
-            for (HashMap<String, String> tema : mapList) {
-                userTema.put(tema.get("temaName"), new Tema(tema));
-            }
-            return userTema;
+            return toTemaer(mapList);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -85,13 +86,7 @@ public class IOutils {
     }
 
     public static void saveCategories(ArrayList<Category> cats) {
-        List<CategoryDTO> dtoList = cats.stream().map(c -> {
-            CategoryDTO dto = new CategoryDTO();
-            dto.name = c.getName();
-            dto.symbols = c.getSymbols();
-            dto.customOrder = c.getCustomOrder();
-            return dto;
-        }).toList();
+        List<CategoryDTO> dtoList = toCategoryDTOs(cats);
         try {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoList);
             Files.writeString(FILE_PATH_CAT, json);
@@ -107,20 +102,44 @@ public class IOutils {
                     FILE_PATH_CAT.toFile(),
                     new TypeReference<List<CategoryDTO>>() {}
             );
-            ArrayList<Category> result = new ArrayList<>();
-            for (CategoryDTO dto : dtoList) {
-                Category cat = new Category(dto.name);
-                cat.setSymbols(dto.symbols);
-                if (cat.hasCustomOrder()) {
-                    cat.setCustomOrder(dto.customOrder);
-                }
-                result.add(cat);
-            }
-            return result;
+            return toCategories(dtoList);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // Omregningerne mellem model og DTO deles med cloud-syncen, som sender og modtager præcis
+    // de samme DTO-former som dem der ligger i cats.json og temaer.json.
+    public static List<CategoryDTO> toCategoryDTOs(ArrayList<Category> cats) {
+        return cats.stream().map(c -> {
+            CategoryDTO dto = new CategoryDTO();
+            dto.name = c.getName();
+            dto.symbols = c.getSymbols();
+            dto.customOrder = c.getCustomOrder();
+            return dto;
+        }).toList();
+    }
+
+    public static ArrayList<Category> toCategories(List<CategoryDTO> dtoList) {
+        ArrayList<Category> result = new ArrayList<>();
+        for (CategoryDTO dto : dtoList) {
+            Category cat = new Category(dto.name);
+            cat.setSymbols(dto.symbols);
+            if (cat.hasCustomOrder()) {
+                cat.setCustomOrder(dto.customOrder);
+            }
+            result.add(cat);
+        }
+        return result;
+    }
+
+    public static HashMap<String,Tema> toTemaer(List<HashMap<String,String>> mapList) {
+        HashMap<String,Tema> userTema = new HashMap<>();
+        for (HashMap<String, String> tema : mapList) {
+            userTema.put(tema.get("temaName"), new Tema(tema));
+        }
+        return userTema;
     }
 
     public static void saveDreams(HashMap<String,Dream> dreams) {

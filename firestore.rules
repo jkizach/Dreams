@@ -1,0 +1,21 @@
+rules_version = '2';
+
+// Sikkerhedsreglerne for projektet dreams-b7dac. Denne fil ligger i repoet for at være
+// læsbar og versionsstyret - den udgives i Firebase-konsollen (Firestore Database ->
+// Rules), som er den eneste kilde der faktisk håndhæver noget.
+//
+// Hele sikkerhedsmodellen er denne ene regel: en bruger kan kun røre sine egne dokumenter.
+// Derfor er Web API-nøglen i FirebaseConfig heller ikke hemmelig - uden et gyldigt login
+// giver den ikke adgang til noget som helst.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Alt under users/{uid} - drømme (users/{uid}/dreams/{dreamId}) såvel som
+    // kategori-definitioner, temaer og indstillinger (users/{uid}/meta/{dokument}).
+    // Jokertegnet {document=**} dækker vilkårlig dybde, så nye undersamlinger virker
+    // uden at reglen skal opdateres igen.
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
