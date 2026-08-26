@@ -2,6 +2,7 @@ package fixit.dreams;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fixit.dreams.sync.SyncDTO;
 
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 
 public class IOutils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -22,6 +24,7 @@ public class IOutils {
     private static final Path FILE_PATH_DREAM = AppPaths.APP_DATA_PATH.resolve("dreams.json");
     private static final Path FILE_PATH_SYNC = AppPaths.APP_DATA_PATH.resolve("sync.json");
     private static final Path FILE_PATH_DELETED = AppPaths.APP_DATA_PATH.resolve("deleted.json");
+    private static final Path FILE_PATH_META = AppPaths.APP_DATA_PATH.resolve("meta.json");
     private static final String TXT_PATH_OM = "om.txt";
     private static final String TXT_PATH_HELP = "help.txt";
 
@@ -32,7 +35,9 @@ public class IOutils {
     public static void saveUser(User user) {
         try {
             UserDTO userDTO = new UserDTO(user); // Konverter til DTO
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_USER.toFile(), userDTO);
+            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(userDTO);
+            Files.writeString(FILE_PATH_USER, json);
+            stampSettings(userDTO);
             System.out.println("User gemt som JSON!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,7 +62,9 @@ public class IOutils {
             for (Tema tema : userTemaer.values()) {
                 mapList.add(tema.getTemaForSaving());
             }
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_TEMA.toFile(), mapList);
+            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapList);
+            Files.writeString(FILE_PATH_TEMA, json);
+            stampIfChanged(meta -> meta.temaer, json);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,7 +93,10 @@ public class IOutils {
             return dto;
         }).toList();
         try {
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_CAT.toFile(), dtoList);} catch (IOException e) {
+            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dtoList);
+            Files.writeString(FILE_PATH_CAT, json);
+            stampIfChanged(meta -> meta.categories, json);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -203,6 +213,50 @@ public class IOutils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Tidsstemplerne for kategori-definitioner, temaer og indstillinger (se MetaDTO).
+    // Returnerer ALDRIG null: mangler eller er meta.json ødelagt, betyder det bare "vi har
+    // endnu ikke set noget indhold", og den bliver genskabt ved næste gem.
+    public static MetaDTO loadMeta() {
+        try {
+            File file = FILE_PATH_META.toFile();
+            if (!file.exists()) {
+                return new MetaDTO();
+            }
+            MetaDTO meta = objectMapper.readValue(file, MetaDTO.class);
+            return (meta != null) ? meta : new MetaDTO();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new MetaDTO();
+        }
+    }
+
+    public static void saveMeta(MetaDTO meta) {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_META.toFile(), meta);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Stempler ét af meta.json's tre felter ud fra det JSON der lige er skrevet til disk.
+    // meta.json skrives kun hvis stemplet faktisk ændrede sig - uændret indhold ved appluk
+    // skal hverken bumpe et tidsstempel eller røre filen.
+    private static void stampIfChanged(Function<MetaDTO, MetaDTO.Stamp> vælgStempel, String json) {
+        MetaDTO meta = loadMeta();
+        if (vælgStempel.apply(meta).stampIfChanged(MetaDTO.hashOf(json))) {
+            saveMeta(meta);
+        }
+    }
+
+    // Indstillingernes stempel må kun afhænge af brugerens EGNE valg. schemaVersion er appens
+    // eget bogholderi og skrives af SchemaMigrator ved opgradering - tælles den med, ville
+    // enhver fremtidig skema-bump se ud som om brugeren havde ændret sine indstillinger.
+    private static void stampSettings(UserDTO userDTO) {
+        ObjectNode node = objectMapper.valueToTree(userDTO);
+        node.remove("schemaVersion");
+        stampIfChanged(meta -> meta.settings, node.toString());
     }
 
     // Sletter sync.json fuldstændigt - bruges ved "log ud", rører aldrig de øvrige datafiler.

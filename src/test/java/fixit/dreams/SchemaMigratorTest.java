@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ class SchemaMigratorTest {
     private Path userJson;
     private Path catsJson;
     private Path dreamsJson;
+    private Path metaJson;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -28,10 +30,12 @@ class SchemaMigratorTest {
         userJson = AppPaths.APP_DATA_PATH.resolve("user.json");
         catsJson = AppPaths.APP_DATA_PATH.resolve("cats.json");
         dreamsJson = AppPaths.APP_DATA_PATH.resolve("dreams.json");
+        metaJson = AppPaths.APP_DATA_PATH.resolve("meta.json");
 
         Files.deleteIfExists(userJson);
         Files.deleteIfExists(catsJson);
         Files.deleteIfExists(dreamsJson);
+        Files.deleteIfExists(metaJson);
     }
 
     // Disse tests skriver rigtige JSON-fixtures til den delte test-home-mappe (se pom.xml's
@@ -42,6 +46,7 @@ class SchemaMigratorTest {
         Files.deleteIfExists(userJson);
         Files.deleteIfExists(catsJson);
         Files.deleteIfExists(dreamsJson);
+        Files.deleteIfExists(metaJson);
         User.resetForTests();
     }
 
@@ -175,5 +180,82 @@ class SchemaMigratorTest {
         assertTrue(dream.hasFlag("Lucid"));
         assertTrue(dream.hasFlag("Mareridt"));
         assertFalse(dream.hasFlag("Advarsel"));
+    }
+
+    @Test
+    void v2_til_v3_stempler_kategorier_temaer_og_indstillinger() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":2}
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        MetaDTO meta = IOutils.loadMeta();
+        assertNotNull(meta.categories.updatedAt);
+        assertNotNull(meta.temaer.updatedAt);
+        assertNotNull(meta.settings.updatedAt);
+    }
+
+    // Hash'en kendes først, når filerne næste gang gemmes gennem IOutils - migrationen må
+    // ikke gætte på et fingeraftryk, for et forkert gæt ville ligne en brugerændring.
+    @Test
+    void v2_til_v3_skriver_ingen_hash() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":2}
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        MetaDTO meta = IOutils.loadMeta();
+        assertNull(meta.categories.hash);
+        assertNull(meta.temaer.hash);
+        assertNull(meta.settings.hash);
+    }
+
+    @Test
+    void v2_til_v3_overskriver_ikke_et_stempel_der_allerede_findes() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":2}
+                """);
+        MetaDTO eksisterende = new MetaDTO();
+        eksisterende.categories.updatedAt = Instant.parse("2020-01-01T00:00:00Z");
+        eksisterende.categories.hash = "gammel-hash";
+        IOutils.saveMeta(eksisterende);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        MetaDTO meta = IOutils.loadMeta();
+        assertEquals(Instant.parse("2020-01-01T00:00:00Z"), meta.categories.updatedAt);
+        assertEquals("gammel-hash", meta.categories.hash);
+        assertNotNull(meta.temaer.updatedAt);
+    }
+
+    // Kernegarantien for eksisterende brugere: opgraderingen til v3 tilføjer kun en ny fil,
+    // den omskriver ikke de data de allerede har liggende.
+    @Test
+    void v2_til_v3_roerer_ikke_brugerens_egne_datafiler() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":2}
+                """);
+        Files.writeString(catsJson, """
+                [{"name":"Farver","symbols":["rød","blå"],"customOrder":[]}]
+                """);
+        Files.writeString(dreamsJson, """
+                [{"id":"abc-123","categories":[],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05","updatedAt":"2020-01-01T00:00:00Z"}]
+                """);
+        String catsFoer = Files.readString(catsJson);
+        String dreamsFoer = Files.readString(dreamsJson);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        assertEquals(catsFoer, Files.readString(catsJson));
+        assertEquals(dreamsFoer, Files.readString(dreamsJson));
+    }
+
+    @Test
+    void frisk_installation_faar_ingen_meta_fil_af_migrationen() {
+        SchemaMigrator.migrateIfNeeded();
+
+        assertFalse(Files.exists(metaJson));
     }
 }

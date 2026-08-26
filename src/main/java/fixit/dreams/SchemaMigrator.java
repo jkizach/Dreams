@@ -18,7 +18,7 @@ import java.util.UUID;
 // læser dem - så migrationen er uafhængig af hvordan de typede klasser (DreamData osv.) ser ud
 // lige nu, og gammel data ikke stille tabes når felter fjernes fra dem.
 class SchemaMigrator {
-    static final int CURRENT_SCHEMA_VERSION = 2;
+    static final int CURRENT_SCHEMA_VERSION = 3;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -42,6 +42,9 @@ class SchemaMigrator {
         if (onDiskVersion < 2) {
             migrateV1ToV2();
         }
+        if (onDiskVersion < 3) {
+            migrateV2ToV3();
+        }
 
         writeRawSchemaVersion(CURRENT_SCHEMA_VERSION);
     }
@@ -49,6 +52,42 @@ class SchemaMigrator {
     private static void migrateV0ToV1() {
         migrateDreamsV0ToV1();
         migrateCatsV0ToV1();
+    }
+
+    // Giver en EKSISTERENDE installations kategori-definitioner, temaer og indstillinger et
+    // starttidsstempel i meta.json (se MetaDTO) - forudsætning for at kunne afgøre hvem der er
+    // nyest, når også de tre ting skal kunne synkroniseres.
+    //
+    // Denne migration er den mest forsigtige af dem alle: den LÆSER ikke og RØRER ikke
+    // cats.json, temaer.json eller user.json. Den opretter kun en ny fil ved siden af. Går der
+    // noget galt her, kan der derfor ikke tabes brugerdata - i værste fald mangler stemplerne,
+    // og de bliver dannet igen ved næste gem.
+    //
+    // Bemærk at der bevidst IKKE skrives nogen hash: den kender vi først, når filerne næste gang
+    // gemmes gennem IOutils. Første gem registrerer så hash'en uden at flytte tidsstemplet
+    // (se MetaDTO.Stamp.stampIfChanged), og vi undgår at gætte på et fingeraftryk der ikke
+    // ville matche - hvilket ville se ud som en ændring brugeren aldrig har foretaget.
+    private static void migrateV2ToV3() {
+        MetaDTO meta = IOutils.loadMeta();
+        Instant now = Instant.now();
+
+        boolean ændret = false;
+        if (meta.categories.updatedAt == null) {
+            meta.categories.updatedAt = now;
+            ændret = true;
+        }
+        if (meta.temaer.updatedAt == null) {
+            meta.temaer.updatedAt = now;
+            ændret = true;
+        }
+        if (meta.settings.updatedAt == null) {
+            meta.settings.updatedAt = now;
+            ændret = true;
+        }
+
+        if (ændret) {
+            IOutils.saveMeta(meta);
+        }
     }
 
     // Stempler enhver drøm uden updatedAt med nu-tidspunktet - forudsætning for at kunne
