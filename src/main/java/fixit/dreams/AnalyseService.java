@@ -66,6 +66,27 @@ public class AnalyseService extends ServiceMother{
     }
 
 
+    /**
+     * Tæller de distinkte drømme (i datointervallet) der faktisk har mindst ét symbol
+     * registreret i den valgte kategori - dvs. den mængde cirkeldiagrammets data reelt
+     * stammer fra. En drøm med flere symboler i samme kategori (fx to slags "Dyr")
+     * tælles kun med én gang, i modsætning til getDataForPieChart's per-symbol-summer.
+     */
+    public int countDreamsForKategori(String kategoriNavn, LocalDate start, LocalDate slut) {
+        int count = 0;
+        for (Dream d : user.getDreams().values()) {
+            if (isInRange(d.getDato(), start, slut)) {
+                for (CategoryDTO c : d.getCategories()) {
+                    if (c.name.equals(kategoriNavn) && !c.symbols.isEmpty()) {
+                        count++;
+                        break;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
     public Map<String,Integer> getDataForPieChart(String kategoriNavn, LocalDate start, LocalDate slut) {
         // Her skal fra og til datoerne jo bruges!
         HashMap<String,Integer> outMap = new HashMap<>();
@@ -197,10 +218,11 @@ public class AnalyseService extends ServiceMother{
                             }
                         }
 
-                        // Check om drømmen matcher ift. checkboxes
-                        if (d.hasFlag("Advarsel") == data.advarsel && d.hasFlag("Arketypisk") == data.arketypisk && d.hasFlag("Mareridt") == data.mareridt &&
-                        d.hasFlag("Kollektiv") == data.kollektiv && d.hasFlag("Modsatkønnet") == data.modsat && d.hasFlag("Lucid") == data.lucid &&
-                        d.hasFlag("Praktiserer") == data.praktiserer && d.hasFlag("Om praksis") == data.praksis && d.hasFlag("Holografisk") == data.holografisk) {
+                        // Check om drømmen matcher ift. checkboxes - kun de checkboxe der faktisk er
+                        // afkrydset skal matches; en ikke-afkrydset boks betyder "ligegyldigt", ikke "skal ikke have".
+                        if ((!data.advarsel || d.hasFlag("Advarsel")) && (!data.arketypisk || d.hasFlag("Arketypisk")) && (!data.mareridt || d.hasFlag("Mareridt")) &&
+                        (!data.kollektiv || d.hasFlag("Kollektiv")) && (!data.modsat || d.hasFlag("Modsatkønnet")) && (!data.lucid || d.hasFlag("Lucid")) &&
+                        (!data.praktiserer || d.hasFlag("Praktiserer")) && (!data.praksis || d.hasFlag("Om praksis")) && (!data.holografisk || d.hasFlag("Holografisk"))) {
                             DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                             filteredDreams.add(dto);
                         }
@@ -304,6 +326,40 @@ public class AnalyseService extends ServiceMother{
             }
         }
         return counts;
+    }
+
+    /**
+     * Tæller de drømme (i datointervallet) som faktisk indgår i grafens data, dvs. dem
+     * der matcher mindst ét af de valgte flag eller CCB-symboler. Samme OR-logik som
+     * ELLER-grenen i updateFilteredDreams, men uden at bygge DreamDTO'er - vi skal kun bruge antallet.
+     */
+    public int countDreamsForGraf(GrafDTO indat) {
+        int count = 0;
+        outer:
+        for (Dream d : user.getDreams().values()) {
+            if (isInRange(d.getDato(), indat.fra, indat.til)) {
+                if ((indat.lucid && d.hasFlag("Lucid"))||(indat.praksis && d.hasFlag("Om praksis"))||(indat.advarsel && d.hasFlag("Advarsel"))||(indat.arketypisk && d.hasFlag("Arketypisk"))||
+                (indat.kollektiv && d.hasFlag("Kollektiv"))||(indat.modsat && d.hasFlag("Modsatkønnet"))||(indat.mareridt && d.hasFlag("Mareridt"))||(indat.praktiserer && d.hasFlag("Praktiserer"))||
+                (indat.holografisk && d.hasFlag("Holografisk"))) {
+                    count++;
+                    continue;
+                }
+
+                for (Category c : user.getUiCategories()) {
+                    if (c.getccbFilterSelections() != null) {
+                        for (String symbol : c.getccbFilterSelections().symbols) {
+                            for (CategoryDTO dto : d.getCategories()) {
+                                if (dto.name.equals(c.getName()) && dto.symbols.contains(symbol)) {
+                                    count++;
+                                    continue outer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return count;
     }
 
 }

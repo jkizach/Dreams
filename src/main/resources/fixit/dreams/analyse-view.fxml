@@ -21,6 +21,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
@@ -115,6 +116,7 @@
                                           <DatePicker fx:id="dpToPie" onAction="#onSelectKategori" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
                                     </GridPane>
+                                    <Label fx:id="antalDreamsLblCirkel" text="Label" />
                                  </children>
                               </VBox>
                               <PieChart fx:id="pieChartAnalyse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="701.0" prefWidth="712.0" HBox.hgrow="ALWAYS" />
@@ -213,7 +215,13 @@
                                                           <NumberAxis side="LEFT" />
                                                         </yAxis>
                                                       </LineChart>
-                                                      <Button fx:id="btnVisGraf" mnemonicParsing="false" onAction="#onVisGraf" prefHeight="25.0" prefWidth="127.0" text="Vis graf" />
+                                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+                                                         <children>
+                                                            <Label fx:id="lblAntalDrommeGraf" text="Antal drømme:" />
+                                                            <Region HBox.hgrow="ALWAYS" />
+                                                            <Button fx:id="btnVisGraf" mnemonicParsing="false" onAction="#onVisGraf" prefHeight="25.0" prefWidth="127.0" text="Vis graf" />
+                                                         </children>
+                                                      </HBox>
                                                    </children>
                                                    <opaqueInsets>
                                                       <Insets />
@@ -233,9 +241,12 @@
                                                 <VBox prefHeight="672.0" prefWidth="631.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <ListView fx:id="filterListe" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="598.0" prefWidth="631.0" styleClass="custom-list-view" VBox.vgrow="ALWAYS" />
-                                                      <HBox alignment="CENTER" prefHeight="25.0" prefWidth="630.0" spacing="300.0" VBox.vgrow="ALWAYS">
+                                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="25.0">
                                                          <children>
+                                                            <Label fx:id="lblAntalDrommeListe" text="Antal drømme:" />
+                                                            <Region HBox.hgrow="ALWAYS" />
                                                             <Button fx:id="btnAndOr" mnemonicParsing="false" onAction="#toggleANDOR" text="Filterstatus: OG" />
+                                                            <Region HBox.hgrow="ALWAYS" />
                                                             <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#updateFilterList" text="Opdater" />
                                                          </children>
                                                       </HBox>
@@ -310,7 +321,13 @@
                                        </children>
                                     </HBox>
                                     <ListView fx:id="forloebListe" prefHeight="568.0" prefWidth="624.0" styleClass="custom-list-view" VBox.vgrow="ALWAYS" />
-                                    <Button fx:id="btnForloebVisListe" mnemonicParsing="false" onAction="#btnVisForloebPressed" text="Vis liste" />
+                                    <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <Label fx:id="lblAntalDrommeForloeb" text="Antal drømme:" />
+                                          <Region HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="btnForloebVisListe" mnemonicParsing="false" onAction="#btnVisForloebPressed" text="Vis liste" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>

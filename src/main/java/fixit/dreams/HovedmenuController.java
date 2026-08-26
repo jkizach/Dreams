@@ -3,6 +3,7 @@ package fixit.dreams;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -77,7 +78,7 @@ public class HovedmenuController {
     private Tab settingsTab;
 
     @FXML
-    private Label lblForsteDrom;
+    private Label lblForsteDrom, lblAntalDrommeHoved;
 
     private static final DateTimeFormatter DATO_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -198,13 +199,11 @@ public class HovedmenuController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(750);
-                // Dynamisk justering baseret på ListView'ens bredde
-                // "param" er her ListView'en selv
-                param.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
-                    label.setMaxWidth(newWidth);
-                });
+                // "param" er her ListView'en selv - bind direkte til dens faktiske bredde
+                // (en almindelig addListener fyrer kun ved senere ÆNDRINGER, ikke med den bredde
+                // ListView'en allerede har når cellen oprettes, hvilket gav forkert ombrydningsbredde
+                // og dermed "..." i enden af nogle drømme)
+                label.maxWidthProperty().bind(Bindings.max(100, param.widthProperty().subtract(40))); // 40 px margin til scrollbar + padding
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -238,6 +237,8 @@ public class HovedmenuController {
         user.addDreamVbox(vBoxSymboler);
         //dreamListView.setItems(userService.getDreamsForDisplay());
         dreamListView.setItems(filteredDreams);
+
+        lblAntalDrommeHoved.textProperty().bind(Bindings.size(filteredDreams).asString("Antal drømme: %d"));
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredDreams.setPredicate(dream -> {

@@ -1,6 +1,7 @@
 package fixit.dreams;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -58,7 +59,7 @@ public class AnalyseController {
     private Spinner<Integer> daysSpinner, monthsSpinner;
 
     @FXML
-    private Label lblForloebDream, antalDreamsLblTal;
+    private Label lblForloebDream, antalDreamsLblTal, antalDreamsLblCirkel, lblAntalDrommeGraf, lblAntalDrommeForloeb, lblAntalDrommeListe;
 
     private boolean visLangtForloeb = false;
 
@@ -75,6 +76,7 @@ public class AnalyseController {
                     analyseService.updateStats();
                     updateGuiDates();
                     loadTalData();
+                    updateAntalDreamsCirkel();
                     kollektiv.setVisible(user.isVisKollektiv());
                     kollektiv.setManaged(user.isVisKollektiv());
                     advarsel.setVisible(user.isVisAdvarsel());
@@ -103,18 +105,17 @@ public class AnalyseController {
         setGuiDates();
 
         setAntalDreamsLabel();
+        updateAntalDreamsCirkel();
 
         filterListe.setCellFactory(param -> new javafx.scene.control.ListCell<>() {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(590);
-                // Dynamisk justering baseret på ListView'ens bredde
-                // "param" er her ListView'en selv
-                param.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
-                    label.setMaxWidth(newWidth);
-                });
+                // "param" er her ListView'en selv - bind direkte til dens faktiske bredde
+                // (en almindelig addListener fyrer kun ved senere ÆNDRINGER, ikke med den bredde
+                // ListView'en allerede har når cellen oprettes, hvilket gav forkert - for smal
+                // eller for bred - ombrydningsbredde og dermed "..." i enden af nogle drømme)
+                label.maxWidthProperty().bind(Bindings.max(100, param.widthProperty().subtract(40))); // 40 px margin til scrollbar + padding
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -132,11 +133,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(690);
-                param.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
-                    label.setMaxWidth(newWidth);
-                });
+                label.maxWidthProperty().bind(Bindings.max(100, param.widthProperty().subtract(40))); // 40 px margin til scrollbar + padding
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -154,11 +151,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(365);
-                param.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
-                    label.setMaxWidth(newWidth);
-                });
+                label.maxWidthProperty().bind(Bindings.max(100, param.widthProperty().subtract(40))); // 40 px margin til scrollbar + padding
             }
             @Override
             protected void updateItem(DreamDTO dream, boolean empty) {
@@ -184,6 +177,7 @@ public class AnalyseController {
         data.til = dpTilGraf.getValue();
         analyseService.updateFilteredDreams(data, false);
         filterListe.setItems(analyseService.getFilteredDreams());
+        lblAntalDrommeListe.textProperty().bind(Bindings.size(analyseService.getFilteredDreams()).asString("Antal drømme: %d"));
 
         // Tal-tabben:
         loadTalData();
@@ -194,15 +188,45 @@ public class AnalyseController {
         forloebValgListe.setItems(analyseService.getForloeb());
         analyseService.updateForloeb();
 
+        lblAntalDrommeForloeb.textProperty().bind(Bindings.size(analyseService.getForloebDreams()).asString("Antal drømme: %d"));
+
+        updateAntalDrommeGraf(buildGrafDTO());
     }
 
     private void setAntalDreamsLabel() {
         int antal = analyseService.countDreams(dpFromTal.getValue(), dpToTal.getValue());
-        if (antal == 1) {
-            antalDreamsLblTal.setText("Data for 1 drøm");
-        } else {
-            antalDreamsLblTal.setText("Data for " + antal + " drømme");
-        }
+        antalDreamsLblTal.setText(formatDataForDrommeText(antal));
+    }
+
+    private void updateAntalDreamsCirkel() {
+        String kategori = comboPieKategorier.getSelectionModel().getSelectedItem();
+        int antal = (kategori == null) ? 0 : analyseService.countDreamsForKategori(kategori, dpFromPie.getValue(), dpToPie.getValue());
+        antalDreamsLblCirkel.setText(formatDataForDrommeText(antal));
+    }
+
+    private String formatDataForDrommeText(int antal) {
+        return antal == 1 ? "Data for 1 drøm" : "Data for " + antal + " drømme";
+    }
+
+    private void updateAntalDrommeGraf(GrafDTO indat) {
+        int antal = analyseService.countDreamsForGraf(indat);
+        lblAntalDrommeGraf.setText(antal == 1 ? "Antal drømme: 1" : "Antal drømme: " + antal);
+    }
+
+    private GrafDTO buildGrafDTO() {
+        GrafDTO data = new GrafDTO();
+        data.fra = dpFraGraf.getValue();
+        data.til = dpTilGraf.getValue();
+        data.lucid = lucid.isSelected();
+        data.praktiserer = praktiserer.isSelected();
+        data.modsat = modsat.isSelected();
+        data.arketypisk = arketypisk.isSelected();
+        data.mareridt = mareridt.isSelected();
+        data.kollektiv = kollektiv.isSelected();
+        data.advarsel = advarsel.isSelected();
+        data.holografisk = holografisk.isSelected();
+        data.praksis = praksis.isSelected();
+        return data;
     }
 
     private void setGuiDates() {
@@ -253,6 +277,7 @@ public class AnalyseController {
 
     @FXML
     private void onSelectKategori() {
+        updateAntalDreamsCirkel();
         if (comboPieKategorier.getSelectionModel().getSelectedItem() != null) {
             Map<String,Integer> mapData = analyseService.getDataForPieChart(comboPieKategorier.getSelectionModel().getSelectedItem(),dpFromPie.getValue(),dpToPie.getValue());
             pieData.clear();
@@ -339,19 +364,7 @@ public class AnalyseController {
         lineChartAnalyse.setAnimated(false);
 
         // Send datoerne med til getData-funktionen - og alt fra alle ccb og cber! Som en GrafDTO :-)
-        GrafDTO data = new GrafDTO();
-        data.fra = dpFraGraf.getValue();
-        data.til = dpTilGraf.getValue();
-
-        data.lucid = lucid.isSelected();
-        data.praktiserer = praktiserer.isSelected();
-        data.modsat = modsat.isSelected();
-        data.arketypisk = arketypisk.isSelected();
-        data.mareridt = mareridt.isSelected();
-        data.kollektiv = kollektiv.isSelected();
-        data.advarsel = advarsel.isSelected();
-        data.holografisk = holografisk.isSelected();
-        data.praksis = praksis.isSelected();
+        GrafDTO data = buildGrafDTO();
         data.xakse = dayWeekOrMonth();
 
         lineChartAnalyse.setVisible(false);
@@ -364,6 +377,8 @@ public class AnalyseController {
         lineChartAnalyse.setCreateSymbols(false);
         lineChartAnalyse.layout();
         lineChartAnalyse.setVisible(true);
+
+        updateAntalDrommeGraf(data);
     }
 
     private String dayWeekOrMonth() {

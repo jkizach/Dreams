@@ -167,6 +167,11 @@
                                     <Insets left="10.0" />
                                  </HBox.margin></Label>
                               <DatePicker fx:id="toDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0" />
+                              <Label fx:id="lblAntalDrommeHoved" text="Antal drømme:">
+                                 <HBox.margin>
+                                    <Insets left="30.0" />
+                                 </HBox.margin>
+                              </Label>
                            </children>
                         </HBox>
                         <ListView fx:id="dreamListView" editable="true" maxWidth="1.7976931348623157E308" prefHeight="675.0" prefWidth="690.0" styleClass="custom-list-view" GridPane.rowIndex="1" />
