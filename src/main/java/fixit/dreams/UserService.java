@@ -3,8 +3,10 @@ package fixit.dreams;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 
 public class UserService extends ServiceMother {
     private Tema tempTema;
@@ -50,6 +52,13 @@ public class UserService extends ServiceMother {
 
     public void deleteDream(String id) {
         user.deleteDream(id);
+
+        // Sletningen skrives til disk MED DET SAMME - ikke først ved appluk som drømmene selv.
+        // Gik appen ned inden da, ville skyen aldrig få besked, og drømmen ville blive hentet
+        // ned igen ved næste synkronisering. Det er præcis den genopstandelse gravstenene findes for.
+        LinkedHashMap<String, Instant> slettede = IOutils.loadDeletedDreams();
+        slettede.put(id, Instant.now());
+        IOutils.saveDeletedDreams(slettede);
     }
 
     public Dream getDream(String id) {

@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.*;
 
 public class IOutils {
@@ -20,6 +21,7 @@ public class IOutils {
     private static final Path FILE_PATH_CAT = AppPaths.APP_DATA_PATH.resolve("cats.json");
     private static final Path FILE_PATH_DREAM = AppPaths.APP_DATA_PATH.resolve("dreams.json");
     private static final Path FILE_PATH_SYNC = AppPaths.APP_DATA_PATH.resolve("sync.json");
+    private static final Path FILE_PATH_DELETED = AppPaths.APP_DATA_PATH.resolve("deleted.json");
     private static final String TXT_PATH_OM = "om.txt";
     private static final String TXT_PATH_HELP = "help.txt";
 
@@ -171,6 +173,35 @@ public class IOutils {
             return objectMapper.readValue(FILE_PATH_SYNC.toFile(), SyncDTO.class);
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    // Køen over drømme slettet på DENNE maskine, som endnu ikke er blevet til gravsten i skyen
+    // (id -> hvornår den blev slettet). Ligger i sin egen fil, ikke i sync.json: den slettes ved
+    // "log ud", og en sletning foretaget mens man var logget ud ville så gå tabt.
+    //
+    // Sletningstidspunktet gemmes med, frem for kun ID'et, så gravstenen kan bære det tidspunkt
+    // sletningen FAKTISK skete. Ellers ville en drøm, der blev slettet her kl. 10 og redigeret på
+    // en anden maskine kl. 11, blive slettet alligevel hvis denne maskine først synkroniserede
+    // kl. 12 - sletningen ville fejlagtigt se nyere ud end redigeringen.
+    public static LinkedHashMap<String, Instant> loadDeletedDreams() {
+        try {
+            File file = FILE_PATH_DELETED.toFile();
+            if (!file.exists()) {
+                return new LinkedHashMap<>();
+            }
+            return objectMapper.readValue(file, new TypeReference<LinkedHashMap<String, Instant>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new LinkedHashMap<>();
+        }
+    }
+
+    public static void saveDeletedDreams(Map<String, Instant> deleted) {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(FILE_PATH_DELETED.toFile(), deleted);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

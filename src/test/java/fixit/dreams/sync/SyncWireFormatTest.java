@@ -1,6 +1,7 @@
 package fixit.dreams.sync;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fixit.dreams.CategoryDTO;
 import fixit.dreams.DreamData;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,21 @@ class SyncWireFormatTest {
         JsonNode dato = hjemme.get("dato");
         assertNotNull(dato, "dato forsvandt helt i rundturen");
         assertEquals(DATO, LocalDate.parse(dato.asText()));
+    }
+
+    @Test
+    void ukendte_felter_faar_ikke_parsningen_til_at_fejle() {
+        // Fremadkompatibilitet: skyen kan indeholde dokumenter skrevet af en nyere version med
+        // felter denne version ikke kender. Fejlede parsningen, ville pullNewerDreams' catch
+        // springe drømmen over i stilhed, og den ville aldrig blive hentet ned.
+        ObjectNode fraEnNyereVersion = (ObjectNode) SyncObjectMapper.INSTANCE.valueToTree(enDroem());
+        fraEnNyereVersion.put("etHeltNytFelt", "som denne version ikke kender");
+
+        DreamData data = assertDoesNotThrow(
+                () -> SyncObjectMapper.INSTANCE.treeToValue(fraEnNyereVersion, DreamData.class));
+
+        assertEquals("Jeg fløj over en skov", data.indhold);
+        assertEquals(UPDATED_AT, data.updatedAt);
     }
 
     @Test

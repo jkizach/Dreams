@@ -2,6 +2,7 @@ package fixit.dreams;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fixit.dreams.sync.AuthResult;
 import fixit.dreams.sync.DreamFingerprint;
 import fixit.dreams.sync.FirebaseAuthClient;
@@ -11,9 +12,11 @@ import fixit.dreams.sync.FirestoreException;
 import fixit.dreams.sync.SyncDTO;
 import fixit.dreams.sync.SyncMerge;
 import fixit.dreams.sync.SyncObjectMapper;
+import fixit.dreams.sync.Tombstone;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,10 +102,15 @@ public class SyncService {
             if (!confirmedMerge) {
                 int duplicates = countLikelyDuplicates(cloudDreams);
                 if (duplicates > 0) {
-                    throw new SyncConflictException(user.getDreams().size(), cloudDreams.size(), duplicates);
+                    throw new SyncConflictException(
+                            user.getDreams().size(), countLivingCloudDreams(cloudDreams), duplicates);
                 }
             }
 
+            // Rækkefølgen er ikke tilfældig. Gravstenene skal skrives FØR pull, fordi pushTombstones
+            // også opdaterer vores snapshot af skyen: ellers ville pullNewerDreams stadig se den
+            // netop slettede drøm som et levende dokument, ikke finde den lokalt, og hente den ned igen.
+            pushTombstones(idToken, dreamsPath, cloudDreams);
             pullNewerDreams(cloudDreams);
             pushNewerDreams(idToken, dreamsPath, cloudDreams);
 
@@ -111,6 +119,49 @@ public class SyncService {
         } catch (FirestoreException e) {
             throw new SyncException("Kunne ikke synkronisere: " + e.getMessage(), e);
         }
+    }
+
+    // Skriver en gravsten for hver drøm der er slettet lokalt, og tømmer køen efterhånden.
+    //
+    // En kø-post springes over og kasseres hvis drømmen findes lokalt igen (genoprettet siden
+    // sletningen) - ellers ville vi slette en drøm brugeren lige har skrevet.
+    //
+    // Fejler et enkelt kald undervejs, gemmes køen ikke, og hele køen forsøges igen ved næste
+    // sync. Det er harmløst: at skrive den samme gravsten to gange giver samme resultat.
+    private void pushTombstones(String idToken, String dreamsPath, Map<String, JsonNode> cloudDreams) throws SyncException {
+        LinkedHashMap<String, Instant> pending = IOutils.loadDeletedDreams();
+        if (pending.isEmpty()) {
+            return;
+        }
+
+        LinkedHashMap<String, Instant> tilbage = new LinkedHashMap<>(pending);
+        for (Map.Entry<String, Instant> entry : pending.entrySet()) {
+            String id = entry.getKey();
+            if (user.getDreams().containsKey(id)) {
+                tilbage.remove(id);
+                continue;
+            }
+
+            ObjectNode tombstone = Tombstone.of(id, entry.getValue());
+            try {
+                firestoreClient.patchDocument(idToken, dreamsPath + "/" + id, tombstone);
+            } catch (FirestoreException e) {
+                throw new SyncException("Kunne ikke slette drøm i skyen: " + e.getMessage(), e);
+            }
+            cloudDreams.put(id, tombstone);
+            tilbage.remove(id);
+        }
+        IOutils.saveDeletedDreams(tilbage);
+    }
+
+    private int countLivingCloudDreams(Map<String, JsonNode> cloudDreams) {
+        int levende = 0;
+        for (JsonNode fields : cloudDreams.values()) {
+            if (!Tombstone.isTombstone(fields)) {
+                levende++;
+            }
+        }
+        return levende;
     }
 
     // Tæller lokale drømme der ville blive til dubletter ved en sammenkøring: samme indhold som
@@ -129,6 +180,9 @@ public class SyncService {
 
         Set<String> cloudFingerprints = new HashSet<>();
         for (JsonNode fields : cloudDreams.values()) {
+            if (Tombstone.isTombstone(fields)) {
+                continue; // en gravsten er ikke en drøm og kan ikke være nogens dublet
+            }
             String fp = DreamFingerprint.of(textOrNull(fields, "dato"), textOrNull(fields, "indhold"));
             if (fp != null) {
                 cloudFingerprints.add(fp);
@@ -172,6 +226,12 @@ public class SyncService {
     private void pullNewerDreams(Map<String, JsonNode> cloudDreams) {
         for (Map.Entry<String, JsonNode> entry : cloudDreams.entrySet()) {
             String id = entry.getKey();
+
+            if (Tombstone.isTombstone(entry.getValue())) {
+                applyRemoteDeletion(id, entry.getValue());
+                continue; // en gravsten må ALDRIG læses som en drøm - den har hverken indhold eller kategorier
+            }
+
             DreamData cloudData;
             try {
                 cloudData = SyncObjectMapper.INSTANCE.treeToValue(entry.getValue(), DreamData.class);
@@ -206,6 +266,22 @@ public class SyncService {
             } catch (FirestoreException e) {
                 throw new SyncException("Kunne ikke gemme drøm i skyen: " + e.getMessage(), e);
             }
+        }
+    }
+
+    // En gravsten i skyen betyder "denne drøm er slettet på en anden maskine". Sletningen
+    // gentages derfor lokalt - men kun hvis gravstenen er nyere end vores egen udgave, så en
+    // redigering foretaget EFTER sletningen ikke går tabt. Det er nøjagtig samme
+    // last-write-wins-regel som for indhold; gravstenen er bare "det nyeste er ingenting".
+    private void applyRemoteDeletion(String id, JsonNode fields) {
+        Dream local = user.getDreams().get(id);
+        if (local == null) {
+            return; // allerede væk her - intet at gøre
+        }
+        if (SyncMerge.cloudWins(local.getUpdatedAt(), extractUpdatedAt(fields))) {
+            // Bevidst User.deleteDream og ikke UserService.deleteDream: sletningen kommer FRA
+            // skyen, og må ikke lægges i vores egen kø som var den en ny lokal sletning.
+            user.deleteDream(id);
         }
     }
 
