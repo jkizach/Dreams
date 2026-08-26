@@ -132,7 +132,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(610);
+                label.setMaxWidth(690);
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {
                     double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
                     label.setMaxWidth(newWidth);
@@ -154,7 +154,7 @@ public class AnalyseController {
             private final Label label = new Label();
             {
                 label.setWrapText(true);
-                label.setMaxWidth(290);
+                label.setMaxWidth(365);
                 param.widthProperty().addListener((obs, oldVal, newVal) -> {
                     double newWidth = Math.max(100, newVal.doubleValue() - 40); // 40 px margin til scrollbar + padding
                     label.setMaxWidth(newWidth);

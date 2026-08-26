@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.HovedmenuController">
+<TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.HovedmenuController">
   <tabs>
     <Tab text="Ny drøm">
       <content>
@@ -30,7 +30,8 @@
                <children>
                   <GridPane hgap="10.0" layoutX="14.0" layoutY="9.0" prefHeight="771.0" prefWidth="1000.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="666.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="231.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="681.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="300.0" />
                      </columnConstraints>
                      <rowConstraints>
@@ -39,11 +40,9 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <GridPane prefHeight="153.0" prefWidth="600.0" vgap="5.0" GridPane.rowIndex="2">
+                        <GridPane prefHeight="153.0" prefWidth="600.0" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="260.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="494.0" minWidth="10.0" prefWidth="426.0" />
                           </columnConstraints>
                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -51,41 +50,10 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints />
                           </rowConstraints>
                            <children>
-                              <CheckBox fx:id="lucid" mnemonicParsing="false" text="Lucid" GridPane.rowIndex="1">
-                                 <tooltip>
-                                    <Tooltip text="Ved man at man drømmer?" wrapText="true" />
-                                 </tooltip>
-                              </CheckBox>
-                              <CheckBox fx:id="praktiserer" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="2">
-                                 <tooltip>
-                                    <Tooltip text="Dobbeltretter man eller laver neutral iagttagelse i drømmen?" wrapText="true" />
-                                 </tooltip>
-                              </CheckBox>
-                              <CheckBox fx:id="modsat" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="3">
-                                 <tooltip>
-                                    <Tooltip text="Er drømmejeget det modsatte køn?" />
-                                 </tooltip>
-                              </CheckBox>
-                              <CheckBox fx:id="arketypisk" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <tooltip>
-                                    <Tooltip text="Er drømmen kraftig med eventyragtige symboler?" wrapText="true" />
-                                 </tooltip>
-                              </CheckBox>
-                              <CheckBox fx:id="praksis" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <tooltip>
-                                    <Tooltip text="Handler drømmen om praksis? Undervisning, øvelser?" wrapText="true" />
-                                 </tooltip>
-                              </CheckBox>
-                              <CheckBox fx:id="mareridt" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <tooltip>
-                                    <Tooltip text="Er du meget bange i drømmen?" />
-                                 </tooltip>
-                              </CheckBox>
-                              <Label text="Drømmejeget" />
-                              <Label text="Drømmen" GridPane.columnIndex="1" />
-                              <TabPane GridPane.columnIndex="2" GridPane.rowSpan="2147483647">
+                              <TabPane GridPane.rowSpan="2147483647">
                                  <tabs>
                                     <Tab closable="false" text="Dagrest">
                                        <content>
@@ -99,29 +67,68 @@
                                     </Tab>
                                  </tabs>
                               </TabPane>
-                              <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false" GridPane.rowIndex="4" />
-                              <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" visible="false" GridPane.rowIndex="5" />
                            </children>
                            <padding>
                               <Insets bottom="5.0" />
                            </padding>
                         </GridPane>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1">
                            <children>
                               <Label prefHeight="26.0" prefWidth="65.0" text="Dato" />
                               <DatePicker fx:id="newDreamDate" prefHeight="39.0" prefWidth="180.0" />
                            </children>
                         </HBox>
-                        <TextArea fx:id="skriveFelt" prefHeight="532.0" prefWidth="600.0" wrapText="true" GridPane.rowIndex="1" />
-                        <Button id="minKnap" fx:id="gemDream" mnemonicParsing="false" onAction="#handleAddDream" text="Gem drømmen" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                        <TextArea fx:id="skriveFelt" prefHeight="532.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button id="minKnap" fx:id="gemDream" mnemonicParsing="false" onAction="#handleAddDream" text="Gem drømmen" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                            <GridPane.margin>
                               <Insets bottom="10.0" right="10.0" />
                            </GridPane.margin>
                         </Button>
-                        <VBox fx:id="vBoxSymboler" prefHeight="530.0" prefWidth="280.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <VBox fx:id="vBoxSymboler" prefHeight="530.0" prefWidth="280.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <children>
                               <Label text="Symboler" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="Drømmejeget" />
+                              <CheckBox fx:id="lucid" mnemonicParsing="false" text="Lucid">
+                                 <tooltip>
+                                    <Tooltip text="Ved man at man drømmer?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="praktiserer" mnemonicParsing="false" text="Praktiserer">
+                                 <tooltip>
+                                    <Tooltip text="Dobbeltretter man eller laver neutral iagttagelse i drømmen?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="modsat" mnemonicParsing="false" text="Modsatkønnet">
+                                 <tooltip>
+                                    <Tooltip text="Er drømmejeget det modsatte køn?" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" visible="false" />
+                              <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false" />
+                              <Label text="Drømmen">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin></Label>
+                              <CheckBox fx:id="arketypisk" mnemonicParsing="false" text="Arketypisk">
+                                 <tooltip>
+                                    <Tooltip text="Er drømmen kraftig med eventyragtige symboler?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="praksis" mnemonicParsing="false" text="Om praksis">
+                                 <tooltip>
+                                    <Tooltip text="Handler drømmen om praksis? Undervisning, øvelser?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="mareridt" mnemonicParsing="false" text="Mareridt">
+                                 <tooltip>
+                                    <Tooltip text="Er du meget bange i drømmen?" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false" />
                            </children>
                         </VBox>
                      </children>
@@ -141,7 +148,7 @@
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="660.0" prefWidth="900.0">
                <children>
-                  <GridPane hgap="10.0" layoutX="14.0" layoutY="8.0" minWidth="100.0" prefHeight="771.0" prefWidth="1000.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <GridPane hgap="20.0" layoutX="14.0" layoutY="8.0" minWidth="100.0" prefHeight="771.0" prefWidth="1000.0" vgap="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="20.0" />
@@ -155,7 +162,10 @@
                            <children>
                               <Label text="Fra" />
                               <DatePicker fx:id="fromDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0" />
-                              <Label text="Til" />
+                              <Label text="Til">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin></Label>
                               <DatePicker fx:id="toDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0" />
                            </children>
                         </HBox>
@@ -200,7 +210,7 @@
                         </VBox>
                      </children>
                      <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
                      </padding>
                   </GridPane>
                </children></AnchorPane>
@@ -215,8 +225,8 @@
                <children>
                   <GridPane hgap="10.0" layoutX="12.0" layoutY="14.0" prefHeight="771.0" prefWidth="1000.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="480.0" minWidth="10.0" prefWidth="467.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="703.0" minWidth="10.0" prefWidth="703.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />

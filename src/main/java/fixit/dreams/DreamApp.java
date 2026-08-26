@@ -22,7 +22,7 @@ public class DreamApp extends Application {
         //Locale.setDefault(Locale.forLanguageTag("DK"));
         FXMLLoader fxmlLoader = new FXMLLoader(DreamApp.class.getResource("hovedmenu.fxml"));
         stage.setOnCloseRequest(event -> handleWindowClose());
-        scene = new Scene(fxmlLoader.load(), 1000, 800);
+        scene = new Scene(fxmlLoader.load(), 1200, 780);
         //scene.getStylesheets().add(getClass().getResource("currentTema.css").toExternalForm());
         CSSUpdater.init();
 
