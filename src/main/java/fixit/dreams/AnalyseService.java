@@ -317,7 +317,7 @@ public class AnalyseService extends ServiceMother{
             return String.valueOf(antal);
         }
         long procent = Math.round(antal * 100.0 / total);
-        return antal + " (" + procent + "%)";
+        return antal + " [" + procent + "%]";
     }
 
     public String getForloebStage(String id) {

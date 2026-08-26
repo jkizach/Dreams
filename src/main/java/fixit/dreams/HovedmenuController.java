@@ -161,7 +161,7 @@ public class HovedmenuController {
         tekstBPicker.setValue(temaet.getTekstB());
         tekstCPicker.setValue(temaet.getTekstC());
         kantPicker.setValue(temaet.getKant());
-        cbFonts.setValue(temaet.getFont());
+        cbFonts.setValue(Fonte.tilgaengelig(temaet.getFont()));
     }
 
     public void changeStylesheet(Boolean temp) {
@@ -280,7 +280,8 @@ public class HovedmenuController {
 
         cbTemaer.setItems(temaer);
         cbTemaer.setValue(userService.getTemaNavn());
-        cbFonts.getItems().addAll("Courier New", "Source Code Pro");
+        // Kun fonte der faktisk er installeret, og kun monospace - ellers flugter kolonnerne i Tal-tabben ikke
+        cbFonts.getItems().addAll(Fonte.monospaceFamilier());
 
         /* ADVARSEL, KOLLEKTIV OG HOLOGRAFISK - VIS ELLER EJ */
         kollektiv.setVisible(userService.isVisKollektiv());

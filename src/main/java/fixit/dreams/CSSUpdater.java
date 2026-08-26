@@ -44,7 +44,7 @@ public class CSSUpdater {
                         for (Map.Entry<String, String> entry : variables.entrySet()) {
                             if (line.contains(entry.getKey() + ":")) {
                                 if (line.contains("-fx-font-family")) {
-                                    return "\t" + entry.getKey() + ": '" + entry.getValue() + "';";
+                                    return "\t" + entry.getKey() + ": '" + Fonte.tilgaengelig(entry.getValue()) + "';";
                                 } else {
                                     String fixedColor = toHexColor(entry.getValue()); // Sikrer korrekt format
                                     return "\t" + entry.getKey() + ": " + fixedColor + ";";
