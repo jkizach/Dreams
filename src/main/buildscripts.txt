@@ -9,7 +9,7 @@ Check at den rigtige version står i nedenstående script.
 
 MacOS:
   Silicon:
-    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.5.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.5 --vendor "ITfix"  --icon src/main/resources/moona.icns --java-options  "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
+    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.0 --vendor "ITfix"  --icon src/main/resources/moona.icns --java-options  "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
   Intel:
    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64 --java-options "-splash:app/splash.png"
 
@@ -19,4 +19,4 @@ Windows OS:
 
 Windows - nu med splash:
     OBS: Både c#-programmet updater.exe og splash.png skal kopieres ind i Target først!
-jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.5.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.5 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
+jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.0 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
