@@ -26,9 +26,9 @@ Vil du tage en sikkerhedskopi, er det den ene mappe du skal kopiere.
 Der er to veje, og du kan bruge den der passer dig:
 
 - Kopiér mappen. Installér appen på den nye maskine, og kopiér hele DrømmeappenData-mappen over fra den gamle. Kræver ikke internet og ikke nogen konto.
-- Brug sky-synkronisering. Log ind med samme konto på den nye maskine, og drømmene henter sig selv ned.
+- Brug sky-synkronisering. Installér appen, log ind med samme konto, og drømmene henter sig selv ned.
 
-Bruger du skyen, så husk at flytte den nye maskines DrømmeappenData-mappe til side FØR du starter appen første gang. Ellers kommer den til at lave sit eget sæt drømme ved siden af skyens, og så står du med det hele i to udgaver.
+Bruger du skyen, er det en god idé at logge ind før du begynder at skrive på den nye maskine. Så står det hele klar med det samme.
 
 ---
 
@@ -42,7 +42,7 @@ Den er tænkt som en flyttekasse og en sikkerhedskopi - ikke som et fælles arbe
 ## Hvordan det virker
 Du opretter en konto med en email og en adgangskode. Dine drømme bliver liggende lokalt som altid - skyen får en kopi.
 
-Når du lukker appen, sendes det du har ændret. Når du åbner den igen, hentes det der måtte være kommet til. Har du ikke ændret noget, kontakter appen slet ikke skyen.
+Når du åbner appen, henter den det der måtte være kommet til. Når du lukker den igen, sender den det du har ændret - og har du ikke ændret noget, springer den skyen helt over.
 
 Ændrer du den samme drøm to steder, vinder den nyeste udgave. Sletter du en drøm ét sted, bliver den også slettet det andet sted.
 
