@@ -1,16 +1,65 @@
-Drømmeappen 2.0
+# Drømmeappen 2.0
 
-Den er udviklet af Johannes Kizach med stor hjælp fra Søren Munk og er til fri afbenyttelse - man kan downloade en installer fra github her:
+En app til at skrive sine drømme ned i - og til at få øje på de mønstre der først træder frem når man har skrevet dem ned længe nok.
+
+Den er udviklet af Johannes Kizach med stor hjælp fra Søren Munk, og er til fri afbenyttelse.
+
+## Hent den
 https://github.com/jkizach/Dreams/releases/latest
 
-Del gerne linkadressen hvis du tror andre kunne have glæde af appen.
+Del gerne linket hvis du tror andre kunne have glæde af appen.
 
-Installeren installerer Drømmeappen i program files, og opretter en mappe, DrømmeappenData, i ens lokale Documents-mappe. Hvis man flytter til en ny pc/mac så kan man bare hente installeren og køre den på den nye pc/mac og derefter kopiere hele DrømmeappenData-mappen over fra den gamle computer til den nye - det er den mappe der indeholder ens drømme, temaer, symboler og så videre.
+---
+
+# Hvor dine drømme ligger
+
+Installeren lægger selve programmet i Program Files, og opretter en mappe ved siden af dine egne dokumenter:
+
+- Dokumenter / DrømmeappenData
+
+Dér ligger alt dit: drømmene, dine symboler og kategorier, dine temaer og dine indstillinger. Programmet kan geninstalleres, opdateres og afinstalleres uden at den mappe bliver rørt.
+
+Vil du tage en sikkerhedskopi, er det den ene mappe du skal kopiere.
+
+# Ny computer
+
+Der er to veje, og du kan bruge den der passer dig:
+
+- Kopiér mappen. Installér appen på den nye maskine, og kopiér hele DrømmeappenData-mappen over fra den gamle. Kræver ikke internet og ikke nogen konto.
+- Brug sky-synkronisering. Log ind med samme konto på den nye maskine, og drømmene henter sig selv ned.
+
+Bruger du skyen, så husk at flytte den nye maskines DrømmeappenData-mappe til side FØR du starter appen første gang. Ellers kommer den til at lave sit eget sæt drømme ved siden af skyens, og så står du med det hele i to udgaver.
+
+---
+
+# Sky-synkronisering
+
+Helt valgfrit. Appen virker fuldstændig som den plejer uden, og rører ikke internettet med mindre du selv slår det til.
+
+## Hvad den er til
+Den er tænkt som en flyttekasse og en sikkerhedskopi - ikke som et fælles arbejdsrum. Meningen er at dine drømme ligger et sted uden for din egen harddisk, så de er der endnu hvis maskinen står af, og så de kan følge med over på en ny computer.
+
+## Hvordan det virker
+Du opretter en konto med en email og en adgangskode. Dine drømme bliver liggende lokalt som altid - skyen får en kopi.
+
+Når du lukker appen, sendes det du har ændret. Når du åbner den igen, hentes det der måtte være kommet til. Har du ikke ændret noget, kontakter appen slet ikke skyen.
+
+Ændrer du den samme drøm to steder, vinder den nyeste udgave. Sletter du en drøm ét sted, bliver den også slettet det andet sted.
+
+## Hvem kan se dem
+Kun dig. Dine data ligger i et rum der er låst til din konto, og serveren afviser enhver anden - også selvom de kender din email. Al trafik er krypteret undervejs.
+
+Vil du holde op, kan du logge ud og beholde alt lokalt. Så ligger drømmene på din maskine præcis som før.
+
+---
+
+# Tak til
 
 Måneikonet er hentet fra Gallery Yopriceille og er gratis og til fri afbenyttelse - tak til dem.
 
-Drømmeforståelsen er baseret på Jes Bertelsens og Jungs teorier, og især er følgende bøger blevet brugt:
+# Baggrund
 
-Jes Bertelsen, Dybdepsykologi 2 - Genfødelsens psykologi, Borgen, 1979.
+Drømmeforståelsen bag appen er baseret på Jes Bertelsens og C.G. Jungs teorier. Især disse to bøger er blevet brugt:
 
-Jes Bertelsen, Drømme, Chakrasymboler og Meditation, Borgen, 1982.
+- Jes Bertelsen, Dybdepsykologi 2 - Genfødelsens psykologi, Borgen, 1979.
+- Jes Bertelsen, Drømme, Chakrasymboler og Meditation, Borgen, 1982.
