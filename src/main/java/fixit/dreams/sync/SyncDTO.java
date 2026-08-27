@@ -11,5 +11,15 @@ public class SyncDTO {
     public boolean syncEnabled;
     public Instant lastSyncedAt;
 
+    // Et tilfældigt id for DENNE installation, sat første gang der synkroniseres. Det er
+    // nøglen til at slippe for at læse hele skyen ved hver sync: står vores eget id i skyens
+    // meta/state-dokument, har ingen anden maskine skrevet siden sidst, og så kan vi nøjes med
+    // vores lokale billede af hvad der ligger deroppe (se SyncService og cloudindex.json).
+    //
+    // Det følger sync.json og forsvinder derfor ved "log ud". Det er med vilje: efter et
+    // kontoskift ved vi ikke længere hvad skyen indeholder, og en frisk id tvinger den næste
+    // sync ud ad den dyre, men altid korrekte vej.
+    public String machineId;
+
     public SyncDTO() {}
 }

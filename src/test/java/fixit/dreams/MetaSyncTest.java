@@ -38,7 +38,8 @@ class MetaSyncTest {
     private static final Instant NY = Instant.parse("2026-06-01T12:00:00Z");
 
     private static final List<String> FILNAVNE = List.of(
-            "user.json", "temaer.json", "cats.json", "dreams.json", "sync.json", "deleted.json", "meta.json");
+            "user.json", "temaer.json", "cats.json", "dreams.json", "sync.json", "deleted.json", "meta.json",
+            "cloudindex.json");
 
     private FakeFirestore sky;
     private User user;

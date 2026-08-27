@@ -23,8 +23,10 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -51,6 +53,10 @@ public class SyncService {
     private static final String META_CATEGORIES = "categories";
     private static final String META_TEMAER = "temaer";
     private static final String META_SETTINGS = "settings";
+
+    // Ejerskabsdokumentet: hvem skrev her sidst, og med hvilke meta-tidsstempler. Det er det
+    // eneste dokument en almindelig sync behøver læse (se syncNow).
+    private static final String META_STATE = "state";
 
     private final User user;
     private final FirebaseAuthClient authClient;
@@ -118,6 +124,22 @@ public class SyncService {
     // installation hvor man har skrevet et par nye drømme inden man synkroniserer). Signalet er,
     // at lokale drømme INDHOLDSMÆSSIGT allerede ligger i skyen under et andet ID: kun dét kan
     // blive til dubletter ved en sammenkøring (se countLikelyDuplicates/SyncConflictException).
+    //
+    // Der findes TO veje igennem her, og hvilken der tages afgøres af meta/state-dokumentet:
+    //
+    //   den billige   vi skrev selv sidst  -> 1 læsning. Skyen er vores eget spejl, og
+    //                                        cloudindex.json ved allerede hvad der ligger der.
+    //   den dyre      alle andre tilfælde  -> hele samlingen listes og køres sammen som før.
+    //
+    // Genvejen tages KUN på et positivt svar. Alt andet - intet ejerskabsdokument, et fremmed
+    // maskin-id, et manglende eller ødelagt indeks - falder tilbage til den dyre vej. En
+    // afbrudt sync når aldrig at skrive ejerskabet, og gør os derfor for forsigtige frem for
+    // for dristige. Det er med vilje den eneste retning fejlen kan gå i.
+    //
+    // Ét hjørne er værd at kende: kører to maskiner samtidig, kan A nå at læse ejerskabet
+    // (som stadig siger A) i det sekund B er ved at skrive, og dermed springe B's netop
+    // uploadede drømme over. B skriver ejerskabet til sidst, så A opdager dem ved NÆSTE sync.
+    // Det er en forsinkelse, ikke et tab - og appen er bygget til én maskine ad gangen.
     public void syncNow(boolean confirmedMerge) throws SyncException {
         SyncDTO dto = IOutils.loadSync();
         if (dto == null || !dto.syncEnabled) {
@@ -132,31 +154,153 @@ public class SyncService {
         // "Synkronisér nu" midt i en session sende en forældet udgave, eller slet ingenting.
         gemLokaleMetaÆndringer();
 
-        try {
-            Map<String, JsonNode> cloudDreams = firestoreClient.listDocuments(idToken, dreamsPath);
+        String maskinId = sikrMaskinId(dto);
 
-            if (!confirmedMerge) {
-                int duplicates = countLikelyDuplicates(cloudDreams);
-                if (duplicates > 0) {
-                    throw new SyncConflictException(
-                            user.getDreams().size(), countLivingCloudDreams(cloudDreams), duplicates);
+        try {
+            // Ét enkelt dokument fortæller hvem der skrev her sidst. Er det os selv, kan skyen
+            // ikke indeholde noget vi ikke allerede kender, og hele den dyre udforskning kan
+            // springes over. Det koster én læsning at spørge, mod 800+ ved at liste alt.
+            JsonNode ejerskab = firestoreClient.getDocument(idToken, metaSti(dto.uid, META_STATE)).orElse(null);
+            LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex();
+            boolean viSkrevSidst = erVoresEget(ejerskab, maskinId) && indeks != null;
+
+            Map<String, JsonNode> cloudDreams;
+            if (viSkrevSidst) {
+                cloudDreams = indeksSomSkyudgave(indeks);
+            } else {
+                cloudDreams = firestoreClient.listDocuments(idToken, dreamsPath);
+
+                if (!confirmedMerge) {
+                    int duplicates = countLikelyDuplicates(cloudDreams);
+                    if (duplicates > 0) {
+                        throw new SyncConflictException(
+                                user.getDreams().size(), countLivingCloudDreams(cloudDreams), duplicates);
+                    }
                 }
             }
 
             // Rækkefølgen er ikke tilfældig. Gravstenene skal skrives FØR pull, fordi pushTombstones
             // også opdaterer vores snapshot af skyen: ellers ville pullNewerDreams stadig se den
             // netop slettede drøm som et levende dokument, ikke finde den lokalt, og hente den ned igen.
-            pushTombstones(idToken, dreamsPath, cloudDreams);
-            pullNewerDreams(cloudDreams);
-            pushNewerDreams(idToken, dreamsPath, cloudDreams);
+            int gravsten = pushTombstones(idToken, dreamsPath, cloudDreams);
 
-            syncMeta(idToken, dto.uid);
+            // Der er intet at hente når vi selv var den sidste der skrev - og vigtigere: der er
+            // heller intet at hente FRA. cloudDreams er her vores eget indeks, ikke skyen.
+            if (!viSkrevSidst) {
+                pullNewerDreams(cloudDreams);
+            }
+
+            Push drømme = pushNewerDreams(idToken, dreamsPath, cloudDreams);
+            boolean metaÆndret = viSkrevSidst
+                    ? pushMetaSomEjer(idToken, dto.uid, ejerskab)
+                    : syncMeta(idToken, dto.uid);
+
+            // Indekset skrives først her, efter at alle push er lykkedes. Fejler et undervejs,
+            // kastes der, og filen står stadig med det den sagde før - næste sync sender så det
+            // manglende igen. Aldrig et indeks der lover mere end der er kommet afsted.
+            IOutils.saveCloudIndex(drømme.indeks());
+
+            // Ejerskabet skrives kun når vi faktisk har ændret noget deroppe. Ellers ville en
+            // app der bare åbnes og lukkes koste to skrivninger om dagen for ingenting.
+            if (!viSkrevSidst || gravsten > 0 || drømme.sendt() > 0 || metaÆndret) {
+                skrivEjerskab(idToken, dto.uid, maskinId);
+            }
 
             dto.lastSyncedAt = Instant.now();
             IOutils.saveSync(dto);
         } catch (FirestoreException e) {
             throw new SyncException("Kunne ikke synkronisere: " + e.getMessage(), e);
         }
+    }
+
+    // Maskin-id'et laves første gang der synkroniseres og bliver liggende i sync.json.
+    private String sikrMaskinId(SyncDTO dto) {
+        if (dto.machineId == null || dto.machineId.isBlank()) {
+            dto.machineId = UUID.randomUUID().toString();
+            IOutils.saveSync(dto);
+        }
+        return dto.machineId;
+    }
+
+    private boolean erVoresEget(JsonNode ejerskab, String maskinId) {
+        if (ejerskab == null) {
+            return false; // ingen har skrevet her endnu - eller i hvert fald ikke med denne udgave
+        }
+        JsonNode id = ejerskab.get("machineId");
+        return id != null && !id.isNull() && maskinId.equals(id.asText());
+    }
+
+    // Klæder det lokale indeks på som var det svaret fra en listDocuments, så resten af
+    // syncen ikke behøver vide hvor billedet af skyen kom fra. Kun updatedAt er med - det er
+    // det eneste felt push-siden overhovedet kigger på.
+    private Map<String, JsonNode> indeksSomSkyudgave(LinkedHashMap<String, Instant> indeks) {
+        Map<String, JsonNode> som = new LinkedHashMap<>();
+        for (Map.Entry<String, Instant> entry : indeks.entrySet()) {
+            ObjectNode felter = SyncObjectMapper.INSTANCE.createObjectNode();
+            if (entry.getValue() != null) {
+                felter.put("updatedAt", entry.getValue().toString());
+            }
+            som.put(entry.getKey(), felter);
+        }
+        return som;
+    }
+
+    private void skrivEjerskab(String idToken, String uid, String maskinId) throws FirestoreException {
+        MetaDTO meta = IOutils.loadMeta();
+        ObjectNode doc = SyncObjectMapper.INSTANCE.createObjectNode();
+        doc.put("machineId", maskinId);
+        doc.put("updatedAt", Instant.now().toString());
+
+        // Meta-stemplerne kommer med, så den billige vej også kan afgøre om kategorier, temaer
+        // og indstillinger er ajour - uden at hente de tre dokumenter ned og kigge.
+        sætStempel(doc, "categoriesUpdatedAt", meta.categories.updatedAt);
+        sætStempel(doc, "temaerUpdatedAt", meta.temaer.updatedAt);
+        sætStempel(doc, "settingsUpdatedAt", meta.settings.updatedAt);
+
+        firestoreClient.patchDocument(idToken, metaSti(uid, META_STATE), doc);
+    }
+
+    private void sætStempel(ObjectNode doc, String felt, Instant tidspunkt) {
+        if (tidspunkt != null) {
+            doc.put(felt, tidspunkt.toString());
+        } else {
+            doc.putNull(felt);
+        }
+    }
+
+    // Meta-siden af den billige vej: skyens tre dokumenter er vores egne, og ejerskabsdokumentet
+    // husker hvilke tidsstempler de havde. Er de uændrede, er der intet at gøre og intet at hente.
+    private boolean pushMetaSomEjer(String idToken, String uid, JsonNode ejerskab) throws SyncException {
+        MetaDTO meta = IOutils.loadMeta();
+        boolean ændret = false;
+        ændret |= pushMetaHvisAnderledes(idToken, uid, META_CATEGORIES, meta.categories.updatedAt,
+                læsTidsstempel(ejerskab, "categoriesUpdatedAt"), this::byggKategoriDokument);
+        ændret |= pushMetaHvisAnderledes(idToken, uid, META_TEMAER, meta.temaer.updatedAt,
+                læsTidsstempel(ejerskab, "temaerUpdatedAt"), this::byggTemaDokument);
+        ændret |= pushMetaHvisAnderledes(idToken, uid, META_SETTINGS, meta.settings.updatedAt,
+                læsTidsstempel(ejerskab, "settingsUpdatedAt"), this::byggIndstillingsDokument);
+        return ændret;
+    }
+
+    private boolean pushMetaHvisAnderledes(String idToken, String uid, String navn, Instant lokal,
+                                           Instant iSkyen, Supplier<ObjectNode> lokalUdgave) throws SyncException {
+        if (Objects.equals(lokal, iSkyen)) {
+            return false;
+        }
+        ObjectNode udgaaende = lokalUdgave.get();
+        if (lokal != null) {
+            udgaaende.put("updatedAt", lokal.toString());
+        }
+        try {
+            firestoreClient.patchDocument(idToken, metaSti(uid, navn), udgaaende);
+        } catch (FirestoreException e) {
+            throw new SyncException("Kunne ikke gemme " + navn + " i skyen: " + e.getMessage(), e);
+        }
+        return true;
+    }
+
+    private String metaSti(String uid, String navn) {
+        return "users/" + uid + "/meta/" + navn;
     }
 
     // Skriver en gravsten for hver drøm der er slettet lokalt, og tømmer køen efterhånden.
@@ -166,12 +310,13 @@ public class SyncService {
     //
     // Fejler et enkelt kald undervejs, gemmes køen ikke, og hele køen forsøges igen ved næste
     // sync. Det er harmløst: at skrive den samme gravsten to gange giver samme resultat.
-    private void pushTombstones(String idToken, String dreamsPath, Map<String, JsonNode> cloudDreams) throws SyncException {
+    private int pushTombstones(String idToken, String dreamsPath, Map<String, JsonNode> cloudDreams) throws SyncException {
         LinkedHashMap<String, Instant> pending = IOutils.loadDeletedDreams();
         if (pending.isEmpty()) {
-            return;
+            return 0;
         }
 
+        int skrevet = 0;
         LinkedHashMap<String, Instant> tilbage = new LinkedHashMap<>(pending);
         for (Map.Entry<String, Instant> entry : pending.entrySet()) {
             String id = entry.getKey();
@@ -188,8 +333,10 @@ public class SyncService {
             }
             cloudDreams.put(id, tombstone);
             tilbage.remove(id);
+            skrevet++;
         }
         IOutils.saveDeletedDreams(tilbage);
+        return skrevet;
     }
 
     private int countLivingCloudDreams(Map<String, JsonNode> cloudDreams) {
@@ -289,22 +436,40 @@ public class SyncService {
         }
     }
 
-    private void pushNewerDreams(String idToken, String dreamsPath, Map<String, JsonNode> cloudDreams) throws SyncException {
-        for (Dream d : user.getDreams().values()) {
+    // Hvor mange drømme der blev sendt, og hvad skyen derefter indeholder pr. drøm.
+    private record Push(int sendt, LinkedHashMap<String, Instant> indeks) {}
+
+    // Indekset bygges HER, undervejs, af nøjagtig de tidsstempler vi enten har sendt afsted
+    // eller bekræftet allerede lå deroppe - ikke bagefter ud fra user.getDreams().
+    //
+    // Forskellen er ikke teoretisk: syncen kører på en baggrundstråd, så brugeren kan nå at
+    // redigere en drøm midt i forløbet. Et indeks bygget til sidst ville notere den redigering
+    // som "ligger i skyen", selvom den blev lavet efter at drømmen var sendt - og så ville den
+    // aldrig komme derop. Sådan et hul er værre end en dyr sync.
+    private Push pushNewerDreams(String idToken, String dreamsPath, Map<String, JsonNode> cloudDreams) throws SyncException {
+        LinkedHashMap<String, Instant> indeks = new LinkedHashMap<>();
+        int sendt = 0;
+
+        for (Dream d : new ArrayList<>(user.getDreams().values())) {
             JsonNode cloudFields = cloudDreams.get(d.getId());
             Instant cloudUpdatedAt = extractUpdatedAt(cloudFields);
 
             boolean cloudIsCurrent = SyncMerge.cloudIsUpToDate(d.getUpdatedAt(), cloudUpdatedAt);
             if (cloudIsCurrent) {
+                indeks.put(d.getId(), cloudUpdatedAt);
                 continue; // skyen har allerede den nyeste/samme version - intet at sende
             }
 
+            JsonNode udgaaende = toPlainJson(d);
             try {
-                firestoreClient.patchDocument(idToken, dreamsPath + "/" + d.getId(), toPlainJson(d));
+                firestoreClient.patchDocument(idToken, dreamsPath + "/" + d.getId(), udgaaende);
             } catch (FirestoreException e) {
                 throw new SyncException("Kunne ikke gemme drøm i skyen: " + e.getMessage(), e);
             }
+            indeks.put(d.getId(), extractUpdatedAt(udgaaende));
+            sendt++;
         }
+        return new Push(sendt, indeks);
     }
 
     // En gravsten i skyen betyder "denne drøm er slettet på en anden maskine". Sletningen
@@ -338,15 +503,18 @@ public class SyncService {
         }
     }
 
-    private void syncMeta(String idToken, String uid) throws SyncException {
+    // Returnerer true hvis mindst ét dokument blev sendt op - så ved syncNow at skyen har
+    // ændret sig, og at ejerskabsdokumentet skal opdateres.
+    private boolean syncMeta(String idToken, String uid) throws SyncException {
         MetaDTO meta = IOutils.loadMeta();
 
-        syncMetaDocument(idToken, uid, META_CATEGORIES, meta.categories.updatedAt,
+        boolean ændret = syncMetaDocument(idToken, uid, META_CATEGORIES, meta.categories.updatedAt,
                 this::byggKategoriDokument, this::overtagKategorierFraSkyen);
-        syncMetaDocument(idToken, uid, META_TEMAER, meta.temaer.updatedAt,
+        ændret |= syncMetaDocument(idToken, uid, META_TEMAER, meta.temaer.updatedAt,
                 this::byggTemaDokument, this::overtagTemaerFraSkyen);
-        syncMetaDocument(idToken, uid, META_SETTINGS, meta.settings.updatedAt,
+        ændret |= syncMetaDocument(idToken, uid, META_SETTINGS, meta.settings.updatedAt,
                 this::byggIndstillingsDokument, this::overtagIndstillingerFraSkyen);
+        return ændret;
     }
 
     // Fælles forløb for alle tre meta-dokumenter: hent skyens udgave, afgør hvem der vinder
@@ -356,10 +524,10 @@ public class SyncService {
     // ("aldrig redigeret"), sendes dokumentet UDEN updatedAt. Ellers ville en frisk
     // installations standardkategorier - stemplet med afsendelsestidspunktet - se nyere ud end
     // den anden maskines rigtige kategorier, og overskrive dem ved næste sync.
-    private void syncMetaDocument(String idToken, String uid, String navn, Instant localUpdatedAt,
-                                  Supplier<ObjectNode> lokalUdgave,
-                                  BiConsumer<JsonNode, Instant> overtagSkyensUdgave) throws SyncException {
-        String path = "users/" + uid + "/meta/" + navn;
+    private boolean syncMetaDocument(String idToken, String uid, String navn, Instant localUpdatedAt,
+                                     Supplier<ObjectNode> lokalUdgave,
+                                     BiConsumer<JsonNode, Instant> overtagSkyensUdgave) throws SyncException {
+        String path = metaSti(uid, navn);
 
         Optional<JsonNode> cloud;
         try {
@@ -372,7 +540,9 @@ public class SyncService {
 
         if (MetaMerge.cloudWins(localUpdatedAt, cloudUpdatedAt, cloud.isPresent())) {
             overtagSkyensUdgave.accept(cloud.get(), cloudUpdatedAt);
-        } else if (MetaMerge.shouldPush(localUpdatedAt, cloudUpdatedAt, cloud.isPresent())) {
+            return false;
+        }
+        if (MetaMerge.shouldPush(localUpdatedAt, cloudUpdatedAt, cloud.isPresent())) {
             ObjectNode udgaaende = lokalUdgave.get();
             if (localUpdatedAt != null) {
                 udgaaende.put("updatedAt", localUpdatedAt.toString());
@@ -382,7 +552,9 @@ public class SyncService {
             } catch (FirestoreException e) {
                 throw new SyncException("Kunne ikke gemme " + navn + " i skyen: " + e.getMessage(), e);
             }
+            return true;
         }
+        return false;
     }
 
     // De udgående dokumenter bygges fra DISKEN, ikke fra den kørende User. Tidsstemplet i
@@ -482,8 +654,14 @@ public class SyncService {
     }
 
     private Instant extractUpdatedAt(JsonNode fields) {
+        return læsTidsstempel(fields, "updatedAt");
+    }
+
+    // Et tidsstempel fra et sky-dokument. Alt der ikke er en parsebar ISO-streng bliver til
+    // null - "det ved vi ikke" - og null fører hos samtlige kaldere ad den forsigtige vej.
+    private Instant læsTidsstempel(JsonNode fields, String felt) {
         if (fields == null) return null;
-        JsonNode ua = fields.get("updatedAt");
+        JsonNode ua = fields.get(felt);
         if (ua == null || ua.isNull() || ua.asText().isBlank()) return null;
         try {
             return Instant.parse(ua.asText());

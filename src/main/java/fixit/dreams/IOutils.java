@@ -25,6 +25,7 @@ public class IOutils {
     private static final Path FILE_PATH_SYNC = AppPaths.APP_DATA_PATH.resolve("sync.json");
     private static final Path FILE_PATH_DELETED = AppPaths.APP_DATA_PATH.resolve("deleted.json");
     private static final Path FILE_PATH_META = AppPaths.APP_DATA_PATH.resolve("meta.json");
+    private static final Path FILE_PATH_CLOUD_INDEX = AppPaths.APP_DATA_PATH.resolve("cloudindex.json");
     private static final String TXT_PATH_OM = "om.txt";
     private static final String TXT_PATH_HELP = "help.txt";
 
@@ -234,6 +235,46 @@ public class IOutils {
         }
     }
 
+    // Vores lokale billede af hvad skyen indeholder: drøm-id -> det updatedAt vi senest har
+    // fået sendt derop. Det er dét, der gør en almindelig sync billig - i stedet for at hente
+    // alle 800+ dokumenter ned bare for at spørge "hvad har ændret sig?", kan vi svare selv.
+    //
+    // Filen må KUN stoles på når skyens meta/state-dokument bekræfter at denne maskine også var
+    // den sidste der skrev (se SyncService). Ellers kan en anden maskine have ændret noget som
+    // indekset ikke kender, og så skal den dyre vej gås.
+    //
+    // Returnerer null - ikke et tomt kort - hvis filen mangler eller er ødelagt. Forskellen er
+    // vigtig: et tomt kort betyder "skyen er tom", mens null betyder "vi ved det ikke", og de to
+    // svar fører til hver sin vej gennem syncen.
+    public static LinkedHashMap<String, Instant> loadCloudIndex() {
+        try {
+            File file = FILE_PATH_CLOUD_INDEX.toFile();
+            if (!file.exists()) {
+                return null;
+            }
+            return objectMapper.readValue(file, new TypeReference<LinkedHashMap<String, Instant>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void saveCloudIndex(Map<String, Instant> indeks) {
+        try {
+            objectMapper.writeValue(FILE_PATH_CLOUD_INDEX.toFile(), indeks);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteCloudIndex() {
+        try {
+            Files.deleteIfExists(FILE_PATH_CLOUD_INDEX);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // Tidsstemplerne for kategori-definitioner, temaer og indstillinger (se MetaDTO).
     // Returnerer ALDRIG null: mangler eller er meta.json ødelagt, betyder det bare "vi har
     // endnu ikke set noget indhold", og den bliver genskabt ved næste gem.
@@ -279,12 +320,17 @@ public class IOutils {
     }
 
     // Sletter sync.json fuldstændigt - bruges ved "log ud", rører aldrig de øvrige datafiler.
+    //
+    // Skyindekset ryger med. Det beskriver hvad der ligger i ÉN bestemt konto, og at lade det
+    // blive liggende ville betyde, at en efterfølgende sync mod en anden konto troede at
+    // drømmene allerede var sendt derop - og så ville de aldrig blive det.
     public static void deleteSync() {
         try {
             Files.deleteIfExists(FILE_PATH_SYNC);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        deleteCloudIndex();
     }
 
     public static void eksporterDreamlist(List<DreamDTO> dreams, String filNavn) {
