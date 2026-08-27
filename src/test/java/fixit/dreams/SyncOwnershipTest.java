@@ -289,7 +289,111 @@ class SyncOwnershipTest {
                 "et indeks fra den gamle konto ville få drømmene til aldrig at blive sendt til den nye");
     }
 
+    // ---------- Hentede drømme skal på DISKEN, ikke kun i hukommelsen ----------
+
+    // Appen skriver ellers kun dreams.json ved appluk. Uden dette gem ville en drøm hentet af
+    // luk-syncen forsvinde med processen - og indekset ville bagefter kende den, så den
+    // billige vej aldrig listede skyen igen. Drømmen ville findes i skyen og være væk her.
+    @Test
+    void en_hentet_droem_gemmes_med_det_samme_paa_disken() throws SyncException {
+        sky.samling.put("fra-den-anden", skyDroem("fra-den-anden", "Skrevet på den nye pc"));
+
+        synkroniser();
+
+        assertTrue(IOutils.loadDreams().containsKey("fra-den-anden"),
+                "drømmen lå kun i hukommelsen - den ville være tabt når appen lukkede");
+    }
+
+    @Test
+    void indekset_kender_aldrig_en_droem_som_disken_ikke_kender() throws SyncException {
+        sky.samling.put("fra-den-anden", skyDroem("fra-den-anden", "Skrevet på den nye pc"));
+
+        synkroniser();
+
+        for (String id : IOutils.loadCloudIndex().keySet()) {
+            assertTrue(IOutils.loadDreams().containsKey(id),
+                    "indekset påstod at kende " + id + ", som ikke findes på disken");
+        }
+    }
+
+    // ---------- Lukning uden ændringer må slet ikke røre skyen ----------
+
+    @Test
+    void efter_en_sync_er_der_intet_usendt() throws SyncException {
+        user.addDream(droem("a", "Første drøm", Instant.parse("2026-08-27T10:00:00Z")));
+        synkroniser();
+
+        assertFalse(tjeneste().harUsendteÆndringer(),
+                "en lukning uden ændringer ville kontakte Firebase helt unødigt");
+    }
+
+    @Test
+    void en_ny_droem_taeller_som_usendt() throws SyncException {
+        synkroniser();
+
+        user.addDream(droem("ny", "Skrevet lige før lukning", Instant.parse("2026-08-27T18:00:00Z")));
+
+        assertTrue(tjeneste().harUsendteÆndringer());
+    }
+
+    @Test
+    void en_redigeret_droem_taeller_som_usendt() throws SyncException {
+        user.addDream(droem("a", "Første drøm", Instant.parse("2026-08-27T10:00:00Z")));
+        synkroniser();
+
+        user.addDream(droem("a", "Første drøm, rettet", Instant.parse("2026-08-27T18:00:00Z")));
+
+        assertTrue(tjeneste().harUsendteÆndringer());
+    }
+
+    @Test
+    void en_ventende_sletning_taeller_som_usendt() throws SyncException {
+        synkroniser();
+
+        LinkedHashMap<String, Instant> koe = new LinkedHashMap<>();
+        koe.put("a", Instant.parse("2026-08-27T18:00:00Z"));
+        IOutils.saveDeletedDreams(koe);
+
+        assertTrue(tjeneste().harUsendteÆndringer());
+    }
+
+    @Test
+    void aendrede_kategorier_taeller_som_usendt() throws SyncException {
+        synkroniser();
+
+        MetaDTO meta = IOutils.loadMeta();
+        meta.categories.updatedAt = Instant.now().plusSeconds(60);
+        IOutils.saveMeta(meta);
+
+        assertTrue(tjeneste().harUsendteÆndringer(),
+                "kategorier har intet indeks - de måles mod lastSyncedAt");
+    }
+
+    @Test
+    void et_mistet_indeks_taeller_som_usendt() throws SyncException, IOException {
+        synkroniser();
+        Files.deleteIfExists(AppPaths.APP_DATA_PATH.resolve("cloudindex.json"));
+
+        assertTrue(tjeneste().harUsendteÆndringer(),
+                "i tvivl skal den svare ja - ellers kan en drøm blive hængende her");
+    }
+
+    @Test
+    void uden_sync_slaaet_til_er_der_aldrig_noget_usendt() {
+        SyncDTO dto = IOutils.loadSync();
+        dto.syncEnabled = false;
+        IOutils.saveSync(dto);
+
+        user.addDream(droem("a", "Første drøm", Instant.parse("2026-08-27T10:00:00Z")));
+
+        assertFalse(tjeneste().harUsendteÆndringer());
+    }
+
     // ---------- Hjælpere ----------
+
+    private SyncService tjeneste() {
+        return new SyncService(user, new FakeAuth(), sky);
+    }
 
     private Dream droem(String id, String indhold, Instant updatedAt) {
         DreamData data = new DreamData();

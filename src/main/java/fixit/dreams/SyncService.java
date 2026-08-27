@@ -186,8 +186,10 @@ public class SyncService {
 
             // Der er intet at hente når vi selv var den sidste der skrev - og vigtigere: der er
             // heller intet at hente FRA. cloudDreams er her vores eget indeks, ikke skyen.
-            if (!viSkrevSidst) {
-                pullNewerDreams(cloudDreams);
+            if (!viSkrevSidst && pullNewerDreams(cloudDreams) > 0) {
+                // Skal ske FØR indekset skrives: indekset må aldrig kende en drøm som disken
+                // ikke gør. Se kommentaren over pullNewerDreams for hvad det ellers koster.
+                IOutils.saveDreams(user.getDreams());
             }
 
             Push drømme = pushNewerDreams(idToken, dreamsPath, cloudDreams);
@@ -399,6 +401,56 @@ public class SyncService {
         }
     }
 
+    // Kan besvares HELT lokalt: er der noget der endnu ikke er kommet i skyen? Ingen netværk,
+    // ingen læsning, ingen kvote - kun disken.
+    //
+    // Bruges ved appluk til at afgøre om der overhovedet er grund til at kontakte Firebase.
+    // Svarer den nej, lukker appen øjeblikkeligt uden at røre skyen; svarer den ja, er det
+    // værd at vente et øjeblik på at pushet bliver færdigt (se DreamApp.handleWindowClose).
+    //
+    // Den fejler bevidst mod JA: mangler indekset, eller er vi i tvivl, siger den ja og lader
+    // den rigtige sync afgøre sagen. At sige nej for meget ville betyde tabte drømme; at sige
+    // ja for meget koster ét enkelt overflødigt opslag.
+    public boolean harUsendteÆndringer() {
+        SyncDTO dto = IOutils.loadSync();
+        if (dto == null || !dto.syncEnabled) {
+            return false; // sync er slet ikke i brug
+        }
+
+        if (!IOutils.loadDeletedDreams().isEmpty()) {
+            return true; // sletninger der endnu ikke er blevet til gravsten
+        }
+
+        LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex();
+        if (indeks == null) {
+            return true; // vi ved ikke hvad skyen indeholder - lad syncen finde ud af det
+        }
+
+        Map<String, Dream> drømme = user.getDreams();
+        if (drømme.size() != indeks.size()) {
+            return true;
+        }
+        for (Dream d : drømme.values()) {
+            if (!Objects.equals(indeks.get(d.getId()), d.getUpdatedAt())) {
+                return true; // ny eller redigeret siden sidste sync
+            }
+        }
+
+        // Kategorier, temaer og indstillinger har ikke deres eget indeks, men deres stempler
+        // sættes af DENNE maskines ur, ligesom lastSyncedAt. Er et stempel nyere end den sidste
+        // gennemførte sync, er ændringen altså sket bagefter og mangler at komme afsted.
+        MetaDTO meta = IOutils.loadMeta();
+        return ændretEfter(meta.categories.updatedAt, dto.lastSyncedAt)
+                || ændretEfter(meta.temaer.updatedAt, dto.lastSyncedAt)
+                || ændretEfter(meta.settings.updatedAt, dto.lastSyncedAt);
+    }
+
+    private boolean ændretEfter(Instant stempel, Instant sidsteSync) {
+        if (stempel == null) return false;        // aldrig redigeret
+        if (sidsteSync == null) return true;      // aldrig synkroniseret
+        return stempel.isAfter(sidsteSync);
+    }
+
     // Best-effort variant til brug ved vindueslukning - må aldrig forsinke/blokere lukning.
     public void pushOnCloseIfEnabled() {
         try {
@@ -408,12 +460,24 @@ public class SyncService {
         }
     }
 
-    private void pullNewerDreams(Map<String, JsonNode> cloudDreams) {
+    // Returnerer hvor mange lokale drømme der blev ændret. Tallet er ikke pynt: kalderen SKAL
+    // gemme dreams.json når det er over nul.
+    //
+    // Appen skriver ellers kun drømmene til disk ved appluk (DreamApp.handleWindowClose), og
+    // alt hentet ligger indtil da kun i hukommelsen. Det gik an dengang hver sync listede hele
+    // skyen igen - en tabt hentning blev bare hentet igen. Med skyindekset gør den ikke: den
+    // hentede drøm ville stå i indekset som kendt, ejerskabet ville sende os ad den billige
+    // vej, og drømmen ville aldrig blive listet igen. Den ville altså findes i skyen og være
+    // væk her, permanent og lydløst.
+    private int pullNewerDreams(Map<String, JsonNode> cloudDreams) {
+        int ændrede = 0;
         for (Map.Entry<String, JsonNode> entry : cloudDreams.entrySet()) {
             String id = entry.getKey();
 
             if (Tombstone.isTombstone(entry.getValue())) {
-                applyRemoteDeletion(id, entry.getValue());
+                if (applyRemoteDeletion(id, entry.getValue())) {
+                    ændrede++;
+                }
                 continue; // en gravsten må ALDRIG læses som en drøm - den har hverken indhold eller kategorier
             }
 
@@ -432,8 +496,10 @@ public class SyncService {
 
             if (SyncMerge.cloudWins(localUpdatedAt, cloudData.updatedAt)) {
                 user.addDream(new Dream(cloudData));
+                ændrede++;
             }
         }
+        return ændrede;
     }
 
     // Hvor mange drømme der blev sendt, og hvad skyen derefter indeholder pr. drøm.
@@ -476,16 +542,18 @@ public class SyncService {
     // gentages derfor lokalt - men kun hvis gravstenen er nyere end vores egen udgave, så en
     // redigering foretaget EFTER sletningen ikke går tabt. Det er nøjagtig samme
     // last-write-wins-regel som for indhold; gravstenen er bare "det nyeste er ingenting".
-    private void applyRemoteDeletion(String id, JsonNode fields) {
+    private boolean applyRemoteDeletion(String id, JsonNode fields) {
         Dream local = user.getDreams().get(id);
         if (local == null) {
-            return; // allerede væk her - intet at gøre
+            return false; // allerede væk her - intet at gøre
         }
         if (SyncMerge.cloudWins(local.getUpdatedAt(), extractUpdatedAt(fields))) {
             // Bevidst User.deleteDream og ikke UserService.deleteDream: sletningen kommer FRA
             // skyen, og må ikke lægges i vores egen kø som var den en ny lokal sletning.
             user.deleteDream(id);
+            return true;
         }
+        return false;
     }
 
     // Skriver den kørende Users kategorier/temaer/indstillinger til disk, så tidsstemplerne er

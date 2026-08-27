@@ -63,12 +63,29 @@ public class DreamApp extends Application {
         }
         IOutils.saveDreams(tempo.getDreams());
 
-        // Cloud-sync: push evt. ændringer til skyen (kun hvis brugeren har slået det til).
-        // Baggrunds-/dæmon-tråd, må aldrig forsinke eller blokere vindueslukning - hvis appen
-        // lukkes hurtigere end pushet når at blive færdigt, fanges det op ved næste sync.
-        Thread pushThread = new Thread(() -> new SyncService(tempo).pushOnCloseIfEnabled());
-        pushThread.setDaemon(true);
-        pushThread.start();
+        // Cloud-sync ved appluk. To beslutninger, i den rækkefølge:
+        //
+        // 1) Er der overhovedet noget at sende? Det kan afgøres helt lokalt mod skyindekset,
+        //    så en session hvor man bare har kigget, lukker uden at røre Firebase overhovedet.
+        //
+        // 2) Er der noget, får pushet lov at blive færdigt - men højst i tre sekunder.
+        //    Tråden er stadig en dæmontråd, så grænsen er en garanti: appen lukker uanset hvad.
+        //
+        // Før ventede vi aldrig, og pushet blev typisk dræbt halvvejs. Det var det rigtige valg
+        // dengang et push først skulle hente 800+ dokumenter ned; nu koster det én læsning og
+        // er ovre på et øjeblik. Prisen for ikke at vente var, at drømme skrevet i den sidste
+        // session først nåede skyen ved NÆSTE opstart - og aldrig, hvis den ikke kom.
+        SyncService sync = new SyncService(tempo);
+        if (sync.harUsendteÆndringer()) {
+            Thread pushThread = new Thread(sync::pushOnCloseIfEnabled);
+            pushThread.setDaemon(true);
+            pushThread.start();
+            try {
+                pushThread.join(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     public static Scene getCurrentScene() {

@@ -143,7 +143,10 @@ public class IOutils {
         return userTema;
     }
 
-    public static void saveDreams(HashMap<String,Dream> dreams) {
+    // synchronized fordi der nu er to skrivere: FX-tråden ved appluk, og sync-tråden når den
+    // har hentet drømme ned fra skyen. To samtidige skrivninger af den 1,4 MB store fil ville
+    // kunne efterlade den halvt overskrevet - og det er hele brugerens dagbog.
+    public static synchronized void saveDreams(HashMap<String,Dream> dreams) {
         List<DreamData> saveMe = new ArrayList<>();
         for (Dream d : dreams.values()) {
             DreamData temp = new DreamData();
