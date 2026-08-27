@@ -8,6 +8,12 @@ module fixit.dreams {
     requires java.desktop;
     requires java.net.http;
 
+    // Ikke-engelske sprogdata ligger i sit eget JDK-modul. Uden dette requires tager jlink det
+    // ikke med i runtime-imaget, og den installerede app falder tilbage til rod-locale: "Tue"
+    // i stedet for "tirs.", og 2026-08-27 i stedet for 27.08.2026. Fra IntelliJ ses det ikke,
+    // for dér køres der på en fuld JDK, som har modulet i forvejen.
+    requires jdk.localedata;
+
 
     opens fixit.dreams to javafx.fxml;
     exports fixit.dreams;
