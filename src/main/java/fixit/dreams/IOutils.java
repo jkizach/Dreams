@@ -26,8 +26,6 @@ public class IOutils {
     private static final Path FILE_PATH_DELETED = AppPaths.APP_DATA_PATH.resolve("deleted.json");
     private static final Path FILE_PATH_META = AppPaths.APP_DATA_PATH.resolve("meta.json");
     private static final Path FILE_PATH_CLOUD_INDEX = AppPaths.APP_DATA_PATH.resolve("cloudindex.json");
-    private static final String TXT_PATH_OM = "om.txt";
-    private static final String TXT_PATH_HELP = "help.txt";
 
     static {
         objectMapper.registerModule(new JavaTimeModule()); // Registrér JavaTimeModule
