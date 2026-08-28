@@ -34,4 +34,32 @@ class AnalyseAndelTest {
     void udeladerProcentNaarDerIkkeErDroemme() {
         assertEquals("0", AnalyseService.formatAntalOgAndel(0, 0));
     }
+
+    // ---------- Andelen alene, til Tal-tabbens binære symboler ----------
+
+    @Test
+    void andelAleneBrugerSammeAfrunding() {
+        assertEquals("[13%]", AnalyseService.formatAndel(101, 807));
+        assertEquals("[13%]", AnalyseService.formatAndel(1, 8));    // 12,5 -> 13
+        assertEquals("[11%]", AnalyseService.formatAndel(1, 9));    // 11,1 -> 11
+        assertEquals("[0%]", AnalyseService.formatAndel(0, 807));
+        assertEquals("[100%]", AnalyseService.formatAndel(807, 807));
+    }
+
+    // Kolonnen skal stå tom, ikke vise "0%": uden drømme i intervallet findes brøken ikke.
+    @Test
+    void ingenDroemmeGiverTomAndel() {
+        assertEquals("", AnalyseService.formatAndel(0, 0));
+    }
+
+    // De to formatteringer må aldrig kunne vise hver sit tal for den samme brøk - derfor
+    // bygger den lange på den korte. Går de fra hinanden, står der to sandheder på skærmen.
+    @Test
+    void deToFormatteringerErEnige() {
+        for (int antal = 0; antal <= 40; antal++) {
+            assertEquals(antal + " " + AnalyseService.formatAndel(antal, 40),
+                    AnalyseService.formatAntalOgAndel(antal, 40),
+                    "uenighed ved antal=" + antal);
+        }
+    }
 }

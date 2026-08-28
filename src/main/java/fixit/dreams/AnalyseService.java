@@ -308,7 +308,7 @@ public class AnalyseService extends ServiceMother{
 
 
     /**
-     * Formaterer en kategoris antal drømme som fx "101 (13%)", hvor procenten er
+     * Formaterer en kategoris antal drømme som fx "101 [13%]", hvor procenten er
      * andelen af det samlede antal drømme i datointervallet. Der rundes til nærmeste
      * hele procent, og halve rundes op. Er totalen 0, vises kun antallet.
      */
@@ -316,8 +316,21 @@ public class AnalyseService extends ServiceMother{
         if (total <= 0) {
             return String.valueOf(antal);
         }
-        long procent = Math.round(antal * 100.0 / total);
-        return antal + " [" + procent + "%]";
+        return antal + " " + formatAndel(antal, total);
+    }
+
+    /**
+     * Andelen alene, fx "[13%]" - til Tal-tabbens binære symboler, hvor antallet står i
+     * sin egen kolonne og procenten skal kunne stå ret under hinanden i den næste.
+     * Samme afrunding som {@link #formatAntalOgAndel}, så de to aldrig kan vise hver sit
+     * tal for den samme brøk. Er totalen 0, er der ingen andel at vise, og kolonnen
+     * bliver tom frem for at påstå "0%" om et tomt datointerval.
+     */
+    public static String formatAndel(int antal, int total) {
+        if (total <= 0) {
+            return "";
+        }
+        return "[" + Math.round(antal * 100.0 / total) + "%]";
     }
 
     public String getForloebStage(String id) {

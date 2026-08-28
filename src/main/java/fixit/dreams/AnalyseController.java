@@ -35,7 +35,7 @@ public class AnalyseController {
     private LineChart<String,Number> lineChartAnalyse;
 
     @FXML
-    private VBox vboxTilCCBAnalyse, talVboxBinary, talVboxBinaryNumbers, talVboxCatOne, talVboxCatTwo;
+    private VBox vboxTilCCBAnalyse, talVboxBinary, talVboxBinaryNumbers, talVboxBinaryPercent, talVboxCatOne, talVboxCatTwo;
 
     @FXML
     private ToggleButton tgDays, tgMonths, tgWeeks, tgForloebKort, tgForloebLangt;
@@ -311,20 +311,31 @@ public class AnalyseController {
 
         talVboxBinary.getChildren().clear();
         talVboxBinaryNumbers.getChildren().clear();
+        talVboxBinaryPercent.getChildren().clear();
+
+        // Samme nævner som kategorioverskrifterne længere nede bruger: alle drømme i
+        // intervallet, ikke kun dem der har mindst ét flag. "13% af drømmene var lucide"
+        // ville ellers betyde noget forskelligt de to steder på den samme skærm.
+        int totalDrommeTal = analyseService.countDreams(dpFromTal.getValue(), dpToTal.getValue());
 
         int[] values = analyseService.getTalBinary(dpFromTal.getValue(), dpToTal.getValue());
         for (int i = 0; i < binaries.size(); i++) {
             Label lbl = new Label();
             Label vals = new Label();
+            Label andel = new Label();
             lbl.setText(binaries.get(i));
             vals.setAlignment(Pos.CENTER_RIGHT);
             vals.setMaxWidth(Double.MAX_VALUE);
             vals.setText(String.valueOf(values[i]));
+            andel.setAlignment(Pos.CENTER_RIGHT);
+            andel.setMaxWidth(Double.MAX_VALUE);
+            andel.setText(AnalyseService.formatAndel(values[i], totalDrommeTal));
 
             if ((!binaries.get(i).equals("Advarsel")||analyseService.usingAdvarsel()) && (!binaries.get(i).equals("Kollektiv")||analyseService.usingKollektiv())
                     && (!binaries.get(i).equals("Holografisk")||analyseService.usingHolografisk())) {
                 talVboxBinary.getChildren().add(lbl);
                 talVboxBinaryNumbers.getChildren().add(vals);
+                talVboxBinaryPercent.getChildren().add(andel);
             }
 
         }
@@ -335,7 +346,6 @@ public class AnalyseController {
 
         ArrayList<ArrayList<String>> statsForCats = analyseService.getTalCategories(dpFromTal.getValue(), dpToTal.getValue());
         ArrayList<Category> cats = analyseService.getCats();
-        int totalDrommeTal = analyseService.countDreams(dpFromTal.getValue(), dpToTal.getValue());
 
         int counter = 0;
 

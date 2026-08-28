@@ -77,8 +77,9 @@
                                     </VBox>
                                     <HBox maxWidth="1.7976931348623157E308" prefHeight="407.0" prefWidth="291.0" spacing="5.0">
                                        <children>
-                                          <VBox fx:id="talVboxBinary" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="240.0" spacing="10.0" HBox.hgrow="ALWAYS" />
-                                          <VBox fx:id="talVboxBinaryNumbers" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS" />
+                                          <VBox fx:id="talVboxBinary" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="130.0" spacing="10.0" HBox.hgrow="ALWAYS" />
+                                          <VBox fx:id="talVboxBinaryNumbers" minWidth="-Infinity" prefHeight="200.0" prefWidth="-1.0" spacing="10.0" HBox.hgrow="NEVER" />
+                                          <VBox fx:id="talVboxBinaryPercent" minWidth="-Infinity" prefHeight="200.0" prefWidth="-1.0" spacing="10.0" HBox.hgrow="NEVER" />
                                        </children>
                                     </HBox>
                                  </children>
