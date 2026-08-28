@@ -1,6 +1,7 @@
 package fixit.dreams;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,7 +26,7 @@ public class IOutils {
     private static final Path FILE_PATH_SYNC = AppPaths.APP_DATA_PATH.resolve("sync.json");
     private static final Path FILE_PATH_DELETED = AppPaths.APP_DATA_PATH.resolve("deleted.json");
     private static final Path FILE_PATH_META = AppPaths.APP_DATA_PATH.resolve("meta.json");
-    private static final Path FILE_PATH_CLOUD_INDEX = AppPaths.APP_DATA_PATH.resolve("cloudindex.json");
+    private static final Path FILE_PATH_MACHINE = AppPaths.APP_DATA_PATH.resolve("machine.json");
 
     static {
         objectMapper.registerModule(new JavaTimeModule()); // Registrér JavaTimeModule
@@ -240,16 +241,31 @@ public class IOutils {
     // fået sendt derop. Det er dét, der gør en almindelig sync billig - i stedet for at hente
     // alle 800+ dokumenter ned bare for at spørge "hvad har ændret sig?", kan vi svare selv.
     //
+    // Filen hedder cloudindex-<uid>.json, altså én pr. konto. Det er dét, der gør det ufarligt
+    // at lade den ligge ved log ud: et indeks beskriver ÉN bestemt konto, og logger man ind på
+    // en anden, findes der ingen fil for dét uid, hvorved den dyre vej tages helt af sig selv.
+    // Logger man ind på samme konto igen, er indekset stadig gyldigt, og syncen koster fire
+    // læsninger i stedet for 800+.
+    //
     // Filen må KUN stoles på når skyens meta/state-dokument bekræfter at denne maskine også var
     // den sidste der skrev (se SyncService). Ellers kan en anden maskine have ændret noget som
-    // indekset ikke kender, og så skal den dyre vej gås.
+    // indekset ikke kender, og så skal den dyre vej gås. Det er også dét, der dækker hullet
+    // mellem log ud og log ind: har en anden maskine skrevet imens, står dens maskin-id i
+    // ejerskabsdokumentet, og indekset bliver ikke brugt.
     //
     // Returnerer null - ikke et tomt kort - hvis filen mangler eller er ødelagt. Forskellen er
     // vigtig: et tomt kort betyder "skyen er tom", mens null betyder "vi ved det ikke", og de to
     // svar fører til hver sin vej gennem syncen.
-    public static LinkedHashMap<String, Instant> loadCloudIndex() {
+    private static Path cloudIndexPath(String uid) {
+        return AppPaths.APP_DATA_PATH.resolve("cloudindex-" + uid + ".json");
+    }
+
+    public static LinkedHashMap<String, Instant> loadCloudIndex(String uid) {
+        if (uid == null || uid.isBlank()) {
+            return null;
+        }
         try {
-            File file = FILE_PATH_CLOUD_INDEX.toFile();
+            File file = cloudIndexPath(uid).toFile();
             if (!file.exists()) {
                 return null;
             }
@@ -260,19 +276,78 @@ public class IOutils {
         }
     }
 
-    public static void saveCloudIndex(Map<String, Instant> indeks) {
+    public static void saveCloudIndex(String uid, Map<String, Instant> indeks) {
+        if (uid == null || uid.isBlank()) {
+            return;
+        }
         try {
-            objectMapper.writeValue(FILE_PATH_CLOUD_INDEX.toFile(), indeks);
+            objectMapper.writeValue(cloudIndexPath(uid).toFile(), indeks);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void deleteCloudIndex() {
+    public static void deleteCloudIndex(String uid) {
+        if (uid == null || uid.isBlank()) {
+            return;
+        }
         try {
-            Files.deleteIfExists(FILE_PATH_CLOUD_INDEX);
+            Files.deleteIfExists(cloudIndexPath(uid));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Maskinens eget id. Beskriver hardwaren, ikke kontoen, og bor derfor i sin egen fil frem
+    // for i sync.json: ellers ville et log ud kaste det væk, et log ind lave et nyt, og
+    // ejerskabsdokumentet i skyen aldrig genkende maskinen igen - hvorved den dyre vej blev
+    // taget ved hvert eneste login, uanset at indekset lå lige der.
+    //
+    // Til gengæld skal filen IKKE følge med når man flytter ved at kopiere datamappen: to
+    // maskiner med samme id ville begge tro at de skrev sidst, og springe hinandens ændringer
+    // over. Se afsnittet "Ny computer" i om.txt.
+    public static String loadMachineId() {
+        try {
+            File file = FILE_PATH_MACHINE.toFile();
+            if (!file.exists()) {
+                return null;
+            }
+            JsonNode node = objectMapper.readTree(file);
+            JsonNode id = node.get("machineId");
+            return (id != null && !id.isNull() && !id.asText().isBlank()) ? id.asText() : null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void saveMachineId(String machineId) {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(FILE_PATH_MACHINE.toFile(), Map.of("machineId", machineId));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Ældre installationer har ét fælles cloudindex.json. Det hørte til den konto der var logget
+    // ind, og navngives derfor bare om første gang. Uden det ville opgraderingen koste én
+    // fuld listning af skyen - præcis dét indekset er sat i verden for at undgå.
+    //
+    // Kaldes kun fra syncNow med kontoens eget uid, aldrig med et vilkårligt: filen bærer ikke
+    // selv rundt på hvem den hører til, så det er kalderen der skal vide det.
+    public static void migrerGammeltIndeks(String uid) {
+        if (uid == null || uid.isBlank()) {
+            return;
+        }
+        Path gammel = AppPaths.APP_DATA_PATH.resolve("cloudindex.json");
+        Path ny = cloudIndexPath(uid);
+        try {
+            if (Files.exists(gammel) && Files.notExists(ny)) {
+                Files.move(gammel, ny);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // mislykkes den, tages den dyre vej - irriterende, ikke farligt
         }
     }
 
@@ -322,16 +397,20 @@ public class IOutils {
 
     // Sletter sync.json fuldstændigt - bruges ved "log ud", rører aldrig de øvrige datafiler.
     //
-    // Skyindekset ryger med. Det beskriver hvad der ligger i ÉN bestemt konto, og at lade det
-    // blive liggende ville betyde, at en efterfølgende sync mod en anden konto troede at
-    // drømmene allerede var sendt derop - og så ville de aldrig blive det.
+    // Skyindekset blev tidligere revet med her, fordi det dengang lå i én fælles cloudindex.json:
+    // lod man den blive liggende, ville en senere sync mod en ANDEN konto tro at drømmene
+    // allerede var sendt derop - og så ville de aldrig blive det. Nu hedder filen
+    // cloudindex-<uid>.json, så et indeks aldrig kan forveksles med en anden kontos, og det er
+    // netop pointen at det får lov at blive liggende: logger man ind på samme konto igen,
+    // koster den første sync fire læsninger i stedet for 800+.
+    //
+    // machine.json bliver også liggende. Maskinen er den samme, uanset hvem der er logget ind.
     public static void deleteSync() {
         try {
             Files.deleteIfExists(FILE_PATH_SYNC);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        deleteCloudIndex();
     }
 
     public static void eksporterDreamlist(List<DreamDTO> dreams, String filNavn) {

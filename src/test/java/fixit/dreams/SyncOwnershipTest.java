@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ class SyncOwnershipTest {
 
     private static final List<String> FILNAVNE = List.of(
             "user.json", "temaer.json", "cats.json", "dreams.json", "sync.json", "deleted.json",
-            "meta.json", "cloudindex.json");
+            "meta.json", "machine.json", "cloudindex.json");
 
     private FakeFirestore sky;
     private User user;
@@ -67,9 +68,19 @@ class SyncOwnershipTest {
         User.resetForTests();
     }
 
+    private static Path cloudIndexFil(String uid) {
+        return AppPaths.APP_DATA_PATH.resolve("cloudindex-" + uid + ".json");
+    }
+
     private void ryd() throws IOException {
         for (String navn : FILNAVNE) {
             Files.deleteIfExists(AppPaths.APP_DATA_PATH.resolve(navn));
+        }
+        // Indeksfilerne hedder noget forskelligt pr. konto og kan derfor ikke stå på listen.
+        try (var stier = Files.list(AppPaths.APP_DATA_PATH)) {
+            for (Path sti : stier.filter(p -> p.getFileName().toString().startsWith("cloudindex-")).toList()) {
+                Files.deleteIfExists(sti);
+            }
         }
     }
 
@@ -86,18 +97,18 @@ class SyncOwnershipTest {
         assertEquals(1, sky.listKald, "uden et ejerskabsdokument SKAL skyen listes");
         assertTrue(sky.patched.containsKey(STATE_PATH), "ejerskabet blev ikke skrevet");
         assertFalse(sky.patched.get(STATE_PATH).path("machineId").asText().isBlank());
-        assertNotNull(IOutils.loadCloudIndex(), "indekset skal ligge klar til næste gang");
+        assertNotNull(IOutils.loadCloudIndex(UID), "indekset skal ligge klar til næste gang");
     }
 
     @Test
     void maskinId_laves_en_gang_og_bliver_liggende() throws SyncException {
         synkroniser();
-        String foerste = IOutils.loadSync().machineId;
+        String foerste = IOutils.loadMachineId();
 
         sky.nulstilTællere();
         synkroniser();
 
-        assertEquals(foerste, IOutils.loadSync().machineId,
+        assertEquals(foerste, IOutils.loadMachineId(),
                 "et nyt id ved hver sync ville sende os ad den dyre vej hver gang");
     }
 
@@ -172,7 +183,7 @@ class SyncOwnershipTest {
         user.addDream(droem("ny-droem", "Jeg fløj over byen", Instant.parse("2026-08-27T10:00:00Z")));
         synkroniser();
 
-        LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex();
+        LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex(UID);
         assertEquals(Instant.parse("2026-08-27T10:00:00Z"), indeks.get("ny-droem"),
                 "uden indeksopdatering ville drømmen blive sendt op igen ved hver eneste sync");
     }
@@ -256,7 +267,7 @@ class SyncOwnershipTest {
 
         // Ejerskabet siger stadig at det var os - men uden indekset aner vi ikke hvad der
         // allerede ligger deroppe, og så må vi ikke tro noget som helst.
-        Files.deleteIfExists(AppPaths.APP_DATA_PATH.resolve("cloudindex.json"));
+        Files.deleteIfExists(cloudIndexFil(UID));
 
         synkroniser();
 
@@ -274,19 +285,85 @@ class SyncOwnershipTest {
 
         assertThrows(SyncException.class, this::synkroniser);
 
-        assertFalse(IOutils.loadCloudIndex().containsKey("ny-droem"),
+        assertFalse(IOutils.loadCloudIndex(UID).containsKey("ny-droem"),
                 "indekset påstod at drømmen lå i skyen, selvom skrivningen fejlede");
     }
 
+    // Log ud rev tidligere indekset med sig, fordi der kun fandtes ét. Nu hører hvert indeks til
+    // ét uid, og så er det både ufarligt og en pointe at lade det ligge: logger man ind på samme
+    // konto igen, koster første sync fire læsninger i stedet for at liste 800+ dokumenter.
     @Test
-    void log_ud_sletter_indekset() throws SyncException {
+    void log_ud_beholder_indekset_for_kontoen() throws SyncException {
         synkroniser();
-        assertNotNull(IOutils.loadCloudIndex());
+        assertNotNull(IOutils.loadCloudIndex(UID));
 
         new SyncService(user, new FakeAuth(), sky).logout();
 
-        assertNull(IOutils.loadCloudIndex(),
-                "et indeks fra den gamle konto ville få drømmene til aldrig at blive sendt til den nye");
+        assertNotNull(IOutils.loadCloudIndex(UID),
+                "indekset beskriver stadig den konto det blev skrevet for");
+        assertNull(IOutils.loadSync(), "men selve login'et skal være væk");
+    }
+
+    // Sikkerheden ligger nu i filens navn frem for i at huske at slette den: en anden konto har
+    // ganske enkelt ikke noget indeks, og syncen falder af sig selv tilbage på den dyre vej.
+    // Holder det ikke, ville den nye kontos drømme aldrig blive sendt op.
+    @Test
+    void en_anden_konto_arver_ikke_det_gamle_indeks() throws SyncException {
+        synkroniser();
+        assertNotNull(IOutils.loadCloudIndex(UID));
+
+        new SyncService(user, new FakeAuth(), sky).logout();
+
+        assertNull(IOutils.loadCloudIndex("et-helt-andet-uid"));
+    }
+
+    // Maskin-id'et er hardware, ikke konto. Overlevede det ikke et log ud, ville ejerskabs-
+    // dokumentet aldrig genkende maskinen igen, og indekset ville ligge der til ingen nytte -
+    // genvejen kræver begge dele.
+    @Test
+    void log_ud_beholder_maskinId() throws SyncException {
+        synkroniser();
+        String foer = IOutils.loadMachineId();
+        assertNotNull(foer);
+
+        new SyncService(user, new FakeAuth(), sky).logout();
+
+        assertEquals(foer, IOutils.loadMachineId());
+    }
+
+    // Hele pointen med de to foregående, målt hvor det gør ondt.
+    @Test
+    void log_ind_paa_samme_konto_igen_gaar_den_billige_vej() throws SyncException {
+        synkroniser();
+        new SyncService(user, new FakeAuth(), sky).logout();
+
+        SyncDTO igen = new SyncDTO();
+        igen.email = "test@example.com";
+        igen.refreshToken = "refresh-token";
+        igen.uid = UID;
+        igen.syncEnabled = true;
+        IOutils.saveSync(igen);
+
+        sky.nulstilTællere();
+        synkroniser();
+
+        assertEquals(0, sky.listKald, "indeks og maskin-id lå der jo - skyen skulle ikke listes igen");
+    }
+
+    // Den gamle udgave havde ét fælles cloudindex.json, som stadig ligger der efter en
+    // opdatering. Navngives den ikke om, lister den første sync efter opgraderingen hele skyen
+    // igen - og så koster omlægningen præcis dét den skulle spare.
+    @Test
+    void et_gammelt_faelles_indeks_overtages_af_kontoen() throws SyncException, IOException {
+        synkroniser();
+        Files.move(cloudIndexFil(UID), AppPaths.APP_DATA_PATH.resolve("cloudindex.json"));
+        sky.nulstilTællere();
+
+        synkroniser();
+
+        assertEquals(0, sky.listKald, "det gamle indeks skulle være taget i brug, ikke ignoreret");
+        assertTrue(Files.notExists(AppPaths.APP_DATA_PATH.resolve("cloudindex.json")),
+                "den gamle fil skal flyttes, ikke kopieres - ellers lever to indeks side om side");
     }
 
     // ---------- Hentede drømme skal på DISKEN, ikke kun i hukommelsen ----------
@@ -310,7 +387,7 @@ class SyncOwnershipTest {
 
         synkroniser();
 
-        for (String id : IOutils.loadCloudIndex().keySet()) {
+        for (String id : IOutils.loadCloudIndex(UID).keySet()) {
             assertTrue(IOutils.loadDreams().containsKey(id),
                     "indekset påstod at kende " + id + ", som ikke findes på disken");
         }
@@ -372,7 +449,7 @@ class SyncOwnershipTest {
     @Test
     void et_mistet_indeks_taeller_som_usendt() throws SyncException, IOException {
         synkroniser();
-        Files.deleteIfExists(AppPaths.APP_DATA_PATH.resolve("cloudindex.json"));
+        Files.deleteIfExists(cloudIndexFil(UID));
 
         assertTrue(tjeneste().harUsendteÆndringer(),
                 "i tvivl skal den svare ja - ellers kan en drøm blive hængende her");

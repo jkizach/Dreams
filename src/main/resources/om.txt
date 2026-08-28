@@ -30,6 +30,14 @@ Der er to veje, og du kan bruge den der passer dig:
 
 Bruger du skyen, er det en god idé at logge ind før du begynder at skrive på den nye maskine. Så står det hele klar med det samme.
 
+## Hvis du kopierer mappen
+
+Har du på et tidspunkt brugt sky-synkronisering, ligger der en fil der hedder machine.json. Den er maskinens eget navneskilt, og den skal ikke med over. Slet den på den nye maskine når du har kopieret mappen - appen laver selv et nyt navneskilt næste gang den synkroniserer.
+
+Gør du det ikke, går de to maskiner rundt med samme navneskilt, og så kan de komme til at overse hinandens ændringer.
+
+Har du aldrig slået skyen til, findes filen slet ikke, og så er der ikke noget at tage sig af: kopiér mappen og kom videre.
+
 ---
 
 # Sky-synkronisering

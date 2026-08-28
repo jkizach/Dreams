@@ -155,13 +155,14 @@ public class SyncService {
         gemLokaleMetaÆndringer();
 
         String maskinId = sikrMaskinId(dto);
+        IOutils.migrerGammeltIndeks(dto.uid);
 
         try {
             // Ét enkelt dokument fortæller hvem der skrev her sidst. Er det os selv, kan skyen
             // ikke indeholde noget vi ikke allerede kender, og hele den dyre udforskning kan
             // springes over. Det koster én læsning at spørge, mod 800+ ved at liste alt.
             JsonNode ejerskab = firestoreClient.getDocument(idToken, metaSti(dto.uid, META_STATE)).orElse(null);
-            LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex();
+            LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex(dto.uid);
             boolean viSkrevSidst = erVoresEget(ejerskab, maskinId) && indeks != null;
 
             Map<String, JsonNode> cloudDreams;
@@ -200,7 +201,7 @@ public class SyncService {
             // Indekset skrives først her, efter at alle push er lykkedes. Fejler et undervejs,
             // kastes der, og filen står stadig med det den sagde før - næste sync sender så det
             // manglende igen. Aldrig et indeks der lover mere end der er kommet afsted.
-            IOutils.saveCloudIndex(drømme.indeks());
+            IOutils.saveCloudIndex(dto.uid, drømme.indeks());
 
             // Ejerskabet skrives kun når vi faktisk har ændret noget deroppe. Ellers ville en
             // app der bare åbnes og lukkes koste to skrivninger om dagen for ingenting.
@@ -215,13 +216,22 @@ public class SyncService {
         }
     }
 
-    // Maskin-id'et laves første gang der synkroniseres og bliver liggende i sync.json.
+    // Maskin-id'et laves første gang der synkroniseres og bliver liggende i machine.json - i sin
+    // egen fil, netop fordi det beskriver maskinen og ikke kontoen. Lå det stadig i sync.json,
+    // ville et log ud kaste det væk, og maskinen ville aldrig kunne genkende sig selv i skyens
+    // ejerskabsdokument igen.
+    //
+    // Ældre installationer har id'et liggende i sync.json. Det flyttes over første gang, så en
+    // opdatering ikke koster den dyre vej én ekstra gang.
     private String sikrMaskinId(SyncDTO dto) {
-        if (dto.machineId == null || dto.machineId.isBlank()) {
-            dto.machineId = UUID.randomUUID().toString();
-            IOutils.saveSync(dto);
+        String id = IOutils.loadMachineId();
+        if (id == null) {
+            id = (dto.machineId != null && !dto.machineId.isBlank())
+                    ? dto.machineId                       // arvet fra en tidligere udgave
+                    : UUID.randomUUID().toString();
+            IOutils.saveMachineId(id);
         }
-        return dto.machineId;
+        return id;
     }
 
     private boolean erVoresEget(JsonNode ejerskab, String maskinId) {
@@ -421,7 +431,7 @@ public class SyncService {
             return true; // sletninger der endnu ikke er blevet til gravsten
         }
 
-        LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex();
+        LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex(dto.uid);
         if (indeks == null) {
             return true; // vi ved ikke hvad skyen indeholder - lad syncen finde ud af det
         }
