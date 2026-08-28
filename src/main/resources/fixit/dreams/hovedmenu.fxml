@@ -75,7 +75,11 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1">
                            <children>
                               <Label prefHeight="26.0" prefWidth="65.0" text="Dato" />
-                              <DatePicker fx:id="newDreamDate" prefHeight="39.0" prefWidth="180.0" />
+                              <DatePicker fx:id="newDreamDate" prefHeight="39.0" prefWidth="180.0">
+                                 <tooltip>
+                                    <Tooltip text="Datoen for drømmen. Står på i dag, så den skal som regel ikke røres." wrapText="true" />
+                                 </tooltip>
+                              </DatePicker>
                            </children>
                         </HBox>
                         <TextArea fx:id="skriveFelt" prefHeight="532.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -83,6 +87,9 @@
                            <GridPane.margin>
                               <Insets bottom="10.0" right="10.0" />
                            </GridPane.margin>
+                           <tooltip>
+                              <Tooltip text="Gem drømmen med den valgte dato og de afkrydsede symboler." wrapText="true" />
+                           </tooltip>
                         </Button>
                         <VBox fx:id="vBoxSymboler" prefHeight="530.0" prefWidth="280.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <children>
@@ -99,7 +106,7 @@
                               </CheckBox>
                               <CheckBox fx:id="praktiserer" mnemonicParsing="false" text="Praktiserer">
                                  <tooltip>
-                                    <Tooltip text="Dobbeltretter man eller laver neutral iagttagelse i drømmen?" wrapText="true" />
+                                    <Tooltip text="Mediterer eller beder du i drømmen?" wrapText="true" />
                                  </tooltip>
                               </CheckBox>
                               <CheckBox fx:id="modsat" mnemonicParsing="false" text="Modsatkønnet">
@@ -107,8 +114,16 @@
                                     <Tooltip text="Er drømmejeget det modsatte køn?" />
                                  </tooltip>
                               </CheckBox>
-                              <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" visible="false" />
-                              <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false" />
+                              <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" visible="false">
+                                 <tooltip>
+                                    <Tooltip text="Er drømmejeget delt op i flere samtidige instanser?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" visible="false">
+                                 <tooltip>
+                                    <Tooltip text="Er der ikke noget drømmejeg i drømmen?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
                               <Label text="Drømmen">
                                  <VBox.margin>
                                     <Insets top="10.0" />
@@ -120,7 +135,7 @@
                               </CheckBox>
                               <CheckBox fx:id="praksis" mnemonicParsing="false" text="Om praksis">
                                  <tooltip>
-                                    <Tooltip text="Handler drømmen om praksis? Undervisning, øvelser?" wrapText="true" />
+                                    <Tooltip text="Handler drømmen om praksis, om meditation? Undervisning, øvelser?" wrapText="true" />
                                  </tooltip>
                               </CheckBox>
                               <CheckBox fx:id="mareridt" mnemonicParsing="false" text="Mareridt">
@@ -128,7 +143,11 @@
                                     <Tooltip text="Er du meget bange i drømmen?" />
                                  </tooltip>
                               </CheckBox>
-                              <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false" />
+                              <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" visible="false">
+                                 <tooltip>
+                                    <Tooltip text="Viser drømmen en farlig ubalance som er truende for drømmejeget?" wrapText="true" />
+                                 </tooltip>
+                              </CheckBox>
                            </children>
                         </VBox>
                      </children>
@@ -161,12 +180,20 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="Fra" />
-                              <DatePicker fx:id="fromDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0" />
+                              <DatePicker fx:id="fromDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0">
+                                 <tooltip>
+                                    <Tooltip text="Vis kun drømme fra og med denne dato." wrapText="true" />
+                                 </tooltip>
+                              </DatePicker>
                               <Label text="Til">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Label>
-                              <DatePicker fx:id="toDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0" />
+                              <DatePicker fx:id="toDatePicker" onAction="#filtrerDreamList" prefHeight="39.0" prefWidth="180.0">
+                                 <tooltip>
+                                    <Tooltip text="Vis kun drømme til og med denne dato." wrapText="true" />
+                                 </tooltip>
+                              </DatePicker>
                               <Label fx:id="lblAntalDrommeHoved" text="Antal drømme:">
                                  <HBox.margin>
                                     <Insets left="30.0" />
@@ -194,7 +221,7 @@
                               </HBox>
                               <Button mnemonicParsing="false" onAction="#handleEditDream" text="Rediger drøm">
                                  <tooltip>
-                                    <Tooltip text="Rediger den valgte drøm i en nyt vindue" />
+                                    <Tooltip text="Rediger den valgte drøm i et nyt vindue." />
                                  </tooltip>
                               </Button>
                               <Button fx:id="deleteDream" mnemonicParsing="false" onAction="#deleteDreamClick" text="Slet drøm">
@@ -205,7 +232,7 @@
                               <Separator prefHeight="3.0" prefWidth="240.0" />
                               <Button fx:id="eksportBtn" mnemonicParsing="false" onAction="#eksportBtn" text="Eksporter">
                                  <tooltip>
-                                    <Tooltip text="Gem drømmelisten som txt-fil" />
+                                    <Tooltip text="Gem drømmelisten som txt-fil." />
                                  </tooltip>
                               </Button>
                            </children>
@@ -242,7 +269,11 @@
                         <VBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
                               <Label text="Vælg tema" />
-                              <ComboBox fx:id="cbTemaer" onAction="#handleSkiftTema" prefHeight="37.0" prefWidth="185.0" />
+                              <ComboBox fx:id="cbTemaer" onAction="#handleSkiftTema" prefHeight="37.0" prefWidth="185.0">
+                                 <tooltip>
+                                    <Tooltip text="Vælg et af de indbyggede temaer eller et du selv har gemt." wrapText="true" />
+                                 </tooltip>
+                              </ComboBox>
                               <Separator prefHeight="5.0" prefWidth="297.0" />
                            </children>
                         </VBox>
@@ -270,24 +301,60 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <ColorPicker fx:id="baggrundBPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <ColorPicker fx:id="baggrundCPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <ColorPicker fx:id="baggrundDPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <ColorPicker fx:id="tekstAPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                    <ColorPicker fx:id="tekstBPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <ColorPicker fx:id="tekstCPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                    <ColorPicker fx:id="kantPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" prefWidth="153.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                    <ComboBox fx:id="cbFonts" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" prefHeight="25.0" prefWidth="161.0" promptText="Courier" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <Label text="Baggrund A" />
-                                    <Label text="Baggrund B" GridPane.rowIndex="1" />
-                                    <Label text="Baggrund C" GridPane.rowIndex="2" />
-                                    <Label text="Baggrund D" GridPane.rowIndex="3" />
-                                    <Label text="Tekst A" GridPane.rowIndex="4" />
-                                    <Label text="Tekst B" GridPane.rowIndex="5" />
-                                    <Label text="Tekst C" GridPane.rowIndex="6" />
+                                    <ColorPicker fx:id="baggrundBPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <tooltip>
+                                          <Tooltip text="Fremhævninger: den valgte fane, den valgte dato, og det du holder musen hen over." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="baggrundCPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <tooltip>
+                                          <Tooltip text="Betjeningselementerne: knapper, valglister, afkrydsningsfelter og datovælgere." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="baggrundDPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <tooltip>
+                                          <Tooltip text="Der hvor du skriver og læser: skrivefelter, søgefeltet og drømmelisterne." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="tekstAPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <tooltip>
+                                          <Tooltip text="Den almindelige tekst: drømmeteksten, listerne og indholdet i felterne." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="tekstBPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                       <tooltip>
+                                          <Tooltip text="Tekst oven på en fremhævning - fx den valgte dato. Skal kunne ses mod farven Fokus." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="tekstCPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                       <tooltip>
+                                          <Tooltip text="Tekst på labels og knapper." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ColorPicker fx:id="kantPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" prefWidth="153.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                       <tooltip>
+                                          <Tooltip text="Rammerne om knapper, felter, lister og afkrydsningsfelter." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
+                                    <ComboBox fx:id="cbFonts" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" prefHeight="25.0" prefWidth="161.0" promptText="Courier" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                       <tooltip>
+                                          <Tooltip text="Skrifttypen i hele appen. Kun fonte med fast bogstavbredde kan vælges - andre får tal og kolonner i statistikken til at hoppe." wrapText="true" />
+                                       </tooltip>
+                                    </ComboBox>
+                                    <Label text="Baggrund" />
+                                    <Label text="Fokus" GridPane.rowIndex="1" />
+                                    <Label text="Knapper" GridPane.rowIndex="2" />
+                                    <Label text="Felter" GridPane.rowIndex="3" />
+                                    <Label text="Brødtekst" GridPane.rowIndex="4" />
+                                    <Label text="Fokustekst" GridPane.rowIndex="5" />
+                                    <Label text="Etikettekst" GridPane.rowIndex="6" />
                                     <Label text="Kanter" GridPane.rowIndex="7" />
                                     <Label text="Font" GridPane.rowIndex="8" />
-                                    <ColorPicker fx:id="baggrundAPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" />
+                                    <ColorPicker fx:id="baggrundAPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1">
+                                       <tooltip>
+                                          <Tooltip text="Den gennemgående baggrund: selve vinduet, fanebladene og kalenderen i datovælgeren." wrapText="true" />
+                                       </tooltip>
+                                    </ColorPicker>
                                  </children>
                               </GridPane>
                            </children>
@@ -297,9 +364,21 @@
                               <Label text="Info" />
                               <HBox spacing="20.0">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#clickBtnOmHelp" text="Om appen" />
-                                    <Button mnemonicParsing="false" onAction="#clickBtnOmHelp" text="Hjælp" />
-                                    <Button mnemonicParsing="false" onAction="#handleOpenSyncPopup" text="Sky-synkronisering" />
+                                    <Button mnemonicParsing="false" onAction="#clickBtnOmHelp" text="Om appen">
+                                       <tooltip>
+                                          <Tooltip text="Om appen, hvor dine data ligger, og hvordan du flytter til en ny computer." wrapText="true" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#clickBtnOmHelp" text="Hjælp">
+                                       <tooltip>
+                                          <Tooltip text="Gennemgang af alle fanerne og hvad de kan." wrapText="true" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#handleOpenSyncPopup" text="Sky-synkronisering">
+                                       <tooltip>
+                                          <Tooltip text="Valgfri sikkerhedskopi i skyen, så drømmene kan følge med til en ny computer." wrapText="true" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
                               </HBox>
                               <Separator prefHeight="5.0" prefWidth="489.0" />
@@ -309,19 +388,19 @@
                            <children>
                               <Button fx:id="seTemaKnap" disable="true" mnemonicParsing="false" onAction="#handleSeTemaKnap" text="Se tema">
                                  <tooltip>
-                                    <Tooltip text="Se hvordan farve- eller fontændringer vil se ud" />
+                                    <Tooltip text="Se hvordan farve- eller fontændringer vil se ud." />
                                  </tooltip>
                               </Button>
                               <HBox spacing="20.0">
                                  <children>
                                     <TextField fx:id="tfNytTemaNavn" disable="true" onKeyTyped="#enableGemKnap" prefHeight="25.0" prefWidth="180.0" promptText="Navngiv tema">
                                        <tooltip>
-                                          <Tooltip text="Her kan du navngive dit nye tema" />
+                                          <Tooltip text="Her kan du navngive dit nye tema." />
                                        </tooltip>
                                     </TextField>
                                     <Button fx:id="gemNytTemaKnap" disable="true" mnemonicParsing="false" onAction="#handleGemNytTema" text="Gem">
                                        <tooltip>
-                                          <Tooltip text="Her kan du gemme dit nye tema" />
+                                          <Tooltip text="Her kan du gemme dit nye tema." />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -349,29 +428,55 @@
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
+                                 <tooltip>
+                                    <Tooltip text="Vælg en kategori, skriv navnet på det nye symbol ved siden af, og tryk +." wrapText="true" />
+                                 </tooltip>
                               </Label>
                               <ComboBox fx:id="cbKategoriAdd" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="1" />
                               <TextField fx:id="tfNytSymbol" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="260.0" promptText="Nyt symbol" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Button fx:id="addSymbolKnap" mnemonicParsing="false" onAction="#handleAddSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <Button fx:id="addSymbolKnap" mnemonicParsing="false" onAction="#handleAddSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                 <tooltip>
+                                    <Tooltip text="Tilføj symbolet til den valgte kategori." wrapText="true" />
+                                 </tooltip>
+                              </Button>
                               <Label text="Fjern symbol" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
+                                 <tooltip>
+                                    <Tooltip text="Vælg en kategori, vælg symbolet i listen, og tryk -." wrapText="true" />
+                                 </tooltip>
                               </Label>
                               <ComboBox fx:id="cbKategoriRemove" onAction="#opretCCbox" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="3" />
-                              <Button fx:id="fjernSymbolKnap" mnemonicParsing="false" onAction="#handleFjernSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="-" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                              <Button fx:id="fjernSymbolKnap" mnemonicParsing="false" onAction="#handleFjernSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="-" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                 <tooltip>
+                                    <Tooltip text="Fjern det valgte symbol fra kategorien." wrapText="true" />
+                                 </tooltip>
+                              </Button>
                               <Label text="Ny symbolkategori" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.valignment="BOTTOM">
                                  <tooltip>
                                     <Tooltip text="Du kan tilføje op til 3 nye symbolkategorier." />
                                  </tooltip>
                               </Label>
                               <TextField fx:id="tfNyKategori" maxWidth="220.0" prefHeight="37.0" prefWidth="220.0" promptText="Navn" GridPane.rowIndex="5" />
-                              <Button fx:id="addNyKategoriKnap" mnemonicParsing="false" onAction="#handleAddNyKategoriKnap" prefHeight="25.0" prefWidth="100.0" text="Tilføj" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+                              <Button fx:id="addNyKategoriKnap" mnemonicParsing="false" onAction="#handleAddNyKategoriKnap" prefHeight="25.0" prefWidth="100.0" text="Tilføj" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                                 <tooltip>
+                                    <Tooltip text="Opret kategorien. Du kan højst tilføje tre, og de kan ikke slettes igen." wrapText="true" />
+                                 </tooltip>
+                              </Button>
                               <VBox fx:id="fjernSymbolVbox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="260.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label text="Ændr symbolkategorinavn" GridPane.rowIndex="6" GridPane.valignment="BOTTOM" />
+                              <Label text="Ændr symbolkategorinavn" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+                                 <tooltip>
+                                    <Tooltip text="Omdøb en kategori - nyttigt hvis du hellere vil holde øje med noget andet end det indbyggede." wrapText="true" />
+                                 </tooltip>
+                              </Label>
                               <TextField fx:id="tfNytNavn" maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="260.0" promptText="Nyt navn" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <ComboBox fx:id="cbKategoriNavn" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="7" />
-                              <Button fx:id="skiftNavnKnap" mnemonicParsing="false" onAction="#handleSkiftNavnKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
+                              <Button fx:id="skiftNavnKnap" mnemonicParsing="false" onAction="#handleSkiftNavnKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
+                                 <tooltip>
+                                    <Tooltip text="Giv den valgte kategori det nye navn. Også de indbyggede kan omdøbes." wrapText="true" />
+                                 </tooltip>
+                              </Button>
                            </children>
                         </GridPane>
                         <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -381,15 +486,27 @@
                                  <children>
                                     <VBox layoutX="156.0" layoutY="10.0" spacing="10.0">
                                        <children>
-                                          <Label text="Indstil startdato:" />
-                                          <DatePicker fx:id="startDatoPicker" prefHeight="25.0" prefWidth="273.0" />
+                                          <Label text="Indstil startdato:">
+                                             <tooltip>
+                                                <Tooltip text="Bestemmer hvornår perioden begynder i Drømme-fanen og i analyserne." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                          <DatePicker fx:id="startDatoPicker" prefHeight="25.0" prefWidth="273.0">
+                                             <tooltip>
+                                                <Tooltip text="Den dato drømmelisten og analyserne starter fra som udgangspunkt." wrapText="true" />
+                                             </tooltip>
+                                          </DatePicker>
                                           <Label fx:id="lblForsteDrom" style="-fx-font-style: italic;" text="Første drøm: " />
                                           <HBox alignment="TOP_RIGHT">
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>
                                              <children>
-                                                <Button fx:id="gemDatoKnap" mnemonicParsing="false" onAction="#handleGemStartDato" text="Gem dato" />
+                                                <Button fx:id="gemDatoKnap" mnemonicParsing="false" onAction="#handleGemStartDato" text="Gem dato">
+                                                   <tooltip>
+                                                      <Tooltip text="Gem startdatoen og tag den i brug med det samme." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
                                              </children>
                                           </HBox>
                                        </children>
@@ -398,17 +515,17 @@
                                        <children>
                                           <CheckBox fx:id="kollektivStyrer" mnemonicParsing="false" onAction="#handleCbStyrerKol" text="Vis checkboks: Kollektiv">
                                              <tooltip>
-                                                <Tooltip text="Vælg om kollektive drømme skal registreres eller ej" />
+                                                <Tooltip text="Vælg om kollektive drømme skal registreres eller ej." />
                                              </tooltip>
                                           </CheckBox>
                                           <CheckBox fx:id="advarselStyrer" mnemonicParsing="false" onAction="#handleCbStyrerAdv" text="Vis checkboks: Advarsel">
                                              <tooltip>
-                                                <Tooltip text="Vælg om advarselsdrømme skal registreres eller ej" />
+                                                <Tooltip text="Vælg om advarselsdrømme skal registreres eller ej." />
                                              </tooltip>
                                           </CheckBox>
                                           <CheckBox fx:id="holografiskStyrer" mnemonicParsing="false" onAction="#handleCbStyrerHolo" text="Vis checkboks: Holografisk">
                                              <tooltip>
-                                                <Tooltip text="Vælg om holografiske drømme skal registreres eller ej" />
+                                                <Tooltip text="Vælg om holografiske drømme skal registreres eller ej." />
                                              </tooltip>
                                           </CheckBox>
                                        </children>

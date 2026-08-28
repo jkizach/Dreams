@@ -1,0 +1,241 @@
+Tooltips i Drømmeappen
+======================
+
+Oversigt over alle tooltips, fordelt på skærm. Tanken med filen er at kunne se
+hele ordlyden ét sted, så nye tooltips kan skrives i samme tone som de gamle -
+og så det er til at få øje på hvad der endnu mangler.
+
+Alle tooltips sættes i FXML, ingen i Java-kode. Ligger de ét sted, er de til at
+finde. Mønsteret er:
+
+    <Button fx:id="minKnap" text="Tryk her">
+       <tooltip>
+          <Tooltip text="Det her sker der." wrapText="true" />
+       </tooltip>
+    </Button>
+
+Husk <?import javafx.scene.control.Tooltip?> øverst i FXML-filen.
+
+
+Skrivereglerne
+--------------
+De er hentet ud af de tooltips der stod der i forvejen, ikke fundet på:
+
+1. Drømmekvaliteterne (Lucid, Mareridt, ...) forklares som et SPØRGSMÅL, fordi
+   det er sådan man står og skal afgøre om feltet skal krydses af:
+   "Ved man at man drømmer?"
+2. Knapper og felter beskrives som en påstand om hvad der sker:
+   "Gem drømmelisten som txt-fil."
+3. Samme kontrol har samme tooltip PÅ ALLE SKÆRME. De ni drømmekvaliteter
+   optræder tre steder - Ny drøm, Analyse/Filtre og Rediger drøm - og skal have
+   nøjagtig samme tekst alle tre steder.
+4. Punktum til sidst. Spørgsmål får ? og et enkelt får !.
+5. Ordlyden følger help.txt hvor emnet er beskrevet der, så app og hjælpetekst
+   ikke siger hver sit.
+6. Ingen tooltip der bare gentager etiketten. En "Luk"-knap med tooltippet
+   "Luk" er støj. Enten tilføjer den noget - "Luk uden at gemme ændringer." -
+   eller også skal den ikke have nogen.
+
+
+==============================================================================
+Hovedvinduet   (hovedmenu.fxml)
+==============================================================================
+
+Fanen "Ny drøm"
+---------------
+DATEPICKER   newDreamDate           Datoen for drømmen. Står på i dag, så den skal som regel ikke røres.
+BUTTON       "Gem drømmen"          Gem drømmen med den valgte dato og de afkrydsede symboler.
+CHECKBOX     "Lucid"                Ved man at man drømmer?
+CHECKBOX     "Praktiserer"          Mediterer eller beder du i drømmen?
+CHECKBOX     "Modsatkønnet"         Er drømmejeget det modsatte køn?
+CHECKBOX     "Arketypisk"           Er drømmen kraftig med eventyragtige symboler?
+CHECKBOX     "Om praksis"           Handler drømmen om praksis, om meditation? Undervisning, øvelser?
+CHECKBOX     "Mareridt"             Er du meget bange i drømmen?
+CHECKBOX     "Kollektiv"            Er der ikke noget drømmejeg i drømmen?
+CHECKBOX     "Advarsel"             Viser drømmen en farlig ubalance som er truende for drømmejeget?
+CHECKBOX     "Holografisk"          Er drømmejeget delt op i flere samtidige instanser?
+
+Fanen "Drømme"
+--------------
+DATEPICKER   fromDatePicker         Vis kun drømme fra og med denne dato.
+DATEPICKER   toDatePicker           Vis kun drømme til og med denne dato.
+TEXTFIELD    "søg..."               Der vises kun drømme som indeholder de ord du skriver - højreklik for at rydde feltet!
+BUTTON       "Rediger drøm"         Rediger den valgte drøm i et nyt vindue.
+BUTTON       "Slet drøm"            Man skal bekræfte sletning, så bare rolig!
+BUTTON       "Eksporter"            Gem drømmelisten som txt-fil.
+
+Indstillinger - tema
+--------------------
+COMBOBOX     cbTemaer               Vælg et af de indbyggede temaer eller et du selv har gemt.
+LABEL        "Lav nyt tema"         Du kan tilføje dine egne farvetemaer. Se dem før du gemmer!
+COLORPICKER  "Baggrund"     (baggrundAPicker)  Den gennemgående baggrund: selve vinduet, fanebladene og kalenderen i datovælgeren.
+COLORPICKER  "Fokus"        (baggrundBPicker)  Fremhævninger: den valgte fane, den valgte dato, og det du holder musen hen over.
+COLORPICKER  "Knapper"      (baggrundCPicker)  Betjeningselementerne: knapper, valglister, afkrydsningsfelter og datovælgere.
+COLORPICKER  "Felter"       (baggrundDPicker)  Der hvor du skriver og læser: skrivefelter, søgefeltet og drømmelisterne.
+COLORPICKER  "Brødtekst"    (tekstAPicker)     Den almindelige tekst: drømmeteksten, listerne og indholdet i felterne.
+COLORPICKER  "Fokustekst"   (tekstBPicker)     Tekst oven på en fremhævning - fx den valgte dato. Skal kunne ses mod farven Fokus.
+COLORPICKER  "Etikettekst"  (tekstCPicker)     Tekst på labels og knapper.
+COLORPICKER  "Kanter"       (kantPicker)       Rammerne om knapper, felter, lister og afkrydsningsfelter.
+COMBOBOX     cbFonts                Skrifttypen i hele appen. Kun fonte med fast bogstavbredde kan vælges - andre får tal og kolonner i statistikken til at hoppe.
+BUTTON       "Se tema"              Se hvordan farve- eller fontændringer vil se ud.
+TEXTFIELD    "Navngiv tema"         Her kan du navngive dit nye tema.
+BUTTON       "Gem"                  Her kan du gemme dit nye tema.
+
+De otte farvevælgere er beskrevet ud fra hvad variablerne rent faktisk bruges
+til i currentTema.css - se Tema.getTemaForCSSUpdater() for koblingen mellem
+picker og CSS-variabel. Farverne genbruges mange steder, så teksterne nævner
+det mest iøjnefaldende, ikke hver eneste forekomst.
+
+Etiketterne hed før "Baggrund A" til "Baggrund D" og "Tekst A" til "Tekst C".
+De blev omdøbt 2026-08-28: at der overhovedet skulle en tooltip til for at
+forklare "Baggrund A", var beviset på at navnet ikke gjorde sit arbejde. De nye
+navne er de samme som tooltipsene allerede brugte. Bemærk at fx:id'erne og
+CSS-variablerne IKKE er omdøbt - gemte temaer ligger på CSS-navnene, så en
+omdøbning der ville have været ren visning, ville pludselig være et dataformat.
+
+Navnene må højst fylde ca. 12 tegn: etiketkolonnen er prefWidth 134 med
+maxWidth 158, og Courier New 18px fylder 10,8 px pr. tegn. Derfor "Fokus" og
+ikke "Fremhævning", som ville have givet "Fremhævet tekst" på 15 tegn.
+
+Indstillinger - symboler
+------------------------
+LABEL        "Tilføj symbol"            Vælg en kategori, skriv navnet på det nye symbol ved siden af, og tryk +.
+BUTTON       "+" (addSymbolKnap)        Tilføj symbolet til den valgte kategori.
+LABEL        "Fjern symbol"             Vælg en kategori, vælg symbolet i listen, og tryk -.
+BUTTON       "-" (fjernSymbolKnap)      Fjern det valgte symbol fra kategorien.
+LABEL        "Ny symbolkategori"        Du kan tilføje op til 3 nye symbolkategorier.
+BUTTON       "Tilføj"                   Opret kategorien. Du kan højst tilføje tre, og de kan ikke slettes igen.
+LABEL        "Ændr symbolkategorinavn"  Omdøb en kategori - nyttigt hvis du hellere vil holde øje med noget andet end det indbyggede.
+BUTTON       "+" (skiftNavnKnap)        Giv den valgte kategori det nye navn. Også de indbyggede kan omdøbes.
+
+Indstillinger - startdato og drømmekvaliteter
+---------------------------------------------
+LABEL        "Indstil startdato:"       Bestemmer hvornår perioden begynder i Drømme-fanen og i analyserne.
+DATEPICKER   startDatoPicker            Den dato drømmelisten og analyserne starter fra som udgangspunkt.
+BUTTON       "Gem dato"                 Gem startdatoen og tag den i brug med det samme.
+CHECKBOX     "Vis checkboks: Kollektiv"     Vælg om kollektive drømme skal registreres eller ej.
+CHECKBOX     "Vis checkboks: Advarsel"      Vælg om advarselsdrømme skal registreres eller ej.
+CHECKBOX     "Vis checkboks: Holografisk"   Vælg om holografiske drømme skal registreres eller ej.
+
+Info
+----
+BUTTON       "Om appen"             Om appen, hvor dine data ligger, og hvordan du flytter til en ny computer.
+BUTTON       "Hjælp"                Gennemgang af alle fanerne og hvad de kan.
+BUTTON       "Sky-synkronisering"   Valgfri sikkerhedskopi i skyen, så drømmene kan følge med til en ny computer.
+
+
+==============================================================================
+Analyse-fanen   (analyse-view.fxml)
+==============================================================================
+
+Cirkel
+------
+COMBOBOX     "Vælg kategori"        Vælg den symbolkategori cirklen skal vise fordelingen for.
+
+Filtre - de samme ni felter som på Ny drøm, med samme tekster
+-------------------------------------------------------------
+CHECKBOX     "Lucid"                Ved man at man drømmer?
+CHECKBOX     "Praktiserer"          Mediterer eller beder du i drømmen?
+CHECKBOX     "Modsatkønnet"         Er drømmejeget det modsatte køn?
+CHECKBOX     "Arketypisk"           Er drømmen kraftig med eventyragtige symboler?
+CHECKBOX     "Om praksis"           Handler drømmen om praksis, om meditation? Undervisning, øvelser?
+CHECKBOX     "Mareridt"             Er du meget bange i drømmen?
+CHECKBOX     "Kollektiv"            Er der ikke noget drømmejeg i drømmen?
+CHECKBOX     "Advarsel"             Viser drømmen en farlig ubalance som er truende for drømmejeget?
+CHECKBOX     "Holografisk"          Er drømmejeget delt op i flere samtidige instanser?
+
+Graf
+----
+TOGGLEBUTTON "dage"                 Én søjle pr. dag.
+TOGGLEBUTTON "uger"                 Én søjle pr. uge.
+TOGGLEBUTTON "måneder"              Én søjle pr. måned.
+BUTTON       "Vis graf"             Tegn grafen for de valgte symboler over den valgte periode.
+
+Liste
+-----
+BUTTON       "Filterstatus: OG"     Skifter mellem OG og ELLER. OG viser kun drømme der indeholder alt det valgte; ELLER viser alle drømme hvor bare ét af symbolerne optræder.
+BUTTON       "Opdater"              Kør filteret igennem igen og opdater listen med de valg der står nu.
+
+Forløb
+------
+LISTVIEW     forloebValgListe       De drømme du har markeret med en af de ni forløbsfaser. Vælg en for at søge omkring den.
+TOGGLEBUTTON "Kort"                 Vis kun begyndelsen af hver drøm i listen.
+TOGGLEBUTTON "Langt"                Vis hele drømmeteksten i listen.
+SPINNER      daysSpinner            Hvor bredt skal der søges?
+BUTTON       "+" (btnForloebPlus)   Søg frem + eller tilbage - i tid.
+SPINNER      monthsSpinner          Hvor mange måneder frem eller tilbage der søges.
+BUTTON       "Vis liste"            Vis de drømme der ligger i det søgte tidsrum.
+
+
+==============================================================================
+Rediger drøm (popup)   (editDream-view.fxml)
+==============================================================================
+DATEPICKER   dpEditDream            Datoen for drømmen.
+CHECKBOX     "Lucid"                Ved man at man drømmer?
+CHECKBOX     "Praktiserer"          Mediterer eller beder du i drømmen?
+CHECKBOX     "Modsatkønnet"         Er drømmejeget det modsatte køn?
+CHECKBOX     "Arketypisk"           Er drømmen kraftig med eventyragtige symboler?
+CHECKBOX     "Om praksis"           Handler drømmen om praksis, om meditation? Undervisning, øvelser?
+CHECKBOX     "Mareridt"             Er du meget bange i drømmen?
+CHECKBOX     "Kollektiv"            Er der ikke noget drømmejeg i drømmen?
+CHECKBOX     "Advarsel"             Viser drømmen en farlig ubalance som er truende for drømmejeget?
+CHECKBOX     "Holografisk"          Er drømmejeget delt op i flere samtidige instanser?
+BUTTON       "Gem"                  Gem ændringerne og luk vinduet.
+BUTTON       "Luk"                  Luk uden at gemme ændringer.
+
+
+==============================================================================
+Sky-synkronisering (popup)   (sync-view.fxml)
+==============================================================================
+BUTTON       "Opret konto"                  Opret en ny konto med den email og adgangskode du har skrevet ovenfor.
+BUTTON       "Log ind"                      Log ind på en konto du allerede har.
+CHECKBOX     "Synkroniser automatisk"       Synkroniser af sig selv når appen åbnes og lukkes.
+BUTTON       "Synkroniser nu"               Synkroniser med det samme i stedet for at vente til appen lukkes.
+BUTTON       "Log ud (behold lokale data)"  Logger ud af kontoen. Alle drømme bliver liggende på maskinen.
+
+
+==============================================================================
+Om appen / Hjælp (popup)   (txt-view.fxml)
+==============================================================================
+Ingen. Vinduet har kun en "Luk"-knap, og den forklarer sig selv.
+
+
+==============================================================================
+Med vilje UDEN tooltip
+==============================================================================
+Så det ikke bliver lavet om ved en fejltagelse næste gang nogen går filen
+igennem. Regel 6 ovenfor er grunden i alle tilfældene:
+
+- "Fra" og "Til" ved datovælgerne. Selve datovælgerne har tooltip; etiketten
+  ved siden af ville bare sige det samme en gang til.
+- "Antal drømme:" alle fem steder. Tallet står lige ved siden af.
+- Fanebladene selv (Ny drøm, Dagrest, Tolkning, Analyse, Drømme, Tal, Cirkel,
+  Filtre, Graf, Liste, Forløb). Man kan trykke på dem og se hvad de er.
+- De store skrivefelter til drøm, dagrest og tolkning. En tooltip der lægger
+  sig hen over teksten mens man skriver, er mest i vejen.
+- "Luk"-knapper der bare lukker. Undtagelsen er Rediger drøm, hvor "Luk"
+  kasserer ændringer, og dét er værd at sige.
+- Etiketterne "Symboler", "Drømmejeget", "Drømmen", "X-aksen",
+  "Forløbsdrømme", "Baggrund" ... "Kanter", "Font", "Info". De står som
+  overskrifter over noget der selv har tooltips.
+- Email- og adgangskodefelterne under Sky-synkronisering.
+
+
+==============================================================================
+Ingen huller
+==============================================================================
+Alle ni drømmekvaliteter har nu tooltip alle tre steder de optræder. Teksterne
+til Kollektiv, Advarsel og Holografisk er skrevet af Johannes; de øvrige seks
+stod der i forvejen, hvoraf Praktiserer og Om praksis blev omformuleret samtidig.
+
+Skal en af de ni ordlyde ændres igen, skal den ind tre steder - ellers kommer
+skærmene til at sige hver sit:
+  hovedmenu.fxml        fx:id="lucid" "praktiserer" "modsat" "arketypisk"
+                        "praksis" "mareridt" "kollektiv" "advarsel" "holografisk"
+  analyse-view.fxml     samme ni fx:id'er
+  editDream-view.fxml   de samme ni, men med Edit til sidst: "lucidEdit" osv.
+
+Tjek bagefter at de tre skærme er enige - fx sådan her, som skal give tre
+træffere for hver af de ni tekster:
+
+  grep -c 'DEN NYE TEKST' src/main/resources/fixit/dreams/*.fxml

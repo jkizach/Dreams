@@ -17,7 +17,11 @@
 <AnchorPane prefHeight="720.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.EditDreamController">
    <children>
       <Label layoutX="21.0" layoutY="21.0" text="Dato" />
-      <DatePicker fx:id="dpEditDream" layoutX="89.0" layoutY="17.0" prefHeight="25.0" prefWidth="200.0" />
+      <DatePicker fx:id="dpEditDream" layoutX="89.0" layoutY="17.0" prefHeight="25.0" prefWidth="200.0">
+         <tooltip>
+            <Tooltip text="Datoen for drømmen." wrapText="true" />
+         </tooltip>
+      </DatePicker>
       <VBox fx:id="vboxEditDream" layoutX="406.0" layoutY="47.0" prefHeight="412.0" prefWidth="280.0" spacing="10.0" />
       <Label layoutX="406.0" layoutY="21.0" text="Symboler" />
       <GridPane layoutX="27.0" layoutY="490.0" prefHeight="160.0" prefWidth="650.0">
@@ -34,15 +38,51 @@
             <RowConstraints />
         </rowConstraints>
          <children>
-            <CheckBox fx:id="lucidEdit" mnemonicParsing="false" text="Lucid" />
-            <CheckBox fx:id="praktisererEdit" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="1" />
-            <CheckBox fx:id="modsatEdit" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="2" />
-            <CheckBox fx:id="kollektivEdit" mnemonicParsing="false" text="Kollektiv" GridPane.rowIndex="3" />
-            <CheckBox fx:id="holografiskEdit" mnemonicParsing="false" text="Holografisk" GridPane.rowIndex="4" />
-            <CheckBox fx:id="arketypiskEdit" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1" />
-            <CheckBox fx:id="praksisEdit" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <CheckBox fx:id="mareridtEdit" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <CheckBox fx:id="advarselEdit" mnemonicParsing="false" text="Advarsel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <CheckBox fx:id="lucidEdit" mnemonicParsing="false" text="Lucid">
+               <tooltip>
+                  <Tooltip text="Ved man at man drømmer?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="praktisererEdit" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="1">
+               <tooltip>
+                  <Tooltip text="Mediterer eller beder du i drømmen?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="modsatEdit" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="2">
+               <tooltip>
+                  <Tooltip text="Er drømmejeget det modsatte køn?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="kollektivEdit" mnemonicParsing="false" text="Kollektiv" GridPane.rowIndex="3">
+               <tooltip>
+                  <Tooltip text="Er der ikke noget drømmejeg i drømmen?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="holografiskEdit" mnemonicParsing="false" text="Holografisk" GridPane.rowIndex="4">
+               <tooltip>
+                  <Tooltip text="Er drømmejeget delt op i flere samtidige instanser?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="arketypiskEdit" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1">
+               <tooltip>
+                  <Tooltip text="Er drømmen kraftig med eventyragtige symboler?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="praksisEdit" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <tooltip>
+                  <Tooltip text="Handler drømmen om praksis, om meditation? Undervisning, øvelser?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="mareridtEdit" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <tooltip>
+                  <Tooltip text="Er du meget bange i drømmen?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <CheckBox fx:id="advarselEdit" mnemonicParsing="false" text="Advarsel" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <tooltip>
+                  <Tooltip text="Viser drømmen en farlig ubalance som er truende for drømmejeget?" wrapText="true" />
+               </tooltip>
+            </CheckBox>
             <TabPane GridPane.columnIndex="2" GridPane.rowSpan="2147483647">
                <tabs>
                   <Tab closable="false" text="Dagrest">
@@ -60,7 +100,11 @@
          </children>
       </GridPane>
       <TextArea fx:id="editSkrivefelt" layoutX="21.0" layoutY="66.0" prefHeight="405.0" prefWidth="359.0" wrapText="true" />
-      <Button layoutX="624.0" layoutY="673.0" mnemonicParsing="false" onAction="#saveDream" text="Gem" />
+      <Button layoutX="624.0" layoutY="673.0" mnemonicParsing="false" onAction="#saveDream" text="Gem">
+         <tooltip>
+            <Tooltip text="Gem ændringerne og luk vinduet." wrapText="true" />
+         </tooltip>
+      </Button>
       <Button layoutX="529.0" layoutY="673.0" mnemonicParsing="false" onAction="#closePopup" text="Luk">
          <tooltip>
             <Tooltip text="Luk uden at gemme ændringer." />

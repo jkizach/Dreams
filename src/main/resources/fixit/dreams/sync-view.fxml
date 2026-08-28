@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -19,8 +20,16 @@
             <TextField fx:id="emailField" />
             <Label text="Adgangskode" />
             <PasswordField fx:id="passwordField" />
-            <Button fx:id="signUpBtn" mnemonicParsing="false" onAction="#handleSignUp" text="Opret konto" />
-            <Button fx:id="signInBtn" mnemonicParsing="false" onAction="#handleSignIn" text="Log ind" />
+            <Button fx:id="signUpBtn" mnemonicParsing="false" onAction="#handleSignUp" text="Opret konto">
+               <tooltip>
+                  <Tooltip text="Opret en ny konto med den email og adgangskode du har skrevet ovenfor." wrapText="true" />
+               </tooltip>
+            </Button>
+            <Button fx:id="signInBtn" mnemonicParsing="false" onAction="#handleSignIn" text="Log ind">
+               <tooltip>
+                  <Tooltip text="Log ind på en konto du allerede har." wrapText="true" />
+               </tooltip>
+            </Button>
          </children>
       </VBox>
 
@@ -28,9 +37,21 @@
          <children>
             <Label fx:id="loggedInEmailLbl" text="Logget ind som:" wrapText="true" />
             <Label fx:id="lastSyncedLbl" text="Sidst synkroniseret: aldrig" wrapText="true" />
-            <CheckBox fx:id="syncEnabledBox" mnemonicParsing="false" onAction="#handleToggleSyncEnabled" text="Synkroniser automatisk" />
-            <Button fx:id="syncNowBtn" mnemonicParsing="false" onAction="#handleSyncNow" text="Synkroniser nu" />
-            <Button fx:id="logoutBtn" mnemonicParsing="false" onAction="#handleLogout" text="Log ud (behold lokale data)" />
+            <CheckBox fx:id="syncEnabledBox" mnemonicParsing="false" onAction="#handleToggleSyncEnabled" text="Synkroniser automatisk">
+               <tooltip>
+                  <Tooltip text="Synkroniser af sig selv når appen åbnes og lukkes." wrapText="true" />
+               </tooltip>
+            </CheckBox>
+            <Button fx:id="syncNowBtn" mnemonicParsing="false" onAction="#handleSyncNow" text="Synkroniser nu">
+               <tooltip>
+                  <Tooltip text="Synkroniser med det samme i stedet for at vente til appen lukkes." wrapText="true" />
+               </tooltip>
+            </Button>
+            <Button fx:id="logoutBtn" mnemonicParsing="false" onAction="#handleLogout" text="Log ud (behold lokale data)">
+               <tooltip>
+                  <Tooltip text="Logger ud af kontoen. Alle drømme bliver liggende på maskinen." wrapText="true" />
+               </tooltip>
+            </Button>
          </children>
       </VBox>
 

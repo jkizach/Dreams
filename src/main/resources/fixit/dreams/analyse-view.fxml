@@ -100,7 +100,11 @@
                            <children>
                               <VBox spacing="50.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <ComboBox fx:id="comboPieKategorier" onAction="#onSelectKategori" prefWidth="250.0" promptText="Vælg kategori" />
+                                    <ComboBox fx:id="comboPieKategorier" onAction="#onSelectKategori" prefWidth="250.0" promptText="Vælg kategori">
+                                       <tooltip>
+                                          <Tooltip text="Vælg den symbolkategori cirklen skal vise fordelingen for." wrapText="true" />
+                                       </tooltip>
+                                    </ComboBox>
                                     <GridPane hgap="10.0" prefHeight="80.0" prefWidth="250.0" vgap="10.0" VBox.vgrow="NEVER">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -168,15 +172,51 @@
                                           <RowConstraints />
                                       </rowConstraints>
                                        <children>
-                                          <CheckBox fx:id="lucid" mnemonicParsing="false" text="Lucid" />
-                                          <CheckBox fx:id="praktiserer" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="1" />
-                                          <CheckBox fx:id="modsat" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="2" />
-                                          <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" GridPane.rowIndex="3" />
-                                          <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" GridPane.rowIndex="4" />
-                                          <CheckBox fx:id="arketypisk" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1" />
-                                          <CheckBox fx:id="praksis" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <CheckBox fx:id="mareridt" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <CheckBox fx:id="lucid" mnemonicParsing="false" text="Lucid">
+                                             <tooltip>
+                                                <Tooltip text="Ved man at man drømmer?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="praktiserer" mnemonicParsing="false" text="Praktiserer" GridPane.rowIndex="1">
+                                             <tooltip>
+                                                <Tooltip text="Mediterer eller beder du i drømmen?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="modsat" mnemonicParsing="false" text="Modsatkønnet" GridPane.rowIndex="2">
+                                             <tooltip>
+                                                <Tooltip text="Er drømmejeget det modsatte køn?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="kollektiv" mnemonicParsing="false" text="Kollektiv" GridPane.rowIndex="3">
+                                             <tooltip>
+                                                <Tooltip text="Er der ikke noget drømmejeg i drømmen?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="holografisk" mnemonicParsing="false" text="Holografisk" GridPane.rowIndex="4">
+                                             <tooltip>
+                                                <Tooltip text="Er drømmejeget delt op i flere samtidige instanser?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="arketypisk" mnemonicParsing="false" text="Arketypisk" GridPane.columnIndex="1">
+                                             <tooltip>
+                                                <Tooltip text="Er drømmen kraftig med eventyragtige symboler?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="praksis" mnemonicParsing="false" text="Om praksis" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <tooltip>
+                                                <Tooltip text="Handler drømmen om praksis, om meditation? Undervisning, øvelser?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="mareridt" mnemonicParsing="false" text="Mareridt" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <tooltip>
+                                                <Tooltip text="Er du meget bange i drømmen?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
+                                          <CheckBox fx:id="advarsel" mnemonicParsing="false" text="Advarsel" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <tooltip>
+                                                <Tooltip text="Viser drømmen en farlig ubalance som er truende for drømmejeget?" wrapText="true" />
+                                             </tooltip>
+                                          </CheckBox>
                                        </children>
                                     </GridPane>
                                  </children>
@@ -198,9 +238,20 @@
                                                                      <toggleGroup>
                                                                         <ToggleGroup fx:id="grafDMYChooser" />
                                                                      </toggleGroup>
+                                                                     <tooltip>
+                                                                        <Tooltip text="Én søjle pr. dag." wrapText="true" />
+                                                                     </tooltip>
                                                                   </ToggleButton>
-                                                                  <ToggleButton fx:id="tgWeeks" mnemonicParsing="false" prefHeight="25.0" prefWidth="122.0" text="uger" toggleGroup="$grafDMYChooser" />
-                                                                  <ToggleButton fx:id="tgMonths" mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0" selected="true" text="måneder" toggleGroup="$grafDMYChooser" />
+                                                                  <ToggleButton fx:id="tgWeeks" mnemonicParsing="false" prefHeight="25.0" prefWidth="122.0" text="uger" toggleGroup="$grafDMYChooser">
+                                                                     <tooltip>
+                                                                        <Tooltip text="Én søjle pr. uge." wrapText="true" />
+                                                                     </tooltip>
+                                                                  </ToggleButton>
+                                                                  <ToggleButton fx:id="tgMonths" mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0" selected="true" text="måneder" toggleGroup="$grafDMYChooser">
+                                                                     <tooltip>
+                                                                        <Tooltip text="Én søjle pr. måned." wrapText="true" />
+                                                                     </tooltip>
+                                                                  </ToggleButton>
                                                                </children>
                                                             </HBox>
                                                          </children>
@@ -220,7 +271,11 @@
                                                          <children>
                                                             <Label fx:id="lblAntalDrommeGraf" text="Antal drømme:" />
                                                             <Region HBox.hgrow="ALWAYS" />
-                                                            <Button fx:id="btnVisGraf" mnemonicParsing="false" onAction="#onVisGraf" prefHeight="25.0" prefWidth="127.0" text="Vis graf" />
+                                                            <Button fx:id="btnVisGraf" mnemonicParsing="false" onAction="#onVisGraf" prefHeight="25.0" prefWidth="127.0" text="Vis graf">
+                                                               <tooltip>
+                                                                  <Tooltip text="Tegn grafen for de valgte symboler over den valgte periode." wrapText="true" />
+                                                               </tooltip>
+                                                            </Button>
                                                          </children>
                                                       </HBox>
                                                    </children>
@@ -246,9 +301,17 @@
                                                          <children>
                                                             <Label fx:id="lblAntalDrommeListe" text="Antal drømme:" />
                                                             <Region HBox.hgrow="ALWAYS" />
-                                                            <Button fx:id="btnAndOr" mnemonicParsing="false" onAction="#toggleANDOR" text="Filterstatus: OG" />
+                                                            <Button fx:id="btnAndOr" mnemonicParsing="false" onAction="#toggleANDOR" text="Filterstatus: OG">
+                                                               <tooltip>
+                                                                  <Tooltip text="Skifter mellem OG og ELLER. OG viser kun drømme der indeholder alt det valgte; ELLER viser alle drømme hvor bare ét af symbolerne optræder." wrapText="true" />
+                                                               </tooltip>
+                                                            </Button>
                                                             <Region HBox.hgrow="ALWAYS" />
-                                                            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#updateFilterList" text="Opdater" />
+                                                            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#updateFilterList" text="Opdater">
+                                                               <tooltip>
+                                                                  <Tooltip text="Kør filteret igennem igen og opdater listen med de valg der står nu." wrapText="true" />
+                                                               </tooltip>
+                                                            </Button>
                                                          </children>
                                                       </HBox>
                                                    </children>
@@ -277,7 +340,11 @@
                               <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Forløbsdrømme" />
-                                    <ListView fx:id="forloebValgListe" onMouseClicked="#onSelectForloebDream" prefHeight="592.0" prefWidth="317.0" styleClass="custom-list-view" />
+                                    <ListView fx:id="forloebValgListe" onMouseClicked="#onSelectForloebDream" prefHeight="592.0" prefWidth="317.0" styleClass="custom-list-view">
+                                       <tooltip>
+                                          <Tooltip text="De drømme du har markeret med en af de ni forløbsfaser. Vælg en for at søge omkring den." wrapText="true" />
+                                       </tooltip>
+                                    </ListView>
                                     <Label fx:id="lblForloebDream" alignment="CENTER" prefHeight="17.0" prefWidth="284.0" text="Ingen drøm valgt endnu" />
                                     <HBox>
                                        <fx:define>
@@ -287,8 +354,16 @@
                                           <ToggleButton fx:id="tgForloebKort" mnemonicParsing="false" onAction="#onForloebVisningChanged" selected="true" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Kort">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="forloebVisningGroup" />
-                                             </toggleGroup></ToggleButton>
-                                          <ToggleButton fx:id="tgForloebLangt" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onForloebVisningChanged" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;" text="Langt" toggleGroup="$forloebVisningGroup" />
+                                             </toggleGroup>
+                                             <tooltip>
+                                                <Tooltip text="Vis kun begyndelsen af hver drøm i listen." wrapText="true" />
+                                             </tooltip>
+                                          </ToggleButton>
+                                          <ToggleButton fx:id="tgForloebLangt" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onForloebVisningChanged" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;" text="Langt" toggleGroup="$forloebVisningGroup">
+                                             <tooltip>
+                                                <Tooltip text="Vis hele drømmeteksten i listen." wrapText="true" />
+                                             </tooltip>
+                                          </ToggleButton>
                                        </children>
                                     </HBox>
                                  </children>
@@ -315,7 +390,11 @@
                                                       <Tooltip text="Søg frem + eller tilbage - i tid." />
                                                    </tooltip>
                                                 </Button>
-                                                <Spinner fx:id="monthsSpinner" prefHeight="25.0" prefWidth="72.0" />
+                                                <Spinner fx:id="monthsSpinner" prefHeight="25.0" prefWidth="72.0">
+                                                   <tooltip>
+                                                      <Tooltip text="Hvor mange måneder frem eller tilbage der søges." wrapText="true" />
+                                                   </tooltip>
+                                                </Spinner>
                                                 <Label text="måneder" />
                                              </children>
                                           </HBox>
@@ -326,7 +405,11 @@
                                        <children>
                                           <Label fx:id="lblAntalDrommeForloeb" text="Antal drømme:" />
                                           <Region HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="btnForloebVisListe" mnemonicParsing="false" onAction="#btnVisForloebPressed" text="Vis liste" />
+                                          <Button fx:id="btnForloebVisListe" mnemonicParsing="false" onAction="#btnVisForloebPressed" text="Vis liste">
+                                             <tooltip>
+                                                <Tooltip text="Vis de drømme der ligger i det søgte tidsrum." wrapText="true" />
+                                             </tooltip>
+                                          </Button>
                                        </children>
                                     </HBox>
                                  </children>

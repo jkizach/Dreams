@@ -58,7 +58,9 @@ Med "Gem drømmelisten som txt-fil" kan du lægge listen ud som en almindelig te
 Her ændrer du både udseende og indhold.
 
 ## Temaer
-Øverst til venstre vælger du tema; der er to indbyggede. Lige under kan du lave dit eget: de fire baggrundsfarver, de tre tekstfarver, kantfarven og skrifttypen kan sættes som du vil have dem.
+Øverst til venstre vælger du tema; der er to indbyggede. Lige under kan du lave dit eget. De otte farver er navngivet efter hvad de maler: Baggrund er den gennemgående flade, Fokus er fremhævninger som den valgte fane og den valgte dato, Knapper er betjeningselementerne, og Felter er der hvor du skriver og læser. Dertil Brødtekst, Fokustekst - som skal kunne ses mod Fokus - Etikettekst og Kanter. Skrifttypen sættes samme sted.
+
+Hold musen over en farvevælger, så står der hvad netop den farve bruges til.
 
 Tryk "Se tema" for at se ændringerne, før du beslutter dig. Er du tilfreds, giver du temaet et navn og gemmer det.
 
