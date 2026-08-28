@@ -1,22 +1,59 @@
-Maven build:
-mvn clean package javafx:jlink
+Byg og pakning af Drømmeappen 2.0
+=================================
+
+Vigtigt at vide, før du går i gang
+----------------------------------
+* jpackage kan KUN bygge pakkeformatet for den maskine den selv kører på. MSI skal derfor
+  bygges på en pc, og DMG skal bygges på en Mac (Sørens). Der findes ingen krydskompilering.
+* Det samme gælder runtime-imaget i target/app: jlink bygger et image til værtsplatformen,
+  så en Windows-bygget target/app kan IKKE puttes i en DMG. Søren skal køre maven-buildet
+  på sin egen Mac, ikke bare kopiere target/ over fra pc'en.
+* Rettelsen "requires jdk.crypto.ec" i module-info.java følger med i git og gælder derfor
+  begge platforme. Uden den mangler runtime-imaget SunEC-provideren, og så fejler hvert
+  eneste HTTPS-kald i den installerede app (login og opdateringstjek) med handshake_failure,
+  som appen viser brugeren som "tjek din internetforbindelse". Fra IntelliJ ses det aldrig,
+  for der køres på en fuld JDK. Samme fælde som "requires jdk.localedata" og de danske datoer.
+* Husk at sætte CURRENT_VERSION i GITHUBUpdater.java, når versionsnummeret skifter.
+* C#-programmet updater.exe er afskaffet. Det var en omvej udenom netop den manglende
+  SunEC-provider, og Java klarer nu GitHub-kaldet selv. Skal ikke længere kopieres ind.
 
 
-Run package script
-==================
+1. Maven build (køres på DEN maskine der skal pakke)
+----------------------------------------------------
+  mvn clean package javafx:jlink
 
-Check at den rigtige version står i nedenstående script.
 
-MacOS:
-  Silicon:
-    jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.0 --vendor "ITfix"  --icon src/main/resources/moona.icns --java-options  "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
-  Intel:
-   jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 1.4 --vendor "ITfix"  --icon src/main/resources/moona.icns --arch x64 --java-options "-splash:app/splash.png"
+2. Ren input-mappe
+-------------------
+Læg kun jar og splash i en tom mappe. Peger --input i stedet på hele target/, sluger jpackage
+også target/app (126 MB) og target/app.zip (41 MB) og lægger dermed runtime-imaget dobbelt i
+installeren. Ren input-mappe fylder 620 KB, og MSI'en faldt fra ~200 MB til 42 MB.
 
-Windows OS:
-    OBS: Placer c#-programmet updater.exe i mappen target før koden her køres:
-  jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-1.4.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 1.4 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE"
+  Windows:
+    mkdir target\jpackage-input
+    copy target\Dreams-2.0.jar target\jpackage-input\
+    copy src\main\splash.png   target\jpackage-input\
 
-Windows - nu med splash:
-    OBS: Både c#-programmet updater.exe og splash.png skal kopieres ind i Target først!
-jpackage --input target/ --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.0 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
+  macOS:
+    mkdir -p target/jpackage-input
+    cp target/Dreams-2.0.jar src/main/splash.png target/jpackage-input/
+
+
+3a. Windows: MSI
+-----------------
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.0 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
+
+
+3b. macOS: DMG (køres på Sørens Mac)
+-------------------------------------
+Bemærk at splash-stien er absolut og peger ind i den installerede app-bundle. På macOS er
+arbejdsmappen ikke app-mappen, så den relative sti "app/splash.png" virker ikke her - derfor
+den fulde sti. Den forudsætter til gengæld, at appen installeres i /Applications.
+
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.0 --vendor "ITfix" --icon src/main/resources/moona.icns --java-options "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
+
+Arkitektur (Silicon vs. Intel): jpackage har ingen --arch-mulighed i JDK 21 - den gamle
+Intel-linje med "--arch x64" er altså ikke gyldig længere. Arkitekturen bestemmes af den
+maskine og den JDK, der bygger runtime-imaget. Skal der laves en Intel-udgave, skal den
+bygges på en Intel-Mac (eller med en x64-JDK under Rosetta) med præcis samme kommando
+som ovenfor.

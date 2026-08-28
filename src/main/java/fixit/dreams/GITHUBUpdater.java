@@ -6,7 +6,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
-import javax.net.ssl.*;
 import java.awt.Desktop;
 import java.io.*;
 import java.net.*;
@@ -33,16 +32,16 @@ public class GITHUBUpdater {
             String latestVersion = null;
             String htmlUrl = null;
 
+            // Kaldet gik tidligere altid galt i den installerede app og faldt tilbage på et
+            // C#-program, app/updater.exe. Årsagen var ikke Java, men at jlink-imaget manglede
+            // SunEC-provideren; se "requires jdk.crypto.ec" i module-info.java. Fallbacken er
+            // fjernet, fordi Java-kaldet nu virker direkte fra MSI'en.
             try {
-                // 1. Forsøg: direkte GitHub HTTP-kald ===
                 HttpURLConnection conn = (HttpURLConnection) new URL(GITHUB_API_URL).openConnection();
                 conn.setConnectTimeout(5000);
                 conn.setReadTimeout(5000);
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
                 conn.setRequestProperty("User-Agent", "Dreams-Updater");
-
-                int responseCode = conn.getResponseCode();
-                //log("GitHub response code: " + responseCode);
 
                 ObjectMapper mapper = new ObjectMapper();
                 Map<?, ?> json = mapper.readValue(conn.getInputStream(), Map.class);
@@ -51,31 +50,11 @@ public class GITHUBUpdater {
                 htmlUrl = (String) json.get("html_url");
 
             } catch (Exception e) {
-                // 2. Fallback: brug updater.exe ===
-                //log("GitHub kald fejlede (" + e.getMessage() + "), prøver updater.exe...");
-
-                try {
-                    Process process = new ProcessBuilder("app/updater.exe").start();
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(process.getInputStream()));
-
-                    String output = reader.readLine(); // forventer fx {"version":"v1.3.2","url":"https://..."}
-
-                    //log("Output fra updater: " + output);
-
-                    // Parse JSON-resultatet
-                    ObjectMapper mapper = new ObjectMapper();
-                    Map<?, ?> json = mapper.readValue(output, Map.class);
-
-                    latestVersion = (String) json.get("version");
-                    htmlUrl = (String) json.get("url");
-
-                } catch (Exception ex) {
-                    //log("Updater.exe fejlede: " + ex.getMessage());
-                }
+                // Opdateringstjek er en bekvemmelighed, ikke en kernefunktion: kan vi ikke nå
+                // GitHub, tier vi stille i stedet for at genere brugeren med en fejlbesked.
             }
 
-            // 3. Hvis vi har fundet en ny version, vis dialog ===
+            // Hvis vi har fundet en ny version, vis dialog ===
             if (latestVersion != null && htmlUrl != null && !CURRENT_VERSION.equals(latestVersion)) {
                 String finalLatestVersion = latestVersion;
                 String finalHtmlUrl = htmlUrl;
@@ -132,15 +111,4 @@ public class GITHUBUpdater {
             e.printStackTrace();
         }
     }
-
-    private static void log(String message) {
-        try {
-            Files.writeString(
-                    Paths.get(System.getProperty("user.home"), "drømmeapp-updater-log.txt"),
-                    LocalDate.now() + " - " + message + System.lineSeparator(),
-                    StandardOpenOption.CREATE, StandardOpenOption.APPEND
-            );
-        } catch (IOException ignored) {}
-    }
 }
-

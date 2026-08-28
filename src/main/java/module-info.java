@@ -14,6 +14,12 @@ module fixit.dreams {
     // for dér køres der på en fuld JDK, som har modulet i forvejen.
     requires jdk.localedata;
 
+    // Samme fælde: TLS' elliptiske kurver (SunEC-provideren) ligger også i sit eget JDK-modul.
+    // Uden dette requires tager jlink det ikke med, og så kan den installerede app ikke lave et
+    // eneste HTTPS-kald - hvert handshake dør i "handshake_failure", som appen viser brugeren
+    // som "tjek din internetforbindelse". Fra IntelliJ ses det ikke, for dér køres der på en
+    // fuld JDK, som har modulet i forvejen.
+    requires jdk.crypto.ec;
 
     opens fixit.dreams to javafx.fxml;
     exports fixit.dreams;
