@@ -134,11 +134,13 @@ public class SyncController {
                 syncService.syncNow(confirmedMerge);
                 Platform.runLater(() -> {
                     setButtonsDisabled(false);
-                    // Drømme hentes ind i den kørende app med det samme, men kategorier, temaer
-                    // og indstillinger skrives kun til disk - de sidder for dybt i UI'et til at
-                    // kunne skiftes ud midt i en session (se SyncService.overtagKategorierFraSkyen).
+                    // Hentede drømme er på plads i den kørende User, men listen i hovedmenuen
+                    // bygges først om når dette vindue lukkes (se handleOpenSyncPopup). Kategorier,
+                    // temaer og indstillinger skrives derimod kun til disk - de sidder for dybt i
+                    // brugerfladen til at kunne skiftes ud midt i en session, og kræver en genstart
+                    // (se SyncService.overtagKategorierFraSkyen).
                     statusLbl.setText(user.harHentetMetaFraSkyen()
-                            ? "Synkroniseret! Genstart appen for at se det hentede."
+                            ? "Synkroniseret! Kategorier og temaer vises efter en genstart."
                             : "Synkroniseret!");
                     refreshView();
                     user.genberegnStatsPlease();

@@ -708,6 +708,11 @@ public class HovedmenuController {
             popupStage.getIcons().add(icon);
 
             popupStage.showAndWait();
+
+            // Syncvinduet kan have hentet drømme ned i den kørende User, men det kender ikke
+            // listen her - samme oprydning som efter opstarts-pullet i initialize().
+            userService.refreshDreamList(fromDatePicker.getValue(), toDatePicker.getValue());
+            updateForsteDromLabel();
         } catch (IOException e) {
             e.printStackTrace();
         }
