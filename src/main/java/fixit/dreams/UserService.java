@@ -5,8 +5,10 @@ import javafx.collections.ObservableList;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class UserService extends ServiceMother {
     private Tema tempTema;
@@ -66,21 +68,23 @@ public class UserService extends ServiceMother {
     }
 
     private void refreshDreamList() {
-        dreamDTOs.clear();
-        for (Dream dream : user.getDreams().values()) {
-            dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getTolkning(), dream.getDato()));
-        }
-        sortDreamsByDate();
+        refreshDreamList(null, null); // uden datoer: hele listen
     }
 
+    // Listen bygges færdig ved siden af og lægges ind i ét hug. Forskellen fra et clear()
+    // efterfulgt af add() er ikke kosmetisk pedanteri: dreamDTOs ER den liste ListView'et
+    // viser, så en tømning kan ses. Efter et pull fra skyen rev listen sig selv ned og op
+    // igen for øjnene af brugeren, og "Antal drømme" gik et øjeblik i nul. setAll giver
+    // ListView'et én udskiftning i stedet.
     public void refreshDreamList(LocalDate fra, LocalDate til) {
-        dreamDTOs.clear();
+        List<DreamDTO> nye = new ArrayList<>();
         for (Dream dream : user.getDreams().values()) {
-            if (isInRange(dream.getDato(), fra, til)) {
-                dreamDTOs.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getTolkning(), dream.getDato()));
+            if (fra == null || til == null || isInRange(dream.getDato(), fra, til)) {
+                nye.add(new DreamDTO(dream.getId(), dream.getIndhold(), dream.getDagrest(), dream.getTolkning(), dream.getDato()));
             }
         }
-        sortDreamsByDate();
+        nye.sort(Comparator.comparing(DreamDTO::getDato).reversed()); // Nyeste først
+        dreamDTOs.setAll(nye);
     }
 
     private void sortDreamsByDate() {
