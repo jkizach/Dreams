@@ -1,6 +1,7 @@
 package fixit.dreams;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -46,7 +47,17 @@ public class DreamApp extends Application {
         }
     }
 
-    private void handleWindowClose() {
+    // Bruges når appen lukker sig SELV - i dag kun når en hentet opdatering skal installeres
+    // (se GITHUBUpdater). setOnCloseRequest fyrer ikke ved Platform.exit(), så gemmet og
+    // luk-syncen skal kaldes eksplicit, præcis som ved et almindeligt luk. Ellers ville
+    // sessionens arbejde gå tabt i selve opdateringen.
+    public static void gemOgAfslut() {
+        handleWindowClose();
+        Platform.exit();
+        System.exit(0);
+    }
+
+    private static void handleWindowClose() {
         User tempo = User.getInstance();
         CSSUpdater.updateCSSVariables(tempo.getForetrukneTema().getTemaForCSSUpdater(),false);
         // Er kategorier/temaer/indstillinger hentet fra skyen i denne session, ligger den

@@ -302,7 +302,8 @@ public class HovedmenuController {
             }
         });
 
-        /* check for updates -- virker ikke, så er udkommenteret */
+        /* Opdateringstjek mod GitHub, højst hver 30. dag. Kaldet er ikke-blokerende: selve
+           tjekket sker på sin egen tråd inde i klassen, og tier stille hvis nettet er nede. */
         GITHUBUpdater.checkForUpdateIfNeeded();
 
         /* Cloud-sync: pull evt. nyere/manglende drømme fra skyen (kun hvis brugeren har slået
