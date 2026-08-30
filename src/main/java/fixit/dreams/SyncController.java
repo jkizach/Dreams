@@ -135,13 +135,14 @@ public class SyncController {
                 Platform.runLater(() -> {
                     setButtonsDisabled(false);
                     // Hentede drømme er på plads i den kørende User, men listen i hovedmenuen
-                    // bygges først om når dette vindue lukkes (se handleOpenSyncPopup). Kategorier,
-                    // temaer og indstillinger skrives derimod kun til disk - de sidder for dybt i
-                    // brugerfladen til at kunne skiftes ud midt i en session, og kræver en genstart
-                    // (se SyncService.overtagKategorierFraSkyen).
+                    // bygges først om når dette vindue lukkes (se handleOpenSyncPopup) - derfor
+                    // siger beskeden det højt. Kategorier, temaer og indstillinger skrives
+                    // derimod kun til disk: de sidder for dybt i brugerfladen til at kunne
+                    // skiftes ud midt i en session, og kræver en genstart (se
+                    // SyncService.overtagKategorierFraSkyen).
                     statusLbl.setText(user.harHentetMetaFraSkyen()
-                            ? "Synkroniseret! Kategorier og temaer vises efter en genstart."
-                            : "Synkroniseret!");
+                            ? "Synkroniseret! Drømmene vises når du lukker vinduet - kategorier og temaer efter en genstart."
+                            : "Synkroniseret! Drømmene vises når du lukker vinduet.");
                     refreshView();
                     user.genberegnStatsPlease();
                 });
