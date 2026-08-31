@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -13,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.CheckComboBox;
 
 import java.time.LocalDate;
@@ -289,14 +291,47 @@ public class AnalyseController {
     @FXML
     private void onSelectKategori() {
         updateAntalDreamsCirkel();
-        if (comboPieKategorier.getSelectionModel().getSelectedItem() != null) {
-            Map<String,Integer> mapData = analyseService.getDataForPieChart(comboPieKategorier.getSelectionModel().getSelectedItem(),dpFromPie.getValue(),dpToPie.getValue());
+        String kategori = comboPieKategorier.getSelectionModel().getSelectedItem();
+        if (kategori != null) {
+            Map<String,Integer> mapData = analyseService.getDataForPieChart(kategori,dpFromPie.getValue(),dpToPie.getValue());
             pieData.clear();
             for (Map.Entry<String, Integer> entry : mapData.entrySet()) {
                 pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
             }
             pieChartAnalyse.setLegendVisible(false);
             pieChartAnalyse.setData(pieData);
+            farvelægLagkagestykker(kategori);
+        }
+    }
+
+    /**
+     * Giver hvert lagkagestykke den farve symbolet selv handler om - rød for rodchakraet,
+     * græsgrøn for græsgrøn. Stykkernes noder findes allerede lige efter setData(), og
+     * "-fx-pie-color" er den variabel modena bygger sin gradient over, så farven falder ind
+     * i appens udseende i stedet for at ligge oven på det.
+     *
+     * Kun Farver og Chakraer farvelægges. Alle andre diagrammer røres ikke og beholder den
+     * palet de altid har haft - også selv om et enkelt dyr eller en arketype skulle kunne
+     * læses som et farveord. Et symbol vi ikke kan udlede noget om, får et neutralt gråt
+     * stykke: en opfundet kulør ville lyve om dataene.
+     */
+    private void farvelægLagkagestykker(String kategori) {
+        boolean farvelæg = Category.harNaturligeFarver(kategori);
+
+        for (PieChart.Data stykke : pieData) {
+            Node node = stykke.getNode();
+            if (node == null) {
+                continue;
+            }
+            if (!farvelæg) {
+                node.setStyle("");
+                continue;
+            }
+            Color farve = Symbolfarver.forSymbol(stykke.getName());
+            // Kanten er nødvendig nu hvor farverne er ægte: uden den flyder nabonuancer som
+            // grøn og græsgrøn sammen, og sort forsvinder helt i den mørke baggrund.
+            node.setStyle("-fx-pie-color: " + Symbolfarver.tilWeb(farve == null ? Symbolfarver.UKENDT : farve) + ";"
+                    + " -fx-border-color: -fx-hovedtxt-text; -fx-border-width: 1;");
         }
     }
 

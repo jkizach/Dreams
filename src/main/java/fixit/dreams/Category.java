@@ -29,6 +29,18 @@ public class Category {
         customOrder = new ArrayList<>();
     }
 
+    // De to kategorier hvor symbolerne selv ER farver, og hvor cirkeldiagrammet derfor tegnes
+    // i de rigtige farver i stedet for JavaFX' palet (se AnalyseController og Symbolfarver).
+    // Alle andre kategorier holdes udenfor med vilje: at et dyr eller en arketype tilfældigvis
+    // kan læses som et farveord gør det ikke til en farve.
+    public static final List<String> FARVEDE_KATEGORIER = List.of("Farver", "Chakraer");
+
+    // Null-tjekket er ikke pedanteri: List.of() er en immutable liste, og dens contains(null)
+    // kaster NullPointerException i stedet for at svare false.
+    public static boolean harNaturligeFarver(String kategoriNavn) {
+        return kategoriNavn != null && FARVEDE_KATEGORIER.contains(kategoriNavn);
+    }
+
     public boolean isFlagsCategory() {
         return FLAGS_CATEGORY_NAME.equals(name);
     }
