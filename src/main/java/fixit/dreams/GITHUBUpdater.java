@@ -70,10 +70,7 @@ public class GITHUBUpdater {
         Thread updaterThread = new Thread(() -> {
             Release release = hentSenesteRelease();
 
-            // Bemærk: ren streng-ulighed, ikke versionssammenligning. Tagget på GitHub skal
-            // hedde præcis det samme som CURRENT_VERSION, ellers tilbyder appen en "opdatering"
-            // - også nedad til en ældre udgave.
-            if (release == null || CURRENT_VERSION.equals(release.tag())) {
+            if (release == null || !erNyereEnd(release.tag(), CURRENT_VERSION)) {
                 return;
             }
             Platform.runLater(() -> spørgOmOpdatering(release));
@@ -112,6 +109,68 @@ public class GITHUBUpdater {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    // Kun STRENGT nyere versioner må tilbydes. Det er ikke pedanteri: kører man installeren
+    // for 1.5 oven på 2.0, læser den gamle udgave ikke det nye format i dreams.json, og
+    // drømmene er væk. En "opdatering" nedad er altså ikke en irritation, det er et datatab.
+    //
+    // Det var det den tidligere !equals-test ikke fangede: den så kun om tagget var et ANDET
+    // end vores, ikke om det var et højere. Så snart CURRENT_VERSION var forud for det seneste
+    // release - hvilket den er hver gang en ny udgave er bygget men ikke lagt op endnu -
+    // tilbød appen brugeren at installere sig selv baglæns.
+    //
+    // Kan et af de to tags ikke læses som tal, siger vi nej. Vi ved så ikke hvad der er nyest,
+    // og af de to måder at tage fejl på er den tavse den ufarlige.
+    static boolean erNyereEnd(String kandidat, String nuværende) {
+        int[] a = versionstal(kandidat);
+        int[] b = versionstal(nuværende);
+        if (a == null || b == null) {
+            return false;
+        }
+        for (int i = 0; i < Math.max(a.length, b.length); i++) {
+            int x = (i < a.length) ? a[i] : 0; // "v2" og "v2.0" er samme version
+            int y = (i < b.length) ? b[i] : 0;
+            if (x != y) {
+                return x > y;
+            }
+        }
+        return false; // helt ens
+    }
+
+    // "v2.0.1" -> [2, 0, 1]. Et foranstillet v og et eventuelt suffiks efter - eller +
+    // ("v2.1-rc1") pilles af først, så et prøve-release ikke ser ud som en ulæselig version.
+    // null hvis der står noget vi ikke forstår.
+    private static int[] versionstal(String tag) {
+        if (tag == null) {
+            return null;
+        }
+        String rest = tag.strip();
+        if (rest.startsWith("v") || rest.startsWith("V")) {
+            rest = rest.substring(1);
+        }
+        int suffiks = rest.length();
+        for (int i = 0; i < rest.length(); i++) {
+            if (rest.charAt(i) == '-' || rest.charAt(i) == '+') {
+                suffiks = i;
+                break;
+            }
+        }
+        rest = rest.substring(0, suffiks);
+        if (rest.isEmpty()) {
+            return null;
+        }
+
+        String[] dele = rest.split("\\.", -1);
+        int[] tal = new int[dele.length];
+        for (int i = 0; i < dele.length; i++) {
+            try {
+                tal[i] = Integer.parseInt(dele[i]);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return tal;
     }
 
     // Filendelsen er nok til at vælge rigtigt: et release har præcis én .msi og én .dmg.
