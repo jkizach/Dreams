@@ -238,22 +238,22 @@ public class UserService extends ServiceMother {
             }
         }
         refreshDreamList();
-        user.skalStatsGenberegnes.set(true);
+        user.genberegnStatsPlease();
     }
 
     public void setVisAdvarsel(boolean b) {
         user.setVisAdvarsel(b);
-        user.skalStatsGenberegnes.set(true);
+        user.genberegnStatsPlease();
     }
 
     public void setVisKollektiv(boolean b) {
         user.setVisKollektiv(b);
-        user.skalStatsGenberegnes.set(true);
+        user.genberegnStatsPlease();
     }
 
     public void setVisHolografisk(boolean b) {
         user.setVisHolografisk(b);
-        user.skalStatsGenberegnes.set(true);
+        user.genberegnStatsPlease();
     }
 
     public boolean isVisAdvarsel() {

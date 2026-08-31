@@ -17,6 +17,7 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
 
@@ -73,9 +74,16 @@ public class AnalyseController {
         this.analyseService = new AnalyseService(user);
         comboPieKategorier.setItems(user.getKategoriLabels());
 
-        user.skalStatsGenberegnes.addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
+        // User tæller op hver gang statistikken skal regnes om. En sync kan sende hundredvis af
+        // beskeder i træk (én pr. hentet drøm), og en fuld genberegning pr. besked ville låse
+        // brugerfladen - derfor lægges der kun én genberegning i kø ad gangen. Vagten slippes
+        // FØRST i genberegningen, så ændringer der kommer ind undervejs får deres egen tur i
+        // stedet for at blive tabt. compareAndSet fordi syncen tæller op fra sin egen tråd.
+        AtomicBoolean genberegningPlanlagt = new AtomicBoolean(false);
+        user.statsGenberegningProperty().addListener((obs, oldVal, newVal) -> {
+            if (genberegningPlanlagt.compareAndSet(false, true)) {
                 Platform.runLater(() -> {
+                    genberegningPlanlagt.set(false);
                     analyseService.updateStats();
                     updateGuiDates();
                     loadTalData();

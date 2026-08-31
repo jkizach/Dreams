@@ -164,7 +164,6 @@ public class AnalyseService extends ServiceMother{
 
     public void updateStats() {
         stats.calculateStats();
-        user.statsErGenberegnet();
     }
 
     public LocalDate getStartDate() {

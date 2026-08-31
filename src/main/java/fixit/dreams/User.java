@@ -1,7 +1,8 @@
 package fixit.dreams;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -27,7 +28,15 @@ class User {
     private boolean visKollektiv = false;
     private boolean visHolografisk = false;
     private LocalDate startFromThisDate = null;
-    protected BooleanProperty skalStatsGenberegnes = new SimpleBooleanProperty(false);
+    // Tælles én op hver gang statistikken skal regnes om. Det VAR et boolsk flag, og det var
+    // forkert: JavaFX fyrer kun listeners når værdien faktisk ÆNDRER sig, og flaget blev kun
+    // sat tilbage til false inde i Analyse-fanens egen listener. Skete der noget der krævede
+    // genberegning FØR fanen var åbnet første gang - en ny drøm, en sync, en ny startdato -
+    // stod flaget allerede på true uden at nogen havde nulstillet det, og hvert eneste senere
+    // set(true) var et rent no-op. Så frøs Tal-fanen resten af sessionen: man kunne sætte
+    // mareridt på en drøm uden at tallene rørte sig. Med en tæller er hver besked en ny værdi,
+    // og der er ikke længere et flag der kan sidde fast (koalescering sker i lytteren i stedet).
+    private final IntegerProperty statsGenberegning = new SimpleIntegerProperty(0);
     protected StringProperty dreamEdited = new SimpleStringProperty("tom");
 
     // Sættes af cloud-syncen når kategorier, temaer eller indstillinger er HENTET fra skyen og
@@ -126,12 +135,12 @@ class User {
 
     public void addDream(Dream d) {
         dreams.put(d.getId(),d);
-        skalStatsGenberegnes.set(true);
+        genberegnStatsPlease();
     }
 
     public void deleteDream(String id) {
         dreams.remove(id);
-        skalStatsGenberegnes.set(true);
+        genberegnStatsPlease();
     }
 
     public Dream getDream(String id) {
@@ -219,14 +228,12 @@ class User {
         this.visHolografisk = visHolografisk;
     }
 
-    public void statsErGenberegnet() {
-        skalStatsGenberegnes.set(false);
+    public void genberegnStatsPlease() {
+        statsGenberegning.set(statsGenberegning.get() + 1);
     }
 
-    public void genberegnStatsPlease() {skalStatsGenberegnes.set(true);}
-
-    public boolean skalStatsGenberegnes() {
-        return skalStatsGenberegnes.get();
+    public ReadOnlyIntegerProperty statsGenberegningProperty() {
+        return statsGenberegning;
     }
 
     public boolean harHentetMetaFraSkyen() {
@@ -270,7 +277,7 @@ class User {
         categories.add(c);
         updateVboxes();
         kategoriLabels.add(c.getName());
-        skalStatsGenberegnes.set(true);
+        genberegnStatsPlease();
     }
 
     public void addDreamVbox(VBox vbox) {
