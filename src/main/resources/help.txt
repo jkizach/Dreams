@@ -24,6 +24,8 @@ Der er også et mindre felt til dagresten, og et til din egen tolkning.
 
 Nedenunder er der ni afkrydsningsfelter, hvor du kan markere hvad slags drøm det var - om den fx var lucid, et mareridt, eller handlede om praksis. Tre af felterne (Kollektiv, Advarsel og Holografisk) er skjult som udgangspunkt; du kan gøre dem synlige under Indstillinger, hvis du har brug for dem.
 
+Er du i tvivl om hvad fx Lucid, Kollektiv eller Holografisk dækker, står der en forklaring under "Om appen".
+
 I højre side finder du seks symbolkategorier, hvor du markerer hvilke symboler der optrådte i drømmen:
 
 - Arketyper
@@ -41,7 +43,7 @@ Når drømmen er skrevet og symbolerne markeret, trykker du "Gem drømmen". Så 
 
 # 2. Analyse
 
-Under den fane ligger fire underfaner, hvor du kan se statistik og søge i dine drømme. De er beskrevet til sidst i teksten her.
+Under Analyse-fanen ligger fire underfaner, hvor du kan se statistik og søge i dine drømme. De er beskrevet til sidst i teksten her.
 
 # 3. Drømme
 
