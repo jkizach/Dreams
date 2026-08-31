@@ -41,7 +41,7 @@ Når drømmen er skrevet og symbolerne markeret, trykker du "Gem drømmen". Så 
 
 # 2. Analyse
 
-Under denne fane ligger fire underfaner, hvor du kan se statistik og søge i dine drømme. De er beskrevet til sidst i teksten her.
+Under den fane ligger fire underfaner, hvor du kan se statistik og søge i dine drømme. De er beskrevet til sidst i teksten her.
 
 # 3. Drømme
 

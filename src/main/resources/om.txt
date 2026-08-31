@@ -47,6 +47,8 @@ Helt valgfrit. Appen virker fuldstændig som den plejer uden, og rører ikke int
 ## Hvad den er til
 Den er tænkt som en flyttekasse og en sikkerhedskopi - ikke som et fælles arbejdsrum. Meningen er at dine drømme ligger et sted uden for din egen harddisk, så de er der endnu hvis maskinen står af, og så de kan følge med over på en ny computer.
 
+Synkronisering har den ekstra fordel at du så kan have appen installeret på flere maskiner og dele de samme drømme uden manuelt at skulle kopiere noget.
+
 ## Hvordan det virker
 Du opretter en konto med en email og en adgangskode. Dine drømme bliver liggende lokalt som altid - skyen får en kopi.
 
@@ -71,3 +73,34 @@ Drømmeforståelsen bag appen er baseret på Jes Bertelsens og C.G. Jungs teorie
 
 - Jes Bertelsen, Dybdepsykologi 2 - Genfødelsens psykologi, Borgen, 1979.
 - Jes Bertelsen, Drømme, Chakrasymboler og Meditation, Borgen, 1982.
+
+## Kategorier og symboler
+
+Der bruges nogle ord som måske er lidt usædvanlige så her er en kort forklaring af dem vi tænker er mindst kendte.
+
+Kategorierne Praktiserer, Om praksis og Advarsel er beregnet til folk som har en fast meditationspraksis. Så hvis man ikke mediterer, så er de næppe så relevante.
+
+Modsatkønnethed er ganske enkelt det fænomen at drømmejeget er det modsatte køn af hvad man selv er. Kollektive drømme er karakteristiske ved at der ikke er et drømmejeg: handlingen eller drømmebillederne folder sig ud, men uden en iagttager, uden det drømmejeg som ellers er i en drøm. Bemærk at her er der forformer hvor drømmejeget er meget vagt, men stadig er der.
+
+## Luciditet.
+
+Følelsen af at man ved at man drømmer mens man drømmer. Der er flere niveauer i luciditet: Man aner at man drømmer, men drømmen er uændret; man kan starte forfra eller ændre små ting; man er så vågen at drømmens handling begynder at blive irrelevant; man er fri af drømmens historie, men er stadig i drømmens billeder – men nu kan man gøre som man vil; man er klar over at man drømmer og drømmens billeder forsvinder; man ved man drømmer, der er ingen billeder, man ved hvor ens krop er i virkeligheden.
+
+De første grader er ret almindelige - de fleste har oplevet at de aner at det er en drøm, mens de drømmer. Men de sidste niveauer af luciditet er ret sjældne.
+
+## Holografiske drømme
+
+De er knyttet til pinealen og ideen er at bevidstheden er delt i større eller mindre grad. Eller at den er foldet ind i et punkt. Der findes forformer til holografiske drømme som en del mennesker har oplevet. Det er dem jeg nedenfor kalder laveste trin og næste trin. De virkelige holografiske drømme er enormt sjældne - de fleste mennesker lever et helt liv uden at have én eneste af den slags drømme.
+
+Laveste trin: Rammedrømme. Man fortæller fx en historie og så er drømmen historien, men den er ligesom inkluderet i en anden drømmesituation hvor man jo så fortæller drømmen.
+
+Næste trin: Der er flere spor i drømmen på samme tid - men de er der ikke helt samtidigt, eller de er tæt knyttede. Fx man er på en cafe og samtidig er man på vej hen til cafeen - men i drømmen er det uklart om man erindrer sin vej derhen eller om det vitterligt er samtidigt.
+
+De ægte holografiske drømme:
+
+Holografisk drøm type A: Der er flere drømme samtidigt. Fx jeg sidder og mediterer med Marie ved en flod på en balinesisk inspireret mole. Og jeg ser hvordan en balinesisk kvinde bruger molen til at sejle ud med hele landsbyens børneflok, og så bliver forældrene bekymrede og hun må sejle ind igen. Og jeg ser hvordan hun ankommer til landsbyen for lang tid siden og bygger molen. Men det sker samtidigt i én drøm. Så bevidstheden er delt i tre samtidige drømmejeger i det her tilfælde.
+
+Holografisk drøm type B: Én drøm, men man ser samtidigt situationen fra flere perspektiver. Fx jeg er en irsk kvinde i 1800-tallet og sidder i min seng og kigger ud af et vindue. Jeg er døende. Samtidig står jeg i døren og kigger hen på den døende kvinde. Bevidstheden er her delt i to ligeværdige perspektiver som er der samtidigt i drømmen.
+
+Holografisk drøm type C: Drømmen er helt kort og simpel, men når man husker den som vågen, er den fuld af information. Fx en kort drøm om et sort-hvidt papirklip med en kvinde og en mand i silhouet. Kvinden sidder ned med ansigtet i hænderne, manden står op og har en økse. Da jeg vågner ved jeg at de to har en uoverensstemmelse og er kede af ikke at kunne få ordentlig kontakt, men det viser sig at der er fordi kvinden har været i nogle mere fortyndede meditative tilstande og blev både lidt rystet og lidt bange og derfor kan hun ikke helt afstemme. Da manden forstår det, forstår han hende og det muliggør at de kan reparere deres kontakt og løse konflikten. Informationen om deres konflikt og detaljerne er ikke til stede i drømmebilledet direkte, men det folder sig ud i bevidstheden når drømmeren vågner. Så helheden (hele drømmesituationen med stemninger, historie og følelser) er foldet ind i ét enkelt billede.
+
