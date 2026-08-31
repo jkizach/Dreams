@@ -88,7 +88,7 @@ public class Dream {
 
     public boolean hasFlag(String symbol) {
         for (CategoryDTO dto : categories) {
-            if (Category.FLAGS_CATEGORY_NAME.equals(dto.name)) {
+            if (Category.ID_KVALITETER.equals(dto.id)) {
                 return dto.symbols != null && dto.symbols.contains(symbol);
             }
         }
@@ -96,7 +96,7 @@ public class Dream {
     }
 
     public void setCategory(CategoryDTO dto) {
-        categories.removeIf(existing -> existing.name.equals(dto.name));
+        categories.removeIf(existing -> existing.id.equals(dto.id));
         categories.add(dto);
     }
 }

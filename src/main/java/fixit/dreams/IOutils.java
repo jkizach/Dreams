@@ -114,6 +114,7 @@ public class IOutils {
     public static List<CategoryDTO> toCategoryDTOs(ArrayList<Category> cats) {
         return cats.stream().map(c -> {
             CategoryDTO dto = new CategoryDTO();
+            dto.id = c.getId();
             dto.name = c.getName();
             dto.symbols = c.getSymbols();
             dto.customOrder = c.getCustomOrder();
@@ -124,7 +125,10 @@ public class IOutils {
     public static ArrayList<Category> toCategories(List<CategoryDTO> dtoList) {
         ArrayList<Category> result = new ArrayList<>();
         for (CategoryDTO dto : dtoList) {
-            Category cat = new Category(dto.name);
+            // Mangler id'et, er posten fra før skema v4 og udledes af navnet - samme regel som
+            // migreringen bruger, så de to kan ikke komme til at give hvert sit svar.
+            String id = (dto.id != null && !dto.id.isBlank()) ? dto.id : Kategoriid.forIndbygget(dto.name);
+            Category cat = new Category(id, dto.name);
             cat.setSymbols(dto.symbols);
             if (cat.hasCustomOrder()) {
                 cat.setCustomOrder(dto.customOrder);

@@ -38,6 +38,11 @@ public class ServiceMother {
         return user.getUiCategories();
     }
 
+    /** Brugerfladen vælger på navne, alt herunder arbejder på id'er. Se User.idForKategoriNavn. */
+    public String idForKategoriNavn(String navn) {
+        return user.idForKategoriNavn(navn);
+    }
+
     protected boolean isInRange(LocalDate date, LocalDate start, LocalDate end) {
         return (date.isEqual(start) || date.isAfter(start)) && (date.isEqual(end) || date.isBefore(end));
     }

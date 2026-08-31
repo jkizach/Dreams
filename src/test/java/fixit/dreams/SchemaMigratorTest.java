@@ -80,7 +80,7 @@ class SchemaMigratorTest {
 
         JsonNode kvaliteter = null;
         for (JsonNode cat : dream.get("categories")) {
-            if ("Kvaliteter".equals(cat.get("name").asText())) {
+            if (Category.ID_KVALITETER.equals(cat.path("id").asText())) {
                 kvaliteter = cat;
             }
         }
@@ -230,10 +230,11 @@ class SchemaMigratorTest {
         assertNotNull(meta.temaer.updatedAt);
     }
 
-    // Kernegarantien for eksisterende brugere: opgraderingen til v3 tilføjer kun en ny fil,
-    // den omskriver ikke de data de allerede har liggende.
+    // Kernegarantien for eksisterende brugere: en opgradering maa ikke aendre indholdet af de
+    // data de allerede har liggende. v3 -> v4 tilfoejer et id, og DET er ogsaa alt hvad den maa
+    // goere - navne, symboler og raekkefoelge skal staa uroert tilbage.
     @Test
-    void v2_til_v3_roerer_ikke_brugerens_egne_datafiler() throws IOException {
+    void opgraderingen_tilfoejer_kun_id_til_brugerens_kategorier() throws IOException {
         Files.writeString(userJson, """
                 {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":2}
                 """);
@@ -243,13 +244,88 @@ class SchemaMigratorTest {
         Files.writeString(dreamsJson, """
                 [{"id":"abc-123","categories":[],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05","updatedAt":"2020-01-01T00:00:00Z"}]
                 """);
-        String catsFoer = Files.readString(catsJson);
-        String dreamsFoer = Files.readString(dreamsJson);
 
         SchemaMigrator.migrateIfNeeded();
 
-        assertEquals(catsFoer, Files.readString(catsJson));
-        assertEquals(dreamsFoer, Files.readString(dreamsJson));
+        JsonNode kategori = mapper.readTree(catsJson.toFile()).get(0);
+        assertEquals("farver", kategori.get("id").asText(), "v3 -> v4: kategorien skal have faaet sit id");
+        assertEquals("Farver", kategori.get("name").asText(), "navnet skal staa uroert");
+        List<String> symboler = new ArrayList<>();
+        kategori.get("symbols").forEach(s -> symboler.add(s.asText()));
+        assertEquals(List.of("rød", "blå"), symboler, "symbolerne skal staa uroert");
+
+        JsonNode droem = mapper.readTree(dreamsJson.toFile()).get(0);
+        assertEquals("test", droem.get("indhold").asText(), "droemmens indhold skal staa uroert");
+    }
+
+    // Det afgoerende ved v3 -> v4: intet ved droemmen er aendret, kun HVORDAN den peger paa sin
+    // kategori - og begge maskiner udleder selv det samme resultat. Flyttede migreringen
+    // updatedAt, ville hver eneste droem se aendret ud og skulle uploades igen, og en migrering
+    // paa den ene maskine ville slaa aegte redigeringer paa den anden.
+    @Test
+    void v3_til_v4_flytter_ikke_droemmenes_updatedAt() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":3}
+                """);
+        Files.writeString(catsJson, """
+                [{"name":"Dyr","symbols":["ræv"],"customOrder":[]}]
+                """);
+        Files.writeString(dreamsJson, """
+                [{"id":"abc-123","categories":[{"name":"Dyr","symbols":["ræv"]}],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05","updatedAt":"2020-01-01T00:00:00Z"}]
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        JsonNode droem = mapper.readTree(dreamsJson.toFile()).get(0);
+        assertEquals("2020-01-01T00:00:00Z", droem.get("updatedAt").asText(),
+                "migreringen maa ikke stemple droemmen som aendret");
+
+        JsonNode tag = droem.get("categories").get(0);
+        assertEquals("dyr", tag.get("id").asText(), "taggen skal pege paa kategoriens id");
+        assertFalse(tag.has("name"), "en droems tag baerer id, ikke navn - se CategoryDTO");
+    }
+
+    // En tag hvis navn slet ikke staar i kategorilisten - fx efterladt af en omdoebning der kun
+    // naaede halvvejs gennem syncen - skal stadig faa et id, udledt efter samme regel, saa begge
+    // maskiner ender med det samme og taggen kan finde hjem hvis kategorien dukker op.
+    @Test
+    void en_foraeldreloes_tag_faar_ogsaa_et_udledt_id() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":3}
+                """);
+        Files.writeString(catsJson, """
+                [{"name":"Dyr","symbols":["ræv"],"customOrder":[]}]
+                """);
+        Files.writeString(dreamsJson, """
+                [{"id":"abc-123","categories":[{"name":"Væsner","symbols":["ork"]}],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05","updatedAt":"2020-01-01T00:00:00Z"}]
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        JsonNode tag = mapper.readTree(dreamsJson.toFile()).get(0).get("categories").get(0);
+        assertEquals(Kategoriid.forIndbygget("Væsner"), tag.get("id").asText());
+    }
+
+    // Migreringen skal kunne koeres igen uden at give nogen et nyt id - fx hvis appen doede
+    // midt i den foerste koersel, saa cats.json naaede at blive skrevet men user.json ikke.
+    @Test
+    void en_gentaget_migrering_aendrer_ingen_id_er() throws IOException {
+        Files.writeString(userJson, """
+                {"foretrukneTema":"mørkt grønt","visAdvarsel":false,"visKollektiv":false,"startFromThisDate":"2026-01-01","schemaVersion":3}
+                """);
+        Files.writeString(catsJson, """
+                [{"id":"noget-helt-andet","name":"Dyr","symbols":["ræv"],"customOrder":[]}]
+                """);
+        Files.writeString(dreamsJson, """
+                [{"id":"abc-123","categories":[{"name":"Dyr","symbols":["ræv"]}],"indhold":"test","dagrest":"","tolkning":"","dato":"2026-01-05","updatedAt":"2020-01-01T00:00:00Z"}]
+                """);
+
+        SchemaMigrator.migrateIfNeeded();
+
+        assertEquals("noget-helt-andet", mapper.readTree(catsJson.toFile()).get(0).get("id").asText(),
+                "et id der allerede staar i filen skal blive staaende");
+        assertEquals("noget-helt-andet", mapper.readTree(dreamsJson.toFile()).get(0).get("categories").get(0).get("id").asText(),
+                "droemmens tag skal pege paa netop det id");
     }
 
     @Test
@@ -260,10 +336,10 @@ class SchemaMigratorTest {
     }
 
     // DEN RIGTIGE OPGRADERINGSVEJ for alle nuværende brugere: den released udgave (1.5) skriver
-    // slet ingen schemaVersion, så deres data er version 0 og skal hele vejen til 3 i ét spring,
-    // første gang de starter den nye udgave. Alle fire trin skal virke i samme kørsel.
+    // slet ingen schemaVersion, så deres data er version 0 og skal hele vejen op i ét spring,
+    // første gang de starter den nye udgave. Alle trin skal virke i samme kørsel.
     @Test
-    void released_data_uden_versionsnummer_migreres_hele_vejen_til_v3() throws IOException {
+    void released_data_uden_versionsnummer_migreres_hele_vejen_til_v4() throws IOException {
         writeOldFormatFixtures();
 
         SchemaMigrator.migrateIfNeeded();
@@ -278,7 +354,7 @@ class SchemaMigratorTest {
         assertNotNull(meta.temaer.updatedAt);
         assertNotNull(meta.settings.updatedAt);
 
-        assertEquals(3, mapper.readTree(userJson.toFile()).get("schemaVersion").asInt());
+        assertEquals(SchemaMigrator.CURRENT_SCHEMA_VERSION, mapper.readTree(userJson.toFile()).get("schemaVersion").asInt());
     }
 
     // Og anden opstart må ikke røre noget: uden dette ville stemplerne blive sat forfra hver

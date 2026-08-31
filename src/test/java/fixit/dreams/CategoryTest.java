@@ -118,7 +118,8 @@ class CategoryTest {
     void buildFlagsCategoryDTO_indeholder_kun_de_afkrydsede_symboler() {
         CategoryDTO dto = Category.buildFlagsCategoryDTO(true, false, false, false, false, true, false, false, false);
 
-        assertEquals("Kvaliteter", dto.name);
+        assertEquals(Category.ID_KVALITETER, dto.id);
+        assertNull(dto.name, "en droems tag baerer id, ikke navn - se CategoryDTO");
         assertEquals(2, dto.symbols.size());
         assertTrue(dto.symbols.contains("Lucid"));
         assertTrue(dto.symbols.contains("Mareridt"));

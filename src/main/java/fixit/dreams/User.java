@@ -11,10 +11,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.CheckComboBox;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 class User {
@@ -162,6 +165,21 @@ class User {
         }
     }
 
+    // Brugerfladen viser og vælger på navne - kategorilisten, comboboksen, CheckComboBoxenes
+    // titler. Alt under den arbejder på id'er. Oversættelsen hører hjemme præcis her, i ét
+    // opslag på vej ind, så resten af koden ikke skal kende til navne overhovedet.
+    public String idForKategoriNavn(String navn) {
+        if (navn == null) {
+            return null;
+        }
+        for (Category c : categories) {
+            if (c.getName().equals(navn)) {
+                return c.getId();
+            }
+        }
+        return null;
+    }
+
     public ArrayList<Category> getUiCategories() {
         ArrayList<Category> result = new ArrayList<>();
         for (Category c : categories) {
@@ -272,8 +290,18 @@ class User {
         this.categories = categories;
     }
 
+    // En kategori brugeren selv opretter får et id med tidsstempel-hash, IKKE en ren slug.
+    // Opretter man "Musik" på begge sine maskiner mellem to synkroniseringer, er det to
+    // forskellige kategorier, og de skal have hvert sit id - ellers ville drømme fra den ene
+    // stille havne i den anden. Se Kategoriid.
     public void addCategory(String name) {
-        Category c = new Category(name);
+        Set<String> optagedeIder = new HashSet<>();
+        for (Category eksisterende : categories) {
+            optagedeIder.add(eksisterende.getId());
+        }
+        String id = Kategoriid.gørUnik(Kategoriid.forNy(name, Instant.now()), optagedeIder);
+
+        Category c = new Category(id, name);
         categories.add(c);
         updateVboxes();
         kategoriLabels.add(c.getName());

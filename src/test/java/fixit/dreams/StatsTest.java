@@ -26,7 +26,7 @@ class StatsTest {
 
     private CategoryDTO farverDTO(String... symbols) {
         CategoryDTO dto = new CategoryDTO();
-        dto.name = "Farver";
+        dto.id = Kategoriid.forIndbygget("Farver");
         dto.symbols = new TreeSet<>(List.of(symbols));
         return dto;
     }
@@ -102,7 +102,7 @@ class StatsTest {
     @Test
     void getCategoryStats_akkumulerer_symboler_pr_dag() {
         Stats stats = buildFixtureStats();
-        TreeMap<String, TreeMap<String, Integer>> farverStats = stats.getCategoryStats("Farver");
+        TreeMap<String, TreeMap<String, Integer>> farverStats = stats.getCategoryStats(Category.ID_FARVER);
 
         assertEquals(1, stats.getStatsPerDag(farverStats, D1).get("rød"));
         assertEquals(1, stats.getStatsPerDag(farverStats, D2).get("rød"));
@@ -113,7 +113,7 @@ class StatsTest {
     @Test
     void getCategoryStats_akkumulerer_symboler_pr_uge_og_maned() {
         Stats stats = buildFixtureStats();
-        TreeMap<String, TreeMap<String, Integer>> farverStats = stats.getCategoryStats("Farver");
+        TreeMap<String, TreeMap<String, Integer>> farverStats = stats.getCategoryStats(Category.ID_FARVER);
 
         // D1 + D2 i samme uge: rød=2 (D1+D2), blå=1 (kun D2)
         TreeMap<String, Integer> ugeStats = stats.getStatsPerUge(farverStats, D1);
@@ -130,10 +130,10 @@ class StatsTest {
     // der er synkroniseret halvt igennem, hvor de omdoebte droemme er ankommet, men den nye
     // kategoriliste endnu ikke er. Foer havde det vaeltet hele statistikken med en NPE.
     @Test
-    void ukendt_kategorinavn_i_en_droem_vaelter_ikke_statistikken() {
+    void ukendt_kategori_id_i_en_droem_vaelter_ikke_statistikken() {
         User user = User.getInstance();
         CategoryDTO ukendt = new CategoryDTO();
-        ukendt.name = "Væsner";
+        ukendt.id = Kategoriid.forIndbygget("Væsner");
         ukendt.symbols = new TreeSet<>(List.of("ork"));
         addDream(user, D1, true, false, ukendt);
 

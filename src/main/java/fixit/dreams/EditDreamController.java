@@ -10,7 +10,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 public class EditDreamController {
@@ -18,7 +19,9 @@ public class EditDreamController {
 
     private User user;
 
-    private ArrayList<CheckComboBox<String>> editCCBs = new ArrayList<>();
+    // Nøglet på kategoriens id, ikke dens titel. CheckComboBoxens titel er det navn brugeren
+    // ser, og det navn kan ændre sig - id'et kan ikke.
+    private final LinkedHashMap<String, CheckComboBox<String>> editCCBs = new LinkedHashMap<>();
 
     public void setDream(Dream dream) {
         this.dream = dream;
@@ -60,19 +63,18 @@ public class EditDreamController {
             ccb.setMinWidth(280);
             ccb.setTitle(c.getName());
             ccb.setShowCheckedCount(true);
-            editCCBs.add(ccb);
+            editCCBs.put(c.getId(), ccb);
         }
     }
 
     private void displayDream() {
         for (CategoryDTO cdto : dream.getCategories()) {
-            for (CheckComboBox<String> ccb : editCCBs) {
-                if (cdto.name.equals(ccb.getTitle())) {
-                    for (String symbol : cdto.symbols) {
-                        ccb.getCheckModel().check(symbol);
-                    }
-                    break;
-                }
+            CheckComboBox<String> ccb = editCCBs.get(cdto.id);
+            if (ccb == null || cdto.symbols == null) {
+                continue; // fx "Kvaliteter", der ikke har en CheckComboBox i UI'et
+            }
+            for (String symbol : cdto.symbols) {
+                ccb.getCheckModel().check(symbol);
             }
         }
         lucidEdit.setSelected(dream.hasFlag("Lucid"));
@@ -96,24 +98,21 @@ public class EditDreamController {
             return;
         }
         // Gemmer valgene fra checkcomboboxene
-        for (CheckComboBox<String> ccb : editCCBs) {
+        for (Map.Entry<String, CheckComboBox<String>> post : editCCBs.entrySet()) {
+            String kategoriId = post.getKey();
+            TreeSet<String> nyeSymboler = new TreeSet<>(post.getValue().getCheckModel().getCheckedItems());
 
-            TreeSet<String> newsymbols = new TreeSet<String>(ccb.getCheckModel().getCheckedItems());
-            // Her skal jeg tjekke om ccb.getTitle() overhovedet er i dream.getCategories()!! Ellers skal den tilføjes...
-            boolean found = dream.getCategories().stream()
-                    .anyMatch(category -> category.name.equals(ccb.getTitle()));
+            CategoryDTO cdto = dream.getCategories().stream()
+                    .filter(c -> kategoriId.equals(c.id))
+                    .findFirst()
+                    .orElse(null);
 
-            if (!found) {
-                CategoryDTO theNewOnenew = new CategoryDTO();
-                theNewOnenew.name = ccb.getTitle();
-                dream.addCategoryDTO(theNewOnenew);
+            if (cdto == null) {
+                cdto = new CategoryDTO();
+                cdto.id = kategoriId;
+                dream.addCategoryDTO(cdto);
             }
-
-            for (CategoryDTO cdto : dream.getCategories()) {
-                if (cdto.name.equals(ccb.getTitle())) {
-                    cdto.symbols = newsymbols;
-                }
-            }
+            cdto.symbols = nyeSymboler;
         }
 
 

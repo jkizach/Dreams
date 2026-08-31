@@ -29,7 +29,7 @@ public class Stats {
         clearAll();
 
         for (Category c : user.getCategories()) {
-            categoryStats.putIfAbsent(c.getName(), new StatsDO(c.getName()));
+            categoryStats.putIfAbsent(c.getId(), new StatsDO(c.getId()));
         }
         firstDream = LocalDate.now();
         for (Dream dream : user.getDreams().values()) {
@@ -65,13 +65,19 @@ public class Stats {
     private void updateStats(String key, Dream dream) {
         // loopes gennem listen af CategoryDTO i hver drøm - inkl. "Kvaliteter" (de tidligere binære flag)
         for (CategoryDTO cat : dream.getCategories()) {
-            // computeIfAbsent, ikke get: en drøm kan bære et kategorinavn der ikke (længere)
-            // står i den lokale kategoriliste. Det sker under en omdøbning der er synkroniseret
-            // halvt igennem - drømmene og selve kategorilisten er hver sit dokument i skyen og
-            // ankommer ikke nødvendigvis samtidig. Et get() ville give en NPE og vælte hele
-            // statistikken. Posten er ikke i vejen: opslag sker altid på navne fra kategori-
-            // listen, så den ses ikke - og den forsvinder af sig selv når de to sider er enige.
-            categoryStats.computeIfAbsent(cat.name, StatsDO::new).updateStatsDO(key, cat);
+            if (cat.id == null) {
+                // Bør ikke kunne ske efter skema v4 - alle tags får et id af migreringen, og
+                // alt der oprettes nyt sætter det. Men categoryStats er en TreeMap, og dens
+                // computeIfAbsent kaster NPE på en null-nøgle. Ét underligt tag skal ikke kunne
+                // vælte hele statistikken, så det springes over i stedet.
+                continue;
+            }
+            // computeIfAbsent, ikke get: en drøm kan bære et kategori-id der ikke står i den
+            // lokale kategoriliste. Det sker fx hvis kategorilisten og drømmene ikke er ankommet
+            // samtidig fra skyen - de er hver sit dokument. Et get() ville give en NPE og vælte
+            // hele statistikken. Posten er ikke i vejen: opslag sker altid på id'er fra kategori-
+            // listen, så den ses ikke - og den falder på plads når de to sider er enige.
+            categoryStats.computeIfAbsent(cat.id, StatsDO::new).updateStatsDO(key, cat);
         }
     }
 
@@ -202,7 +208,7 @@ public class Stats {
             TreeMap<String, Integer> totals = new TreeMap<>();
             LocalDate loopVar = fra;
             while (!loopVar.isAfter(til)) {
-                TreeMap<String, Integer> tm = categoryStats.get(category.getName()).getCatStats().get(String.valueOf(loopVar));
+                TreeMap<String, Integer> tm = categoryStats.get(category.getId()).getCatStats().get(String.valueOf(loopVar));
                 if (tm != null) {
                     tm.forEach((key, value) -> totals.merge(key, value, Integer::sum));
                 }
@@ -216,7 +222,7 @@ public class Stats {
 
     public Map<String, Integer> getFlagStats(String symbol) {
         Map<String, Integer> out = new HashMap<>();
-        StatsDO kvaliteter = categoryStats.get(Category.FLAGS_CATEGORY_NAME);
+        StatsDO kvaliteter = categoryStats.get(Category.ID_KVALITETER);
         if (kvaliteter != null) {
             for (Map.Entry<String, TreeMap<String, Integer>> entry : kvaliteter.getCatStats().entrySet()) {
                 Integer value = entry.getValue().get(symbol);
@@ -228,7 +234,7 @@ public class Stats {
         return out;
     }
 
-    public TreeMap<String, TreeMap<String, Integer>> getCategoryStats(String name) {
-        return categoryStats.get(name).getCatStats();
+    public TreeMap<String, TreeMap<String, Integer>> getCategoryStats(String kategoriId) {
+        return categoryStats.get(kategoriId).getCatStats();
     }
 }

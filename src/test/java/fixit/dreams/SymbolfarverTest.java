@@ -189,13 +189,16 @@ class SymbolfarverTest {
 
     @Test
     void kun_farver_og_chakraer_farvelaegges() {
-        assertTrue(Category.harNaturligeFarver("Farver"));
-        assertTrue(Category.harNaturligeFarver("Chakraer"));
-        assertFalse(Category.harNaturligeFarver("Dyr"));
-        assertFalse(Category.harNaturligeFarver("Arketyper"));
-        assertFalse(Category.harNaturligeFarver("Personer"));
-        assertFalse(Category.harNaturligeFarver("Forløb"));
-        assertFalse(Category.harNaturligeFarver(Category.FLAGS_CATEGORY_NAME));
+        // Opslaget sker paa id, ikke navn - saa farvelaegningen overlever en omdoebning
+        assertTrue(Category.harNaturligeFarver(Category.ID_FARVER));
+        assertTrue(Category.harNaturligeFarver(Category.ID_CHAKRAER));
+        assertFalse(Category.harNaturligeFarver(Kategoriid.forIndbygget("Dyr")));
+        assertFalse(Category.harNaturligeFarver(Kategoriid.forIndbygget("Arketyper")));
+        assertFalse(Category.harNaturligeFarver(Kategoriid.forIndbygget("Personer")));
+        assertFalse(Category.harNaturligeFarver(Category.ID_FORLOEB));
+        assertFalse(Category.harNaturligeFarver(Category.ID_KVALITETER));
+        // og et NAVN er nu netop ikke et gyldigt opslag
+        assertFalse(Category.harNaturligeFarver("Farver"));
         assertFalse(Category.harNaturligeFarver(null));
     }
 }

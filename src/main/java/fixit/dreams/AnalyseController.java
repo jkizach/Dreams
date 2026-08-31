@@ -212,8 +212,8 @@ public class AnalyseController {
     }
 
     private void updateAntalDreamsCirkel() {
-        String kategori = comboPieKategorier.getSelectionModel().getSelectedItem();
-        int antal = (kategori == null) ? 0 : analyseService.countDreamsForKategori(kategori, dpFromPie.getValue(), dpToPie.getValue());
+        String kategoriId = analyseService.idForKategoriNavn(comboPieKategorier.getSelectionModel().getSelectedItem());
+        int antal = (kategoriId == null) ? 0 : analyseService.countDreamsForKategori(kategoriId, dpFromPie.getValue(), dpToPie.getValue());
         antalDreamsLblCirkel.setText(formatDataForDrommeText(antal));
     }
 
@@ -291,16 +291,16 @@ public class AnalyseController {
     @FXML
     private void onSelectKategori() {
         updateAntalDreamsCirkel();
-        String kategori = comboPieKategorier.getSelectionModel().getSelectedItem();
-        if (kategori != null) {
-            Map<String,Integer> mapData = analyseService.getDataForPieChart(kategori,dpFromPie.getValue(),dpToPie.getValue());
+        String kategoriId = analyseService.idForKategoriNavn(comboPieKategorier.getSelectionModel().getSelectedItem());
+        if (kategoriId != null) {
+            Map<String,Integer> mapData = analyseService.getDataForPieChart(kategoriId,dpFromPie.getValue(),dpToPie.getValue());
             pieData.clear();
             for (Map.Entry<String, Integer> entry : mapData.entrySet()) {
                 pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
             }
             pieChartAnalyse.setLegendVisible(false);
             pieChartAnalyse.setData(pieData);
-            farvelægLagkagestykker(kategori);
+            farvelægLagkagestykker(kategoriId);
         }
     }
 
@@ -315,8 +315,8 @@ public class AnalyseController {
      * læses som et farveord. Et symbol vi ikke kan udlede noget om, får et neutralt gråt
      * stykke: en opfundet kulør ville lyve om dataene.
      */
-    private void farvelægLagkagestykker(String kategori) {
-        boolean farvelæg = Category.harNaturligeFarver(kategori);
+    private void farvelægLagkagestykker(String kategoriId) {
+        boolean farvelæg = Category.harNaturligeFarver(kategoriId);
 
         for (PieChart.Data stykke : pieData) {
             Node node = stykke.getNode();
@@ -394,7 +394,7 @@ public class AnalyseController {
 
         for (int i = 0; i < cats.size(); i++) {
             String katNavn = cats.get(i).getName();
-            int antalIKat = analyseService.countDreamsForKategori(katNavn, dpFromTal.getValue(), dpToTal.getValue());
+            int antalIKat = analyseService.countDreamsForKategori(cats.get(i).getId(), dpFromTal.getValue(), dpToTal.getValue());
 
             // Navnet venstrejusteret, antal + andel højrejusteret på samme linje
             Label lbl = new Label(katNavn);

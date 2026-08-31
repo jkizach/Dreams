@@ -197,15 +197,13 @@ public class UserService extends ServiceMother {
                 c.updateAllCCBs();
             }
         }
-        // Loop gennem alle drømmene og ændr kategorinavnet!
-        for (Dream d : user.getDreams().values()) {
-            for (CategoryDTO dto : d.getCategories()) {
-                if (dto.name.equals(gammeltNavn)) {
-                    dto.name = nytNavn;
-                    d.touch();
-                }
-            }
-        }
+
+        // Her lå før en løkke gennem hver eneste drøm, som rettede kategorinavnet og kaldte
+        // touch() på dem alle. Den er væk med skema v4: drømmene peger på kategoriens id, og
+        // id'et følger ikke med en omdøbning. Ingen drøm røres, intet updatedAt flyttes, og
+        // intet skal uploades igen. Havde appen ligget død midt i den gamle løkke, stod nogle
+        // drømme tilbage med det gamle navn og andre med det nye, uden at noget opdagede det.
+
         user.refreshKategoriLabels();
         user.genberegnStatsPlease();
         refreshDreamList();
@@ -217,6 +215,7 @@ public class UserService extends ServiceMother {
     }
 
     public void fjernSymbol(String kategorien, String symbolet) {
+        String kategoriId = user.idForKategoriNavn(kategorien);
         for (Category c : user.getCategories()) {
             if (c.getName().equals(kategorien)) {
                 if (c.getSymbols().contains(symbolet)) {
@@ -226,10 +225,11 @@ public class UserService extends ServiceMother {
                 }
             }
         }
-        // Fjern symbolet fra alle drømme!
+        // Fjern symbolet fra alle drømme! (her ER en ændring i selve drømmene på sin plads -
+        // symbolet forsvinder fra deres indhold, ikke bare fra en etiket)
         for (Dream d : user.getDreams().values()) {
             for (CategoryDTO cdto : d.getCategories()) {
-                if (cdto.name.equals(kategorien)) {
+                if (cdto.id != null && cdto.id.equals(kategoriId)) {
                     if (cdto.symbols.remove(symbolet)) {
                         d.touch();
                     }

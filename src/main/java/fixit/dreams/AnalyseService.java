@@ -32,7 +32,7 @@ public class AnalyseService extends ServiceMother{
         forloeb.clear();
         for (Dream d : user.getDreams().values()) {
             for (CategoryDTO c : d.getCategories()) {
-                if (c.name.equals("Forløb") && !c.symbols.isEmpty()) {
+                if (Category.ID_FORLOEB.equals(c.id) && !c.symbols.isEmpty()) {
                     DreamDTO dto = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                     forloeb.add(dto);
                     break;
@@ -72,12 +72,12 @@ public class AnalyseService extends ServiceMother{
      * stammer fra. En drøm med flere symboler i samme kategori (fx to slags "Dyr")
      * tælles kun med én gang, i modsætning til getDataForPieChart's per-symbol-summer.
      */
-    public int countDreamsForKategori(String kategoriNavn, LocalDate start, LocalDate slut) {
+    public int countDreamsForKategori(String kategoriId, LocalDate start, LocalDate slut) {
         int count = 0;
         for (Dream d : user.getDreams().values()) {
             if (isInRange(d.getDato(), start, slut)) {
                 for (CategoryDTO c : d.getCategories()) {
-                    if (c.name.equals(kategoriNavn) && !c.symbols.isEmpty()) {
+                    if (kategoriId.equals(c.id) && !c.symbols.isEmpty()) {
                         count++;
                         break;
                     }
@@ -87,7 +87,7 @@ public class AnalyseService extends ServiceMother{
         return count;
     }
 
-    public Map<String,Integer> getDataForPieChart(String kategoriNavn, LocalDate start, LocalDate slut) {
+    public Map<String,Integer> getDataForPieChart(String kategoriId, LocalDate start, LocalDate slut) {
         // Her skal fra og til datoerne jo bruges!
         HashMap<String,Integer> outMap = new HashMap<>();
 
@@ -96,7 +96,7 @@ public class AnalyseService extends ServiceMother{
             // her skal tjekkes som dato er in range!
             if (isInRange(d.getDato(), start, slut)) {
                 for (CategoryDTO c : d.getCategories()) {
-                    if (c.name.equals(kategoriNavn)) {
+                    if (kategoriId.equals(c.id)) {
                         for (String symbol : c.symbols) {
                             outMap.merge(symbol, 1, Integer::sum);
                         }
@@ -118,7 +118,7 @@ public class AnalyseService extends ServiceMother{
         for (Category c : user.getUiCategories()) {
             if (c.getccbFilterSelections() != null) {
                 for (String symbol : c.getccbFilterSelections().symbols) {
-                    outdat.add(stats.makeXY(stats.getCategoryStats(c.getName()), symbol, indat.fra, indat.til, indat.xakse));
+                    outdat.add(stats.makeXY(stats.getCategoryStats(c.getId()), symbol, indat.fra, indat.til, indat.xakse));
                 }
             }
         }
@@ -205,7 +205,7 @@ public class AnalyseService extends ServiceMother{
                                     // det som "matcher ikke" - ellers vil den stille springe filteret over.
                                     boolean matcher = false;
                                     for (CategoryDTO dto : d.getCategories()) {
-                                        if (dto.name.equals(c.getName())) {
+                                        if (dto.id.equals(c.getId())) {
                                             matcher = dto.symbols.contains(symbol);
                                             break;
                                         }
@@ -242,7 +242,7 @@ public class AnalyseService extends ServiceMother{
                                 for (String symbol : c.getccbFilterSelections().symbols) {
                                     // Hvis alle matcher så go on!
                                     for (CategoryDTO dto : d.getCategories()) {
-                                        if (dto.name.equals(c.getName())) {
+                                        if (dto.id.equals(c.getId())) {
                                             if (dto.symbols.contains(symbol)) {
                                                 DreamDTO addme = new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato());
                                                 filteredDreams.add(addme);
@@ -335,7 +335,7 @@ public class AnalyseService extends ServiceMother{
     public String getForloebStage(String id) {
         String out = "";
         for (CategoryDTO c : user.getDream(id).getCategories()) {
-            if (c.name.equals("Forløb")) {
+            if (Category.ID_FORLOEB.equals(c.id)) {
                 for (String symbol : c.symbols) {
                     out = out + symbol;
                 }
@@ -375,7 +375,7 @@ public class AnalyseService extends ServiceMother{
                     if (c.getccbFilterSelections() != null) {
                         for (String symbol : c.getccbFilterSelections().symbols) {
                             for (CategoryDTO dto : d.getCategories()) {
-                                if (dto.name.equals(c.getName()) && dto.symbols.contains(symbol)) {
+                                if (dto.id.equals(c.getId()) && dto.symbols.contains(symbol)) {
                                     count++;
                                     continue outer;
                                 }
