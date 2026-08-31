@@ -162,6 +162,12 @@ public class SyncService {
             // ikke indeholde noget vi ikke allerede kender, og hele den dyre udforskning kan
             // springes over. Det koster én læsning at spørge, mod 800+ ved at liste alt.
             JsonNode ejerskab = firestoreClient.getDocument(idToken, metaSti(dto.uid, META_STATE)).orElse(null);
+
+            // FØR noget som helst hentes ned eller sendes op: er skyen skrevet af en nyere
+            // udgave end den her, forstår vi ikke det der ligger deroppe, og et push ville
+            // oven i købet skrive vores ældre format hen over det.
+            afvisNyereSky(ejerskab);
+
             LinkedHashMap<String, Instant> indeks = IOutils.loadCloudIndex(dto.uid);
             boolean viSkrevSidst = erVoresEget(ejerskab, maskinId) && indeks != null;
 
@@ -257,11 +263,44 @@ public class SyncService {
         return som;
     }
 
+    /**
+     * Stopskiltet. Standser synkroniseringen hvis skyen bærer et højere dataformat end vi
+     * forstår - før noget hentes ned, og før noget sendes op.
+     *
+     * Den blokerer KUN når skyen er nyere. Er den ældre, eller lige så gammel, køres der videre:
+     * en nyere udgave kender per definition det format den selv er vokset ud af, og den første
+     * maskine der opgraderer tager skyen med sig - hvorefter modparten selv standser her, indtil
+     * den også er opdateret.
+     *
+     * Mangler feltet, eller findes dokumentet slet ikke, køres der også videre. Det betyder
+     * enten en tom sky eller en skrevet før dette værn fandtes, og i begge tilfælde er der intet
+     * ukendt format at beskytte sig mod.
+     */
+    private void afvisNyereSky(JsonNode ejerskab) throws SyncVersionException {
+        if (ejerskab == null) {
+            return;
+        }
+        JsonNode felt = ejerskab.get("schemaVersion");
+        if (felt == null || !felt.canConvertToInt()) {
+            return;
+        }
+        int skyensVersion = felt.asInt();
+        if (skyensVersion > SchemaMigrator.CURRENT_SCHEMA_VERSION) {
+            throw new SyncVersionException(skyensVersion, SchemaMigrator.CURRENT_SCHEMA_VERSION);
+        }
+    }
+
     private void skrivEjerskab(String idToken, String uid, String maskinId) throws FirestoreException {
         MetaDTO meta = IOutils.loadMeta();
         ObjectNode doc = SyncObjectMapper.INSTANCE.createObjectNode();
         doc.put("machineId", maskinId);
         doc.put("updatedAt", Instant.now().toString());
+
+        // Skyens eneste udsagn om hvilket dataformat den er skrevet i. Drømmedokumenterne selv
+        // bærer ingen markør, så det er her en ældre udgave kan opdage at den ikke bør røre
+        // noget (se afvisNyereSky og SyncVersionException). Feltet koster ingen ekstra læsning:
+        // dette dokument hentes i forvejen ved hver eneste sync.
+        doc.put("schemaVersion", SchemaMigrator.CURRENT_SCHEMA_VERSION);
 
         // Meta-stemplerne kommer med, så den billige vej også kan afgøre om kategorier, temaer
         // og indstillinger er ajour - uden at hente de tre dokumenter ned og kigge.
@@ -403,12 +442,23 @@ public class SyncService {
     }
 
     // Best-effort variant til brug ved appstart - fejl logges kun, blokerer aldrig UI'et.
-    public void pullOnStartIfEnabled() {
+    /**
+     * @return null hvis alt gik godt (eller fejlede på en måde brugeren ikke kan gøre noget ved),
+     *         ellers beskeden om at skyen er skrevet af en nyere udgave end denne.
+     *
+     * Netværksfejl tier bevidst stille som før - de retter sig selv ved næste sync. Et
+     * versionsstop gør ikke: det bliver ved med at blokere til brugeren opdaterer maskinen, så
+     * det ville være uærligt at synke det ned i en stakspor ingen ser.
+     */
+    public String pullOnStartIfEnabled() {
         try {
             syncNow();
+        } catch (SyncVersionException e) {
+            return e.getMessage();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     // Kan besvares HELT lokalt: er der noget der endnu ikke er kommet i skyen? Ingen netværk,

@@ -146,6 +146,21 @@ public class SyncController {
                     refreshView();
                     user.genberegnStatsPlease();
                 });
+            } catch (SyncVersionException e) {
+                // Skal fanges FØR SyncException, som den arver fra. Og den fortjener en dialog
+                // frem for en linje i statuslabelen: intet blev synkroniseret, og sådan bliver
+                // det ved indtil maskinen er opdateret.
+                String message = e.getMessage();
+                Platform.runLater(() -> {
+                    setButtonsDisabled(false);
+                    statusLbl.setText("Synkronisering standset - skyen er nyere end denne udgave.");
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Synkronisering standset");
+                    alert.setHeaderText("Skyen er nyere end denne udgave af appen.");
+                    alert.setContentText(message);
+                    alert.showAndWait();
+                    refreshView();
+                });
             } catch (SyncConflictException e) {
                 Platform.runLater(() -> {
                     setButtonsDisabled(false);

@@ -309,9 +309,20 @@ public class HovedmenuController {
         /* Cloud-sync: pull evt. nyere/manglende drømme fra skyen (kun hvis brugeren har slået
            det til) - baggrundstråd, blokerer aldrig UI'et ved opstart. */
         Thread pullThread = new Thread(() -> {
-            new SyncService(user).pullOnStartIfEnabled();
+            String skyenErNyere = new SyncService(user).pullOnStartIfEnabled();
             Platform.runLater(() -> {
                 opdaterEfterSync();
+
+                // Skyen er skrevet af en nyere udgave af appen, og synkroniseringen blev standset
+                // før den rørte noget. Det skal siges højt: det retter sig ikke selv, og indtil
+                // maskinen er opdateret kommer der hverken noget op eller ned.
+                if (skyenErNyere != null) {
+                    Alert versionAlert = new Alert(Alert.AlertType.WARNING);
+                    versionAlert.setTitle("Synkronisering standset");
+                    versionAlert.setHeaderText("Skyen er nyere end denne udgave af appen.");
+                    versionAlert.setContentText(skyenErNyere);
+                    versionAlert.show();
+                }
 
                 // Drømmene er nu på plads i den kørende app, men hentede kategorier og temaer
                 // ligger kun på disken - de sidder for dybt i UI'et til at kunne skiftes ud
