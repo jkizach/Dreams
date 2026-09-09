@@ -280,8 +280,21 @@ public class UserService extends ServiceMother {
         return !user.getDreams().isEmpty();
     }
 
-    public void setStartDate(LocalDate startDate) {
-        user.setStartFromThisDate(startDate);
+    // Ældste drøm syncen har hentet ned i denne session, eller null hvis der ikke kom nogen.
+    public LocalDate getÆldsteHentedeDrøm() {
+        return user.getÆldsteHentedeDrøm();
+    }
+
+    public void glemHentedeDrømme() {
+        user.glemHentedeDrømme();
+    }
+
+    // Brugerens valg i indstillingerne. Gemmes MED DET SAMME, og ikke først ved appluk som
+    // resten af indstillingerne: har syncen hentet user.json ned tidligere i sessionen, springer
+    // appluk gemmet over (se DreamApp.handleWindowClose), og så ville valget forsvinde uden et ord.
+    public void vælgStartDato(LocalDate startDate) {
+        user.vælgStartFromThisDate(startDate);
+        IOutils.gemStartDato(user);
         user.genberegnStatsPlease();
     }
 }

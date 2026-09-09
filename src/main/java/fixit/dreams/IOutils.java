@@ -49,6 +49,23 @@ public class IOutils {
         }
     }
 
+    // Gemmer KUN startdatoen, oven i den user.json der allerede ligger på disken.
+    //
+    // Bevidst ikke saveUser(user): har syncen hentet indstillinger ned i denne session, er det
+    // disken der er den nyeste udgave, og et fuldt gem fra hukommelsen ville skrive fx det gamle
+    // temanavn hen over det hentede (se SyncService.overtagIndstillingerFraSkyen). Her rettes ét
+    // felt i den fil der ligger, så brugerens valg overlever uden at tage resten med sig.
+    public static void gemStartDato(User user) {
+        UserDTO paaDisken = FILE_PATH_USER.toFile().exists() ? loadUser() : null;
+        if (paaDisken == null) {
+            saveUser(user); // ingen brugbar fil endnu - så er hukommelsen det bedste vi har
+            return;
+        }
+        paaDisken.startFromThisDate = user.harValgtStartdato() ? user.getStartFromThisDate() : null;
+        paaDisken.startDatoValgtAfBruger = user.harValgtStartdato();
+        saveUserDTO(paaDisken);
+    }
+
     public static UserDTO loadUser() {
         try {
             UserDTO userDTO = objectMapper.readValue(FILE_PATH_USER.toFile(), UserDTO.class);

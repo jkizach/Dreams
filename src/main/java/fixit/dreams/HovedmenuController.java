@@ -391,31 +391,30 @@ public class HovedmenuController {
     // Efter et pull fra skyen. Drømmene selv ligger allerede i den kørende User, men to ting
     // omkring dem er blevet forkerte: listen kender dem ikke, og datofiltret kan udelukke dem.
     //
-    // Det sidste er den lumske af de to. fromDatePicker blev sat ved opstart ud fra brugerens
-    // startdato - og på en tom installation ER den startdato dags dato, fordi User udleder den
-    // af den første drøm, og uden drømme bliver det i dag. Hentede syncen så 800 gamle drømme
-    // ned, faldt hver eneste af dem uden for filtret, og listen så tom ud selv om alt var
-    // hentet. Først ved næste opstart blev startdatoen regnet ud på ny, og alt dukkede op.
+    // Det sidste er den lumske af de to. fromDatePicker blev sat ved opstart ud fra startdatoen -
+    // og på en tom installation ER den dags dato, fordi den udledes af første drøm, og uden
+    // drømme bliver det i dag. Hentede syncen så 800 gamle drømme ned, faldt hver eneste af dem
+    // uden for filtret, og listen så tom ud selv om alt var hentet.
     //
-    // Derfor rykkes startdatoen tilbage her, hvis skyen kom med drømme der er ældre end den.
-    // Har brugeren selv valgt en senere startdato, taber den - men en drøm man lige har hentet
-    // skal kunne ses, og startdatoen kan sættes igen i indstillingerne.
+    // Her ligger 2.0-fejlen begravet: dengang blev selve INDSTILLINGEN rullet tilbage til første
+    // drøms dato. Betingelsen var sand præcis når brugeren havde valgt en startdato senere end
+    // sin første drøm - altså i hvert eneste tilfælde hvor indstillingen overhovedet gør noget -
+    // og da metoden kaldes ved hver opstart, blev et valg aldrig mere end én session gammelt.
+    //
+    // Nu røres indstillingen slet ikke herfra. To ting klarer det i stedet:
+    //   - er datoen ikke valgt af brugeren, udleder User den af drømmene hver gang der spørges,
+    //     så den følger med af sig selv når skyen kommer med ældre drømme;
+    //   - er den valgt, åbnes kun VISNINGEN, og kun hvis syncen faktisk lagde noget ældre end
+    //     filtret ned. Det er en session, ikke en ændring: startdatoen står som brugeren satte den.
     private void opdaterEfterSync() {
         // Læses friskt: syncen kan selv have overtaget startdatoen fra skyen undervejs
         // (se SyncService.overtagIndstillingerFraSkyen).
         LocalDate start = userService.getStartDate();
-        if (userService.harDrømme()) {
-            LocalDate førsteDrøm = userService.getFirstDreamDate();
-            if (start == null || førsteDrøm.isBefore(start)) {
-                userService.setStartDate(førsteDrøm);
-                start = førsteDrøm;
-            }
-        }
-        if (start == null) {
-            start = LocalDate.now();
-        }
-        fromDatePicker.setValue(start);
-        startDatoPicker.setValue(start);
+        LocalDate filterFra = Startdato.filterFra(start, userService.getÆldsteHentedeDrøm());
+        userService.glemHentedeDrømme(); // beskeden er læst; næste sync skal fortælle sit eget
+
+        fromDatePicker.setValue(filterFra);
+        startDatoPicker.setValue(start != null ? start : filterFra);
         if (toDatePicker.getValue() == null || toDatePicker.getValue().isBefore(LocalDate.now())) {
             toDatePicker.setValue(LocalDate.now());
         }
@@ -438,7 +437,7 @@ public class HovedmenuController {
     private void handleGemStartDato() {
         LocalDate valgtDato = startDatoPicker.getValue();
         if (valgtDato != null) {
-            userService.setStartDate(valgtDato);
+            userService.vælgStartDato(valgtDato);
             fromDatePicker.setValue(valgtDato);
             filtrerDreamList();
         }

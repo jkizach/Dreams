@@ -381,6 +381,34 @@ class SyncOwnershipTest {
                 "drømmen lå kun i hukommelsen - den ville være tabt når appen lukkede");
     }
 
+    // Datofiltret står ved opstart på startdatoen, og en hentet drøm der er ældre end den ville
+    // falde udenfor - listen så tom ud, selvom alt var kommet ned. Derfor noterer syncen den
+    // ældste drøm den faktisk hentede, så brugerfladen kan åbne VISNINGEN uden at flytte selve
+    // startdatoen (se Startdato.filterFra og HovedmenuController.opdaterEfterSync).
+    @Test
+    void en_hentet_droem_noterer_sin_dato_til_datofiltret() throws SyncException {
+        ObjectNode gammel = skyDroem("gammel", "Fra dengang");
+        gammel.put("dato", "2019-03-04");
+        sky.samling.put("gammel", gammel);
+        sky.samling.put("nyere", skyDroem("nyere", "Fra i år"));
+
+        synkroniser();
+
+        assertEquals(LocalDate.of(2019, 3, 4), user.getÆldsteHentedeDrøm(),
+                "syncen skal fortælle brugerfladen hvor langt tilbage det hentede rækker");
+    }
+
+    // Modstykket: kom der intet ned, er der heller ikke noget at åbne filtret for. Uden det
+    // ville hver opstart se ud som en hentning, og filtret ville skride af sig selv.
+    @Test
+    void en_sync_uden_hentede_droemme_noterer_ingenting() throws SyncException {
+        user.addDream(droem("a", "Første drøm", Instant.parse("2026-08-27T10:00:00Z")));
+
+        synkroniser();
+
+        assertNull(user.getÆldsteHentedeDrøm());
+    }
+
     @Test
     void indekset_kender_aldrig_en_droem_som_disken_ikke_kender() throws SyncException {
         sky.samling.put("fra-den-anden", skyDroem("fra-den-anden", "Skrevet på den nye pc"));

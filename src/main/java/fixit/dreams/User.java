@@ -30,7 +30,14 @@ class User {
     private boolean visAdvarsel = false;
     private boolean visKollektiv = false;
     private boolean visHolografisk = false;
+    // null betyder "brugeren har aldrig valgt en startdato" - så UDLEDES den af den ældste drøm,
+    // hver gang der spørges (se getStartFromThisDate). Den udledte værdi må aldrig fryses ned i
+    // feltet eller i user.json: gør man det, kan man ikke længere kende forskel på en dato appen
+    // selv har regnet ud og en brugeren har sat, og så er der ingen måde at vide, om det er i
+    // orden at flytte den. Præcis den forveksling var fejlen i 2.0, hvor oprydningen efter hver
+    // sync trak startdatoen tilbage til første drøm - også når brugeren selv havde valgt en senere.
     private LocalDate startFromThisDate = null;
+    private boolean startDatoValgtAfBruger = false;
     // Tælles én op hver gang statistikken skal regnes om. Det VAR et boolsk flag, og det var
     // forkert: JavaFX fyrer kun listeners når værdien faktisk ÆNDRER sig, og flaget blev kun
     // sat tilbage til false inde i Analyse-fanens egen listener. Skete der noget der krævede
@@ -48,6 +55,12 @@ class User {
     private boolean kategorierHentetFraSkyen = false;
     private boolean temaerHentetFraSkyen = false;
     private boolean indstillingerHentetFraSkyen = false;
+
+    // Datoen på den ældste drøm syncen har hentet ned i denne session - ikke en indstilling, men
+    // en besked fra syncen til brugerfladen: "der er kommet noget ned, som dit datofilter gemmer
+    // væk". Den bor her, fordi begge syncveje (opstart og syncvinduet) laver hver sin SyncService
+    // men deler denne ene User. Læses og ryddes af HovedmenuController.opdaterEfterSync.
+    private LocalDate ældsteHentedeDrøm = null;
 
     private ArrayList<VBox> dreamVboxes = new ArrayList<>();
     private ArrayList<VBox> filterVboxes = new ArrayList<>();
@@ -94,11 +107,12 @@ class User {
             this.visAdvarsel = loadedUserDTO.visAdvarsel;
             this.visKollektiv = loadedUserDTO.visKollektiv;
             this.visHolografisk = loadedUserDTO.visHolografisk;
-            this.startFromThisDate = (loadedUserDTO.startFromThisDate != null) ? loadedUserDTO.startFromThisDate : getFirstDreamDate();
+            this.startFromThisDate = loadedUserDTO.startFromThisDate;
+            this.startDatoValgtAfBruger = Startdato.valgtAfBruger(
+                    loadedUserDTO.startFromThisDate, loadedUserDTO.startDatoValgtAfBruger);
 
         } else {
             System.out.println("Ingen user loaded...");
-            this.startFromThisDate = getFirstDreamDate();
          }
     }
 
@@ -282,6 +296,20 @@ class User {
         indstillingerHentetFraSkyen = true;
     }
 
+    public void noterHentetDrøm(LocalDate dato) {
+        if (dato != null && (ældsteHentedeDrøm == null || dato.isBefore(ældsteHentedeDrøm))) {
+            ældsteHentedeDrøm = dato;
+        }
+    }
+
+    public LocalDate getÆldsteHentedeDrøm() {
+        return ældsteHentedeDrøm;
+    }
+
+    public void glemHentedeDrømme() {
+        ældsteHentedeDrøm = null;
+    }
+
     public ArrayList<Category> getCategories() {
         return categories;
     }
@@ -382,11 +410,27 @@ class User {
         }
     }
 
+    // Aldrig null: har brugeren ikke valgt en dato, er svaret den ældste drøm vi kender lige nu -
+    // og "lige nu" er pointen. Henter syncen 800 ældre drømme ned midt i en session, følger den
+    // udledte startdato med af sig selv, uden at nogen skal skrive noget nogen steder.
     public LocalDate getStartFromThisDate() {
-        return startFromThisDate;
+        return (startFromThisDate != null) ? startFromThisDate : getFirstDreamDate();
     }
 
-    public void setStartFromThisDate(LocalDate startFromThisDate) {
+    public boolean harValgtStartdato() {
+        return startDatoValgtAfBruger;
+    }
+
+    // Brugerens eget valg i indstillingerne. Herfra er datoen fredet: intet i appen flytter den
+    // igen af sig selv - hverken en sync eller en opstart.
+    public void vælgStartFromThisDate(LocalDate startFromThisDate) {
         this.startFromThisDate = startFromThisDate;
+        this.startDatoValgtAfBruger = (startFromThisDate != null);
+    }
+
+    // Fra disk eller sky, hvor det står skrevet om datoen var et valg eller en udregning.
+    void setStartFromThisDate(LocalDate startFromThisDate, boolean valgtAfBruger) {
+        this.startFromThisDate = startFromThisDate;
+        this.startDatoValgtAfBruger = valgtAfBruger && (startFromThisDate != null);
     }
 }

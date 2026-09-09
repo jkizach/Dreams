@@ -556,6 +556,10 @@ public class SyncService {
 
             if (SyncMerge.cloudWins(localUpdatedAt, cloudData.updatedAt)) {
                 user.addDream(new Dream(cloudData));
+                // Kun drømme der FAKTISK kom ned tælles med her. Brugerfladen bruger den ældste
+                // af dem til at åbne datofiltret, og kun når der er noget at åbne det for -
+                // se HovedmenuController.opdaterEfterSync.
+                user.noterHentetDrøm(cloudData.dato);
                 ændrede++;
             }
         }
@@ -758,7 +762,10 @@ public class SyncService {
         user.setVisAdvarsel(dto.visAdvarsel);
         user.setVisKollektiv(dto.visKollektiv);
         user.setVisHolografisk(dto.visHolografisk);
-        user.setStartFromThisDate(dto.startFromThisDate);
+        // Skyen bærer også OM datoen var et valg. Et dokument fra før 2.1 mangler feltet, og
+        // læses som et valg - samme forsigtige antagelse som for en gammel user.json (se Startdato).
+        user.setStartFromThisDate(dto.startFromThisDate,
+                Startdato.valgtAfBruger(dto.startFromThisDate, dto.startDatoValgtAfBruger));
 
         // Det foretrukne tema er undtagelsen: kommer det fra en maskine med et tema vi ikke
         // kender endnu, findes det kun i den temaer.json vi lige har hentet - ikke i denne
