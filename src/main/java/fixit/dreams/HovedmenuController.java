@@ -78,6 +78,9 @@ public class HovedmenuController {
     private Tab settingsTab;
 
     @FXML
+    private TabPane dagrestTolkningTabs;
+
+    @FXML
     private Label lblForsteDrom, lblAntalDrommeHoved;
 
     private static final DateTimeFormatter DATO_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -452,6 +455,7 @@ public class HovedmenuController {
         skriveFelt.clear();
         dagrestFelt.clear();
         tolkningFelt.clear();
+        dagrestTolkningTabs.getSelectionModel().selectFirst();
         newDreamDate.setValue(LocalDate.now());
 
         List<CheckBox> cbs = Arrays.asList(

@@ -53,7 +53,7 @@
                               <RowConstraints />
                           </rowConstraints>
                            <children>
-                              <TabPane GridPane.rowSpan="2147483647">
+                              <TabPane fx:id="dagrestTolkningTabs" GridPane.rowSpan="2147483647">
                                  <tabs>
                                     <Tab closable="false" text="Dagrest">
                                        <content>
