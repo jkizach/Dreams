@@ -42,8 +42,34 @@ public class AnalyseService extends ServiceMother{
         sortDreamsByDate(forloeb);
     }
 
+    public Dream getDream(String id) {
+        return user.getDream(id);
+    }
+
     public ObservableList<DreamDTO> getForloebDreams() {
         return forloebDreams;
+    }
+
+    // Bygger de drømme der ALLEREDE står i forløbslisten op på ny ud fra drømmene selv.
+    //
+    // En DreamDTO er et øjebliksbillede af en drøm, ikke en henvisning til den, så redigerer man
+    // en drøm mens listen står med den, viser listen stadig den gamle tekst. Drømmelisten i
+    // hovedmenuen har sin egen vej udenom (User.dreamEdited -> UserService.updateDreamDTO), men
+    // den rører kun dens egne DTO'er - analysens lister har deres egne kopier.
+    //
+    // Søgningen laves med vilje ikke om: brugeren har valgt en drøm og et tidsrum, og det skal
+    // stå. Har redigeringen flyttet drømmens dato ud af tidsrummet, bliver den altså stående
+    // indtil man trykker "Vis liste" igen - listen viser hvad der blev søgt frem, opdateret.
+    public void genopfriskForloebDreams() {
+        ArrayList<DreamDTO> nye = new ArrayList<>();
+        for (DreamDTO gammel : forloebDreams) {
+            Dream d = user.getDream(gammel.getId());
+            if (d != null) { // slettet under redigeringen - så hører den ikke til i listen mere
+                nye.add(new DreamDTO(d.getId(), d.getIndhold(), d.getDagrest(), d.getTolkning(), d.getDato()));
+            }
+        }
+        forloebDreams.setAll(nye);
+        sortDreamsByDate(forloebDreams);
     }
 
     public void refreshForloebDreams(LocalDate startDate, int days, int targetMonthDelta) {

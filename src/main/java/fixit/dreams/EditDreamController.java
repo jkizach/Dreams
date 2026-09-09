@@ -1,6 +1,11 @@
 package fixit.dreams;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -10,11 +15,46 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
 public class EditDreamController {
+
+    // Åbner redigeringsvinduet for én drøm, og gør det ÉT sted. Der er nu to veje ind -
+    // drømmelisten i hovedmenuen og forløbsfanen i analysen - og lå koden i hver sin
+    // controller, ville de to kunne komme til at opføre sig forskelligt (andet tema, anden
+    // modalitet, andet ikon) uden at nogen opdagede det. Vinduet er modalt og venter, så
+    // kalderen ved at redigeringen er ovre når kaldet vender tilbage - det er dér listerne
+    // skal bygges om.
+    static void aabnRedigering(Dream dream) {
+        try {
+            FXMLLoader loader = new FXMLLoader(EditDreamController.class.getResource("editDream-view.fxml"));
+            Parent root = loader.load();
+
+            EditDreamController controller = loader.getController();
+            controller.setDream(dream);
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.setScene(new Scene(root));
+
+            Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
+            root.getStylesheets().clear();
+            root.getStylesheets().add(cssPath.toFile().toURI().toString());
+            root.applyCss();
+
+            popupStage.setTitle("Rediger drøm");
+            popupStage.getIcons().add(new Image(EditDreamController.class.getResourceAsStream("/moona.png")));
+
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Dream dream;
 
     private User user;

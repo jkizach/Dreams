@@ -356,10 +356,7 @@
                                           <ToggleGroup fx:id="forloebVisningGroup" />
                                        </fx:define>
                                        <children>
-                                          <ToggleButton fx:id="tgForloebKort" mnemonicParsing="false" onAction="#onForloebVisningChanged" selected="true" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Kort">
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="forloebVisningGroup" />
-                                             </toggleGroup>
+                                          <ToggleButton fx:id="tgForloebKort" mnemonicParsing="false" onAction="#onForloebVisningChanged" selected="true" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Kort" toggleGroup="$forloebVisningGroup">
                                              <tooltip>
                                                 <Tooltip text="Vis kun begyndelsen af hver drøm i listen." wrapText="true" />
                                              </tooltip>
@@ -409,6 +406,12 @@
                                     <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
                                        <children>
                                           <Label fx:id="lblAntalDrommeForloeb" text="Antal drømme:" />
+                                          <Region HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="btnForloebRediger" mnemonicParsing="false" onAction="#redigerForloebDream" text="Rediger drøm">
+                                             <tooltip>
+                                                <Tooltip text="Rediger den drøm der er valgt i listen." wrapText="true" />
+                                             </tooltip>
+                                          </Button>
                                           <Region HBox.hgrow="ALWAYS" />
                                           <Button fx:id="btnForloebVisListe" mnemonicParsing="false" onAction="#btnVisForloebPressed" text="Vis liste">
                                              <tooltip>

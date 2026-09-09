@@ -59,7 +59,7 @@ public class AnalyseController {
     private CheckBox lucid, praktiserer, modsat, arketypisk, praksis, mareridt, kollektiv, advarsel, holografisk;
 
     @FXML
-    private Button btnVisGraf, btnAndOr, btnForloebVisListe, btnForloebPlus;
+    private Button btnVisGraf, btnAndOr, btnForloebVisListe, btnForloebPlus, btnForloebRediger;
 
     @FXML
     private Spinner<Integer> daysSpinner, monthsSpinner;
@@ -96,7 +96,7 @@ public class AnalyseController {
                     advarsel.setManaged(user.isVisAdvarsel());
                     holografisk.setVisible(user.isVisHolografisk());
                     holografisk.setManaged(user.isVisHolografisk());
-                    analyseService.updateForloeb();
+                    genopfriskForloebsdroemme();
                 });
             }
         });
@@ -494,6 +494,66 @@ public class AnalyseController {
         if (forloebValgListe.getSelectionModel().getSelectedItem() != null) {
             String id = forloebValgListe.getSelectionModel().getSelectedItem().getId();
             lblForloebDream.setText(analyseService.getForloebStage(id));
+        }
+    }
+
+    // Samme funktion som "Rediger drøm" i Drømmeliste-fanen, men på den drøm der er valgt i
+    // søgeresultatet til højre. Deler vindue med den anden knap (EditDreamController.aabnRedigering),
+    // så de to veje ikke kan komme til at opføre sig forskelligt.
+    //
+    // Oprydningen bagefter er ikke til pynt. Vinduet er modalt, så når kaldet vender tilbage er
+    // redigeringen ovre - og listen her viser DTO'er, der er øjebliksbilleder af drømmene og
+    // altså stadig bærer den gamle tekst. Forløbsdrømmene til venstre klarer sig selv: de bygges
+    // om af statistiksignalet, som redigeringen har udløst (se lytteren i initialize).
+    @FXML
+    private void redigerForloebDream() {
+        DreamDTO valgt = forloebListe.getSelectionModel().getSelectedItem();
+        if (valgt == null) {
+            return; // ingen drøm valgt - præcis som knappen i Drømmeliste-fanen gør det
+        }
+        Dream drøm = analyseService.getDream(valgt.getId());
+        if (drøm == null) {
+            return;
+        }
+
+        EditDreamController.aabnRedigering(drøm);
+
+        analyseService.genopfriskForloebDreams();
+        vælgIgen(valgt.getId());
+    }
+
+    // Forløbsdrømmene til venstre. Listen bygges HELT om hver gang noget ændrer sig i drømmene,
+    // og da rækkerne er nye objekter, ryger markeringen med. Det var ikke til at se på listen -
+    // men etiketten under den bliver stående med fasen fra den drøm der IKKE længere er valgt,
+    // og så står der noget forkert på skærmen. Derfor findes valget frem igen bagefter.
+    private void genopfriskForloebsdroemme() {
+        DreamDTO valgt = forloebValgListe.getSelectionModel().getSelectedItem();
+
+        analyseService.updateForloeb();
+
+        if (valgt == null) {
+            return;
+        }
+        for (DreamDTO dto : forloebValgListe.getItems()) {
+            if (dto.getId().equals(valgt.getId())) {
+                forloebValgListe.getSelectionModel().select(dto);
+                onSelectForloebDream(); // fasen kan være ændret af netop den redigering
+                return;
+            }
+        }
+        // Drømmen har mistet sin fase (eller er slettet) og står der ikke længere
+        lblForloebDream.setText("Ingen drøm valgt endnu");
+    }
+
+    // Listen er bygget om, så den valgte række er et NYT objekt. Uden det her ville markeringen
+    // forsvinde hver gang man havde redigeret en drøm, og man skulle finde sin plads igen.
+    private void vælgIgen(String dreamId) {
+        for (DreamDTO dto : forloebListe.getItems()) {
+            if (dto.getId().equals(dreamId)) {
+                forloebListe.getSelectionModel().select(dto);
+                forloebListe.scrollTo(dto);
+                return;
+            }
         }
     }
 }

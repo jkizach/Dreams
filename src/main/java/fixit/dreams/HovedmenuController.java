@@ -471,7 +471,7 @@ public class HovedmenuController {
         if (dreamListView.getSelectionModel().getSelectedItem() != null) {
             String id = dreamListView.getSelectionModel().getSelectedItem().getId();
             Dream toBeEdited = userService.getDream(id);
-            openEditPopup(toBeEdited); // åbner mit pop-up vindue!
+            EditDreamController.aabnRedigering(toBeEdited); // åbner mit pop-up vindue!
         };
     }
 
@@ -668,36 +668,6 @@ public class HovedmenuController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("analyse-view.fxml"));
             Node content = loader.load();
             analyseTab.setContent(content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /* LOADING AF EDIT-POPUP*/
-    @FXML
-    private void openEditPopup(Dream d)  {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("editDream-view.fxml"));
-            Parent root = fxmlLoader.load();
-
-            EditDreamController edc = fxmlLoader.getController();
-            edc.setDream(d);
-
-            Stage popupStage = new Stage();
-
-            Image icon = new Image(getClass().getResourceAsStream("/moona.png"));
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setScene(new Scene(root));
-            //File tempFile = new File("src/main/resources/fixit/dreams/currentTema.css");
-            Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
-            File cssFile = cssPath.toFile();
-            root.getStylesheets().clear();
-            root.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
-            root.applyCss();
-            popupStage.setTitle("Rediger drøm");
-            popupStage.getIcons().add(icon);
-
-            popupStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
