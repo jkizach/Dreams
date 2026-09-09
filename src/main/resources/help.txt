@@ -106,7 +106,15 @@ Her ser du optællinger af alle symbolerne i den valgte periode. Som udgangspunk
 Nedenunder vises symbolkategorierne som lister, med de hyppigste symboler øverst.
 
 ## 6.2 Cirkel
-Igen vælger du selv perioden. Så kan du se et cirkeldiagram over en symbolkategori ad gangen, så du kan se hvordan den fordeler sig.
+Her ser du et cirkeldiagram over én symbolkategori ad gangen, så du kan se hvordan den fordeler sig.
+
+Perioden vælger du selv, på to måder. Enten sætter du Fra og Til som du plejer - det er "Interval" - eller du trykker på Uge, Måned eller År, og så sætter appen datoerne for dig: hele ugen fra mandag til søndag, hele måneden, hele året.
+
+Pilene < og > flytter dig én periode tilbage eller frem - en uge, en måned, et år. Står du i Interval, flytter de i stedet hele dit udsnit med dets egen længde, så du kan bladre "de forrige 17 dage" igennem. Mellem pilene står der hvilken periode du er i, og Fra og Til viser altid præcis det cirklen er tegnet på.
+
+Retter du selv en af datoerne, hopper appen over i Interval, så den ikke retter dine datoer tilbage igen ved næste tryk.
+
+Der er ingen bund og intet loft: du kan bladre længere tilbage end din første drøm og længere frem end i dag. Så står der bare at der ikke er nogen drømme i perioden.
 
 ## 6.3 Filter
 Her finder du de samme felter og valglister som på Ny drøm-fanen. Du vælger de symboler du er interesseret i, og får en graf over deres antal over tid - per dag, per uge eller per måned.

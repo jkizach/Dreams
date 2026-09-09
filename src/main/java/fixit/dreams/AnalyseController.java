@@ -41,10 +41,11 @@ public class AnalyseController {
     private VBox vboxTilCCBAnalyse, talVboxBinary, talVboxBinaryNumbers, talVboxBinaryPercent, talVboxCatOne, talVboxCatTwo;
 
     @FXML
-    private ToggleButton tgDays, tgMonths, tgWeeks, tgForloebKort, tgForloebLangt;
+    private ToggleButton tgDays, tgMonths, tgWeeks, tgForloebKort, tgForloebLangt,
+            tgPeriodeUge, tgPeriodeMaaned, tgPeriodeAar, tgPeriodeInterval;
 
     @FXML
-    private ToggleGroup forloebVisningGroup;
+    private ToggleGroup forloebVisningGroup, periodeGruppe;
 
     @FXML
     private ListView<DreamDTO> filterListe, forloebListe, forloebValgListe;
@@ -65,9 +66,27 @@ public class AnalyseController {
     private Spinner<Integer> daysSpinner, monthsSpinner;
 
     @FXML
-    private Label lblForloebDream, antalDreamsLblTal, antalDreamsLblCirkel, lblAntalDrommeGraf, lblAntalDrommeForloeb, lblAntalDrommeListe;
+    private Label lblForloebDream, antalDreamsLblTal, antalDreamsLblCirkel, lblAntalDrommeGraf, lblAntalDrommeForloeb, lblAntalDrommeListe, lblPeriode;
 
     private boolean visLangtForloeb = false;
+
+    // Sand mens koden selv skriver i Cirkel-fanens to datovælgere.
+    //
+    // En DatePicker der har fået sin skin - altså enhver der sidder i et rigtigt vindue - fyrer
+    // onAction når setValue() ændrer værdien. Og vi skriver i to felter efter hinanden: efter
+    // det første kald står Fra på den nye måned mens Til stadig står på den gamle. Uden vagten
+    // bliver vores egen halvfærdige skrivning læst som om brugeren havde rettet datoen i
+    // hånden, og perioden hopper i Interval midt i sit eget opdateringsforløb - hvorefter
+    // pilene begynder at flytte sig med et vilkårligt antal dage i stedet for en måned.
+    //
+    // Fælden er usynlig uden et vindue: en DatePicker uden skin fyrer ingenting ved setValue,
+    // så en test der bare loader FXML'en ser ikke problemet.
+    private boolean skriverSelv;
+
+    // Hvad koden selv sidst skrev. Brugeren kan bekræfte den samme dato igen - Enter i feltet,
+    // eller det samme dagfelt i kalenderen - og så kommer der en onAction uden at noget har
+    // ændret sig. Sådan et tryk må ikke smide en valgt måned på gulvet.
+    private LocalDate sidstSkrevetFra, sidstSkrevetTil;
 
     @FXML
     public void initialize() {
@@ -89,7 +108,11 @@ public class AnalyseController {
                     analyseService.updateStats();
                     updateGuiDates();
                     loadTalData();
-                    updateAntalDreamsCirkel();
+                    // Var updateAntalDreamsCirkel(): tallet blev opdateret, men cirklen blev
+                    // stående på de gamle data, så etiket og diagram kunne sige hver sit.
+                    // onSelectKategori tæller op OG tegner om - og gør ingenting hvis der slet
+                    // ikke er valgt en kategori endnu.
+                    onSelectKategori();
                     kollektiv.setVisible(user.isVisKollektiv());
                     kollektiv.setManaged(user.isVisKollektiv());
                     advarsel.setVisible(user.isVisAdvarsel());
@@ -116,6 +139,10 @@ public class AnalyseController {
         holografisk.setManaged(user.isVisHolografisk());
 
         setGuiDates();
+
+        // Cirkel-fanen begynder i Interval med de datoer setGuiDates lige har sat - første drøm
+        // til i dag - så fanen ser ud og opfører sig præcis som før perioden fandtes.
+        visPeriode(aktuelPeriode());
 
         setAntalDreamsLabel();
         updateAntalDreamsCirkel();
@@ -185,6 +212,14 @@ public class AnalyseController {
             }
         });
 
+        // Samme regel for periodeknapperne på cirkelfanen: et tryk på den knap der allerede er
+        // valgt, ville ellers slå perioden helt fra og efterlade pilene uden noget at flytte.
+        periodeGruppe.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle == null) {
+                oldToggle.setSelected(true);
+            }
+        });
+
         FilterDTO data = new FilterDTO();
         data.fra = dpFraGraf.getValue();
         data.til = dpTilGraf.getValue();
@@ -213,7 +248,7 @@ public class AnalyseController {
 
     private void updateAntalDreamsCirkel() {
         String kategoriId = analyseService.idForKategoriNavn(comboPieKategorier.getSelectionModel().getSelectedItem());
-        int antal = (kategoriId == null) ? 0 : analyseService.countDreamsForKategori(kategoriId, dpFromPie.getValue(), dpToPie.getValue());
+        int antal = (kategoriId == null) ? 0 : analyseService.countDreamsForKategori(kategoriId, pieFra(), pieTil());
         antalDreamsLblCirkel.setText(formatDataForDrommeText(antal));
     }
 
@@ -251,10 +286,87 @@ public class AnalyseController {
         }
     }
 
+    // Graf- og Tal-fanernes Fra-dato er et rent filter, og den må gerne følge startdatoen: har
+    // en sync hentet ældre drømme ned, skal de kunne ses uden at man selv skal rette datoen.
+    //
+    // Cirkel-fanens Fra-dato er ikke bare et filter mere - den ER den periode brugeren står i.
+    // Står den på september, er det september etiketten og pilene regner ud fra, og en
+    // genberegning (der kommer én pr. hentet drøm under en sync) ville trække den ned til den
+    // første drøm og lade etiketten stå og lyve om hvad cirklen viser. I Interval opfører den
+    // sig præcis som før.
     private void updateGuiDates() {
-        for (DatePicker dp : List.of(dpFraGraf,dpFromPie,dpFromTal)) {
+        for (DatePicker dp : List.of(dpFraGraf,dpFromTal)) {
             dp.setValue(analyseService.getStartDate());
         }
+        if (valgtPeriodetype() == Periode.Type.INTERVAL) {
+            skriverSelv = true;
+            try {
+                dpFromPie.setValue(analyseService.getStartDate());
+            } finally {
+                skriverSelv = false;
+            }
+        }
+        visPeriode(aktuelPeriode());
+    }
+
+    /* ---------- Cirkel-fanens periode ---------- */
+
+    // Datovælgerne er facit for hvad cirklen viser - men de kan stå tomme: markér teksten,
+    // tryk slet, og værdien er null. ServiceMother.isInRange tager ikke imod null og ville
+    // kaste en NullPointerException midt i optællingen. En tom Fra læses derfor som
+    // startdatoen og en tom Til som i dag, og svaret skrives tilbage i vælgeren, så skærmen
+    // ikke står og påstår noget andet end det cirklen er tegnet på.
+    private LocalDate pieFra() {
+        return dpFromPie.getValue() != null ? dpFromPie.getValue() : analyseService.getStartDate();
+    }
+
+    private LocalDate pieTil() {
+        return dpToPie.getValue() != null ? dpToPie.getValue() : LocalDate.now();
+    }
+
+    private Periode.Type valgtPeriodetype() {
+        if (tgPeriodeUge.isSelected())    return Periode.Type.UGE;
+        if (tgPeriodeMaaned.isSelected()) return Periode.Type.MÅNED;
+        if (tgPeriodeAar.isSelected())    return Periode.Type.ÅR;
+        return Periode.Type.INTERVAL;
+    }
+
+    // Perioden gemmes ikke i et felt: den regnes ud af de to datovælgere og den knap der er
+    // trykket ind, hver gang der er brug for den. En hel uge der gøres hel igen er den samme
+    // uge, så det koster ingenting at spørge - og der er kun ét sted sandheden kan stå forkert.
+    private Periode aktuelPeriode() {
+        return new Periode(valgtPeriodetype(), pieFra(), pieTil());
+    }
+
+    // Perioden ud på skærmen: datoerne i vælgerne, teksten mellem pilene. De to skrivninger
+    // holdes under vagten, så halvvejen - Fra ny, Til gammel - ikke bliver læst som at brugeren
+    // har rettet noget.
+    private void visPeriode(Periode periode) {
+        skriverSelv = true;
+        try {
+            sidstSkrevetFra = periode.fra();
+            sidstSkrevetTil = periode.til();
+            dpFromPie.setValue(periode.fra());
+            dpToPie.setValue(periode.til());
+        } finally {
+            skriverSelv = false;
+        }
+        lblPeriode.setText(periode.etiket());
+    }
+
+    // Hvilken dato den nye periode skal lægge sig omkring, når man skifter fra fx Interval til
+    // Måned. Normalt Fra-datoen: står den i september, er det september man får.
+    //
+    // Med ét hensyn: rummer det udsnit man står i DAGS DATO, er det den måned - eller uge,
+    // eller år - man står i, man vil se. Ellers ville det allerførste tryk på "Måned" lande på
+    // måneden for ens allerførste drøm, fordi standardintervallet begynder dér, og man skulle
+    // trykke ">" mange hundrede gange for at komme hjem igen.
+    private LocalDate anker() {
+        LocalDate iDag = LocalDate.now();
+        LocalDate fra = pieFra();
+        LocalDate til = pieTil();
+        boolean rummerIDag = !iDag.isBefore(fra) && !iDag.isAfter(til);
+        return rummerIDag ? iDag : fra;
     }
 
     @FXML
@@ -289,11 +401,52 @@ public class AnalyseController {
     }
 
     @FXML
+    private void onPeriodetypeValgt() {
+        Periode.Type type = valgtPeriodetype();
+        // Interval rører ikke datoerne - man beholder præcis det udsnit man stod i, og pilene
+        // begynder bare at flytte det med dets egen længde i stedet for en uge ad gangen.
+        Periode ny = (type == Periode.Type.INTERVAL)
+                ? new Periode(type, pieFra(), pieTil())
+                : Periode.omkring(type, anker());
+        visPeriode(ny);
+        onSelectKategori();
+    }
+
+    @FXML
+    private void onForrigePeriode() {
+        visPeriode(aktuelPeriode().forrige());
+        onSelectKategori();
+    }
+
+    @FXML
+    private void onNaestePeriode() {
+        visPeriode(aktuelPeriode().næste());
+        onSelectKategori();
+    }
+
+    // Retter man selv en dato, er det ikke en hel uge eller måned længere. Så skal knapperne
+    // ikke stå og rette den tilbage igen ved næste tryk - vi lander i Interval, hvor pilene
+    // flytter vinduet med dets egen længde og dermed stadig kan bruges til noget.
+    @FXML
+    private void onPieDatoRettet() {
+        if (skriverSelv) {
+            return; // vores egen skrivning, ikke brugerens
+        }
+        if (Objects.equals(dpFromPie.getValue(), sidstSkrevetFra)
+                && Objects.equals(dpToPie.getValue(), sidstSkrevetTil)) {
+            return; // de samme datoer bekræftet igen - ingen grund til at forlade perioden
+        }
+        tgPeriodeInterval.setSelected(true); // setSelected fyrer ikke onAction
+        visPeriode(new Periode(Periode.Type.INTERVAL, pieFra(), pieTil()));
+        onSelectKategori();
+    }
+
+    @FXML
     private void onSelectKategori() {
         updateAntalDreamsCirkel();
         String kategoriId = analyseService.idForKategoriNavn(comboPieKategorier.getSelectionModel().getSelectedItem());
         if (kategoriId != null) {
-            Map<String,Integer> mapData = analyseService.getDataForPieChart(kategoriId,dpFromPie.getValue(),dpToPie.getValue());
+            Map<String,Integer> mapData = analyseService.getDataForPieChart(kategoriId,pieFra(),pieTil());
             pieData.clear();
             for (Map.Entry<String, Integer> entry : mapData.entrySet()) {
                 pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));

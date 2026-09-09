@@ -105,7 +105,7 @@
                                           <Tooltip text="Vælg den symbolkategori cirklen skal vise fordelingen for." wrapText="true" />
                                        </tooltip>
                                     </ComboBox>
-                                    <GridPane hgap="10.0" prefHeight="80.0" prefWidth="250.0" vgap="10.0" VBox.vgrow="NEVER">
+                                    <GridPane hgap="10.0" prefHeight="180.0" prefWidth="250.0" vgap="10.0" VBox.vgrow="NEVER">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -113,12 +113,62 @@
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="NEVER" />
+                                          <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="NEVER" />
                                        </rowConstraints>
                                        <children>
                                           <Label text="Fra" />
-                                          <DatePicker fx:id="dpFromPie" onAction="#onSelectKategori" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" />
+                                          <DatePicker fx:id="dpFromPie" onAction="#onPieDatoRettet" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" />
                                           <Label text="Til" GridPane.rowIndex="1" />
-                                          <DatePicker fx:id="dpToPie" onAction="#onSelectKategori" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <DatePicker fx:id="dpToPie" onAction="#onPieDatoRettet" prefHeight="30.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <HBox maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets top="20.0" />
+                                             </GridPane.margin>
+                                             <children>
+                                                <ToggleButton fx:id="tgPeriodeUge" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPeriodetypeValgt" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Uge" HBox.hgrow="ALWAYS">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="periodeGruppe" />
+                                                   </toggleGroup>
+                                                   <tooltip>
+                                                      <Tooltip text="Vis én uge ad gangen, mandag til søndag. Fra og Til flytter med." wrapText="true" />
+                                                   </tooltip>
+                                                </ToggleButton>
+                                                <ToggleButton fx:id="tgPeriodeMaaned" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPeriodetypeValgt" style="-fx-background-radius: 0; -fx-border-radius: 0;" text="Måned" toggleGroup="$periodeGruppe" HBox.hgrow="ALWAYS">
+                                                   <tooltip>
+                                                      <Tooltip text="Vis én hel måned ad gangen. Fra og Til flytter med." wrapText="true" />
+                                                   </tooltip>
+                                                </ToggleButton>
+                                                <ToggleButton fx:id="tgPeriodeAar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPeriodetypeValgt" style="-fx-background-radius: 0; -fx-border-radius: 0;" text="År" toggleGroup="$periodeGruppe" HBox.hgrow="ALWAYS">
+                                                   <tooltip>
+                                                      <Tooltip text="Vis ét helt år ad gangen. Fra og Til flytter med." wrapText="true" />
+                                                   </tooltip>
+                                                </ToggleButton>
+                                                <ToggleButton fx:id="tgPeriodeInterval" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPeriodetypeValgt" selected="true" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;" text="Interval" toggleGroup="$periodeGruppe" HBox.hgrow="ALWAYS">
+                                                   <tooltip>
+                                                      <Tooltip text="Brug de datoer du selv sætter. Pilene flytter så vinduet med dets egen længde." wrapText="true" />
+                                                   </tooltip>
+                                                </ToggleButton>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets top="8.0" />
+                                             </GridPane.margin>
+                                             <children>
+                                                <Button mnemonicParsing="false" onAction="#onForrigePeriode" text="&lt;">
+                                                   <tooltip>
+                                                      <Tooltip text="Gå én periode tilbage." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Label fx:id="lblPeriode" alignment="CENTER" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#onNaestePeriode" text="&gt;">
+                                                   <tooltip>
+                                                      <Tooltip text="Gå én periode frem." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </children>
                                     </GridPane>
                                     <Label fx:id="antalDreamsLblCirkel" text="Label" />

@@ -131,6 +131,12 @@ Analyse-fanen   (analyse-view.fxml)
 Cirkel
 ------
 COMBOBOX     "Vælg kategori"        Vælg den symbolkategori cirklen skal vise fordelingen for.
+TOGGLEBUTTON "Uge"                  Vis én uge ad gangen, mandag til søndag. Fra og Til flytter med.
+TOGGLEBUTTON "Måned"                Vis én hel måned ad gangen. Fra og Til flytter med.
+TOGGLEBUTTON "År"                   Vis ét helt år ad gangen. Fra og Til flytter med.
+TOGGLEBUTTON "Interval"             Brug de datoer du selv sætter. Pilene flytter så vinduet med dets egen længde.
+BUTTON       "<"                    Gå én periode tilbage.
+BUTTON       ">"                    Gå én periode frem.
 
 Filtre - de samme ni felter som på Ny drøm, med samme tekster
 -------------------------------------------------------------
