@@ -11,6 +11,8 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
@@ -78,12 +80,22 @@ public class EditDreamController {
     private VBox vboxEditDream = new VBox();
 
     @FXML
+    private TextField tfTagEdit;
+
+    @FXML
+    private FlowPane tagChipsEdit;
+
+    /** Samme klasse som på Ny drøm, så de to felter ikke kan nå at opføre sig forskelligt. */
+    private Tagfelt tagfelt;
+
+    @FXML
     private CheckBox lucidEdit, praktisererEdit, modsatEdit, arketypiskEdit, praksisEdit, mareridtEdit, kollektivEdit, advarselEdit, holografiskEdit;
 
     @FXML
     public void initialize() {
         user = User.getInstance();
         loadCCBs();
+        tagfelt = new Tagfelt(tfTagEdit, tagChipsEdit, user.getTagkategori());
 
         // De tre valgfri cber:
         kollektivEdit.setVisible(user.isVisKollektiv());
@@ -96,6 +108,9 @@ public class EditDreamController {
 
     private void loadCCBs() {
         for (Category c : user.getUiCategories()) {
+            if (Tag.ID.equals(c.getId())) {
+                continue; // tags har intet CheckComboBox - de står i tagfeltet nedenunder
+            }
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());
             vboxEditDream.getChildren().add(ccb);
@@ -130,6 +145,7 @@ public class EditDreamController {
         editTolkning.setText(dream.getTolkning());
         editSkrivefelt.setText(dream.getIndhold());
         dpEditDream.setValue(dream.getDato());
+        tagfelt.vis(user.tagsPaaDroem(dream));
     }
 
     @FXML
@@ -160,6 +176,10 @@ public class EditDreamController {
         dream.setTolkning(editTolkning.getText());
         dream.setIndhold(editSkrivefelt.getText());
         dream.setDato(dpEditDream.getValue());
+
+        // Samme upsert-primitiv som flagene bruger lige nedenfor: tag-DTO'en har altid både id
+        // og et symbolsæt, så den kan lægges ind uden at tjekke for null.
+        dream.setCategory(tagfelt.somCategoryDTO());
 
         dream.setCategory(Category.buildFlagsCategoryDTO(
                 lucidEdit.isSelected(), praktisererEdit.isSelected(), modsatEdit.isSelected(), arketypiskEdit.isSelected(),

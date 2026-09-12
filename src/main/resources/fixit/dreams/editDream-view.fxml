@@ -7,14 +7,16 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="720.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.EditDreamController">
+<AnchorPane prefHeight="820.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.EditDreamController">
    <children>
       <Label layoutX="21.0" layoutY="21.0" text="Dato" />
       <DatePicker fx:id="dpEditDream" layoutX="89.0" layoutY="17.0" prefHeight="25.0" prefWidth="200.0">
@@ -24,7 +26,18 @@
       </DatePicker>
       <VBox fx:id="vboxEditDream" layoutX="406.0" layoutY="47.0" prefHeight="412.0" prefWidth="280.0" spacing="10.0" />
       <Label layoutX="406.0" layoutY="21.0" text="Symboler" />
-      <GridPane layoutX="27.0" layoutY="490.0" prefHeight="160.0" prefWidth="650.0">
+      <VBox layoutX="406.0" layoutY="470.0" prefWidth="280.0" spacing="5.0">
+         <children>
+            <Label text="Tags" />
+            <TextField fx:id="tfTagEdit" maxWidth="1.7976931348623157E308" promptText="skriv et ord, tryk Enter">
+               <tooltip>
+                  <Tooltip text="Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol." wrapText="true" />
+               </tooltip>
+            </TextField>
+            <FlowPane fx:id="tagChipsEdit" hgap="5.0" prefWrapLength="280.0" vgap="5.0" />
+         </children>
+      </VBox>
+      <GridPane layoutX="27.0" layoutY="590.0" prefHeight="160.0" prefWidth="650.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
@@ -104,13 +117,13 @@
             </VBox>
          </children>
       </GridPane>
-      <TextArea fx:id="editSkrivefelt" layoutX="21.0" layoutY="66.0" prefHeight="405.0" prefWidth="359.0" wrapText="true" />
-      <Button layoutX="624.0" layoutY="673.0" mnemonicParsing="false" onAction="#saveDream" text="Gem">
+      <TextArea fx:id="editSkrivefelt" layoutX="21.0" layoutY="66.0" prefHeight="505.0" prefWidth="359.0" wrapText="true" />
+      <Button layoutX="624.0" layoutY="773.0" mnemonicParsing="false" onAction="#saveDream" text="Gem">
          <tooltip>
             <Tooltip text="Gem ændringerne og luk vinduet." wrapText="true" />
          </tooltip>
       </Button>
-      <Button layoutX="529.0" layoutY="673.0" mnemonicParsing="false" onAction="#closePopup" text="Luk">
+      <Button layoutX="529.0" layoutY="773.0" mnemonicParsing="false" onAction="#closePopup" text="Luk">
          <tooltip>
             <Tooltip text="Luk uden at gemme ændringer." />
          </tooltip>

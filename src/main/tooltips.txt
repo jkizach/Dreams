@@ -54,6 +54,7 @@ CHECKBOX     "Mareridt"             Er du meget bange i drømmen?
 CHECKBOX     "Kollektiv"            Er der ikke noget drømmejeg i drømmen?
 CHECKBOX     "Advarsel"             Viser drømmen en farlig ubalance som er truende for drømmejeget?
 CHECKBOX     "Holografisk"          Er drømmejeget delt op i flere samtidige instanser?
+TEXTFIELD    tfTag                  Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol.
 
 Fanen "Drømme"
 --------------
@@ -107,6 +108,14 @@ LABEL        "Ny symbolkategori"        Du kan tilføje op til 3 nye symbolkateg
 BUTTON       "Tilføj"                   Opret kategorien. Du kan højst tilføje tre, og de kan ikke slettes igen.
 LABEL        "Ændr symbolkategorinavn"  Omdøb en kategori - nyttigt hvis du hellere vil holde øje med noget andet end det indbyggede.
 BUTTON       "+" (skiftNavnKnap)        Giv den valgte kategori det nye navn. Også de indbyggede kan omdøbes.
+
+Indstillinger - tags
+--------------------
+LABEL        "Tags"                     Tags sætter du på drømmen mens du skriver den. Her kan du rette dem bagefter.
+COMBOBOX     cbTag                      Vælg det tag du vil omdøbe eller slette.
+TEXTFIELD    tfNytTagNavn               Det navn tagget skal have i stedet.
+BUTTON       "Omdøb"                    Giv tagget et nyt navn på alle drømme. Findes navnet i forvejen, flettes de to.
+BUTTON       "Slet"                     Fjern tagget fra alle drømme. Selve drømmene røres ikke.
 
 Indstillinger - startdato og drømmekvaliteter
 ---------------------------------------------
@@ -185,6 +194,7 @@ CHECKBOX     "Om praksis"           Handler drømmen om praksis, om meditation? 
 CHECKBOX     "Mareridt"             Er du meget bange i drømmen?
 CHECKBOX     "Kollektiv"            Er der ikke noget drømmejeg i drømmen?
 CHECKBOX     "Advarsel"             Viser drømmen en farlig ubalance som er truende for drømmejeget?
+TEXTFIELD    tfTagEdit              Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol.
 CHECKBOX     "Holografisk"          Er drømmejeget delt op i flere samtidige instanser?
 BUTTON       "Gem"                  Gem ændringerne og luk vinduet.
 BUTTON       "Luk"                  Luk uden at gemme ændringer.

@@ -37,6 +37,14 @@ I højre side finder du seks symbolkategorier, hvor du markerer hvilke symboler 
 
 Du kan selv tilføje og fjerne symboler i kategorierne, og du kan oprette op til tre helt nye kategorier - fx Kropssteder, Steder eller Lyde, alt efter hvad du har brug for at holde øje med.
 
+Nederst i højre side er der et felt der hedder Tags. Det er den lette udgave af en symbolkategori: du skriver bare et ord og trykker Enter, og så sidder tagget på drømmen. Mens du skriver, foreslår appen de tags du har brugt før, så du ikke ender med "hav", "havet" og "Hav" som tre forskellige ting. Tagget kan fjernes igen ved at trykke på det.
+
+Tags er tænkt til dét du opdager undervejs. Drømmer du pludselig meget om vand eller om bygninger, behøver du ikke beslutte dig for en hel ny kategori med færdige symboler - du sætter bare et tag på, og kan bagefter følge det i Cirkel, Graf og Tal præcis som et hvilket som helst andet symbol. Viser det sig at være et mønster der er værd at holde øje med, kan du altid oprette en rigtig kategori senere.
+
+Du behøver ikke tænke over store og små bogstaver eller mellemrum i enderne; appen retter det til. Skriver du en havelåge foran, som man gør på nettet, bliver den også fjernet. Tags må godt være på flere ord - "gamle huse" er ét tag.
+
+Tags kan rettes bagefter under Indstillinger, og dét er værd at kende: opdager du at du har skrevet både "hav" og "havet", kan du omdøbe det ene til det andet, og så lægges de to sammen.
+
 Når drømmen er skrevet og symbolerne markeret, trykker du "Gem drømmen". Så nulstilles felterne, og drømmen er gemt.
 
 Øverst kan du løbende se "Antal drømme", så du kan følge med i hvor stor din samling er blevet.
@@ -74,6 +82,8 @@ Under "Tilføj symbol" vælger du en kategori, skriver navnet på det nye symbol
 "Fjern symbol" virker på samme måde - her skal du bare vælge symbolet i listen, og knappen er så et minus.
 
 Vil du have en helt ny symbolkategori, skriver du navnet i "Navn"-feltet under "Ny symbolkategori" og trykker "Tilføj". Bemærk to ting: du kan højst tilføje tre nye kategorier, og de kan ikke slettes igen. Så brug dem med omtanke.
+
+Under "Tags" retter du de tags du har sat på drømmene. Vælg et tag i listen, og du får at vide hvor mange drømme det står på. Skriver du et nyt navn ved siden af og trykker "Omdøb", får tagget det nye navn på alle drømmene på én gang. Findes navnet i forvejen, bliver de to lagt sammen - det er sådan du rydder op i "hav" og "havet". "Slet" fjerner tagget fra alle drømme; selve drømmene rører den ikke.
 
 Under "Ændr symbolkategorinavn" kan du give en kategori et nyt navn. Det er nyttigt hvis du har fortrudt et navn du selv fandt på - men du kan også omdøbe de indbyggede. Interesserer dyr eller chakraer dig ikke, kan du give kategorien et andet navn og holde øje med noget helt andet i stedet.
 

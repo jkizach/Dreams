@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -57,10 +58,19 @@ public class HovedmenuController {
     public Tab analyseTab;
 
     @FXML
-    private TextField tfNytTemaNavn, tfNytSymbol, tfNyKategori, tfNytNavn, searchField;
+    private TextField tfNytTemaNavn, tfNytSymbol, tfNyKategori, tfNytNavn, searchField, tfTag, tfNytTagNavn;
 
     @FXML
-    private ComboBox<String> cbKategoriRemove, cbKategoriAdd, cbTemaer, cbFonts, cbKategoriNavn;
+    private ComboBox<String> cbKategoriRemove, cbKategoriAdd, cbTemaer, cbFonts, cbKategoriNavn, cbTag;
+
+    @FXML
+    private FlowPane tagChips;
+
+    @FXML
+    private Label lblTagAntal;
+
+    /** Tagfeltet på Ny drøm. Kontrollerne står i FXML, opførslen i Tagfelt. */
+    private Tagfelt tagfelt;
 
     @FXML
     private VBox fjernSymbolVbox = new VBox();
@@ -274,12 +284,21 @@ public class HovedmenuController {
 
         // Og kunne man så lave et Søren-trick med Categories her i stedet? vv
         loadCCBs();
+        tagfelt = new Tagfelt(tfTag, tagChips, user.getTagkategori());
+        opdaterTagliste();
 
         kategoriLabels = user.getKategoriLabels(); // skal løses så det bruger categories og ikke noget andet...
 
-        cbKategoriRemove.setItems(kategoriLabels);
-        cbKategoriAdd.setItems(kategoriLabels);
-        cbKategoriNavn.setItems(kategoriLabels);
+        // De tre administrations-combobokse må ikke vise Tags: tags administreres i deres eget
+        // felt nedenfor, og kategorien kan hverken omdøbes eller få symboler ad den vej.
+        //
+        // Filtreringen kan ikke ligge i getKategoriLabels(): det er den SAMME levende liste som
+        // Cirkel-fanens kategorivælger får, og dér SKAL Tags være med. Derfor en FilteredList
+        // her - de tre kan godt dele den, ligesom de før delte den ufiltrerede.
+        FilteredList<String> udenTags = new FilteredList<>(kategoriLabels, navn -> !Tag.NAVN.equals(navn));
+        cbKategoriRemove.setItems(udenTags);
+        cbKategoriAdd.setItems(udenTags);
+        cbKategoriNavn.setItems(udenTags);
 
         cbTemaer.setItems(temaer);
         cbTemaer.setValue(userService.getTemaNavn());
@@ -351,6 +370,9 @@ public class HovedmenuController {
 
     private void loadCCBs() {
         for (Category c : userService.getCats()) {
+            if (Tag.ID.equals(c.getId())) {
+                continue; // tags har intet CheckComboBox - de kommer fra tagfeltet nedenunder
+            }
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());
             vBoxSymboler.getChildren().add(ccb);
@@ -370,8 +392,15 @@ public class HovedmenuController {
             dreamData.categories = new ArrayList<>();
 
             for (Category c : userService.getCats()) {
+                if (Tag.ID.equals(c.getId())) {
+                    // getccbDreamSelections() ville give {id:null, symbols:null} for en kategori
+                    // uden CheckComboBox, og dét vælter AnalyseService.updateFilteredDreams med
+                    // en NPE. Tagfeltet bygger sin egen DTO, som altid har id og et symbolsæt.
+                    continue;
+                }
                 dreamData.categories.add(c.getccbDreamSelections());
             }
+            dreamData.categories.add(tagfelt.somCategoryDTO());
 
             dreamData.categories.add(Category.buildFlagsCategoryDTO(
                     lucid.isSelected(), praktiserer.isSelected(), modsat.isSelected(), arketypisk.isSelected(),
@@ -468,6 +497,8 @@ public class HovedmenuController {
         for (Category c : userService.getCats()) {
             c.resetDreamCCBs();
         }
+        tagfelt.ryd();
+        opdaterTagliste();
     }
 
     @FXML
@@ -588,6 +619,57 @@ public class HovedmenuController {
             timeline.setCycleCount(1);
             timeline.play();
         }
+    }
+
+    /* ---------- Tags i Indstillinger ---------- */
+
+    // Listen bygges friskt op fra ordforrådet, og det valgte tag beholdes hvis det stadig
+    // findes. Kaldes både efter en omdøbning, efter en sletning og hver gang en ny drøm er
+    // gemt - en drøm kan have fundet på et tag der ikke stod i listen før.
+    private void opdaterTagliste() {
+        String valgt = cbTag.getSelectionModel().getSelectedItem();
+        cbTag.getItems().setAll(userService.getTags());
+        if (valgt != null && cbTag.getItems().contains(valgt)) {
+            cbTag.getSelectionModel().select(valgt);
+        } else {
+            cbTag.getSelectionModel().clearSelection();
+            lblTagAntal.setText("");
+        }
+    }
+
+    @FXML
+    private void handleTagValgt() {
+        String tag = cbTag.getSelectionModel().getSelectedItem();
+        if (tag == null) {
+            lblTagAntal.setText("");
+            return;
+        }
+        int antal = userService.antalDroemmeMedTag(tag);
+        lblTagAntal.setText(tag + " står på " + antal + (antal == 1 ? " drøm" : " drømme"));
+    }
+
+    @FXML
+    private void handleOmdoebTag() {
+        String gammelt = cbTag.getSelectionModel().getSelectedItem();
+        String nyt = Tag.normaliser(tfNytTagNavn.getText());
+        if (gammelt == null || nyt == null || nyt.equals(gammelt)) {
+            return;
+        }
+        userService.omdoebTag(gammelt, nyt);
+        tfNytTagNavn.clear();
+        opdaterTagliste();
+        // Findes det nye navn i forvejen, er de to netop blevet flettet - så pege på resultatet.
+        cbTag.getSelectionModel().select(nyt);
+    }
+
+    @FXML
+    private void handleSletTag() {
+        String tag = cbTag.getSelectionModel().getSelectedItem();
+        if (tag == null) {
+            return;
+        }
+        userService.fjernTag(tag);
+        opdaterTagliste();
     }
 
     @FXML

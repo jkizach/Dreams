@@ -6,9 +6,11 @@ import javafx.collections.ObservableList;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 public class UserService extends ServiceMother {
     private Tema tempTema;
@@ -179,7 +181,10 @@ public class UserService extends ServiceMother {
     }
 
     public String renameKategori(String nytNavn, String gammeltNavn) {
-        if (gammeltNavn.equals("Forløb")) {
+        // Tags står ikke i comboboksen i forvejen (se HovedmenuController), men værnet bliver
+        // her som bagstopper: navnet skal ligge fast, for id'et udledes af det, og filtreringen
+        // af de tre administrations-combobokse matcher på det.
+        if (gammeltNavn.equals("Forløb") || gammeltNavn.equals(Tag.NAVN)) {
             return "Kan ikke omdøbes!";
         }
         char first = nytNavn.charAt(0);
@@ -210,8 +215,90 @@ public class UserService extends ServiceMother {
         return "Navn ændret!";
     }
 
+    // Tags tælles ikke med. Kategorien er appens egen, ikke en af brugerens tre - og talte den
+    // med, ville tagfunktionen koste brugeren en kategoriplads uden at nogen havde spurgt.
     public Boolean okToAddNewUserDefinedCat() {
-        return user.getUiCategories().size() <= 8;
+        int antal = 0;
+        for (Category c : user.getUiCategories()) {
+            if (!Tag.ID.equals(c.getId())) {
+                antal++;
+            }
+        }
+        return antal <= 8;
+    }
+
+    /** Hvor mange drømme bærer tagget lige nu. */
+    public int antalDroemmeMedTag(String tag) {
+        int antal = 0;
+        for (Dream d : user.getDreams().values()) {
+            if (user.tagsPaaDroem(d).contains(tag)) {
+                antal++;
+            }
+        }
+        return antal;
+    }
+
+    /** Tagordforrådet, sorteret - det autocomplete foreslår fra, og det Indstillinger viser. */
+    public Collection<String> getTags() {
+        Category tags = user.getTagkategori();
+        return (tags == null) ? new TreeSet<>() : tags.getSymbols();
+    }
+
+    /**
+     * Giver tagget et nyt navn på hver eneste drøm der bærer det.
+     *
+     * Findes det nye navn i forvejen, FLETTES de to af sig selv: symbolsættet er et TreeSet, så
+     * "havet" -> "hav" lægger de tre drømme til de toogfyrre uden en linje særkode. Det er den
+     * vigtigste operation i hele funktionen - den er svaret på tastefejl, og tastefejl er den
+     * eneste reelle omkostning ved at lade brugeren skrive frit.
+     *
+     * Opskriften er fjernSymbols: løb alle drømme igennem, match på id, og kald kun touch() på
+     * dem der faktisk blev ændret - ellers ville hver eneste drøm få nyt updatedAt og skulle
+     * uploades igen for en rettelse der ikke rørte dem.
+     */
+    public void omdoebTag(String gammelt, String nyt) {
+        Category tags = user.getTagkategori();
+        String nytNavn = Tag.normaliser(nyt);
+        if (tags == null || gammelt == null || nytNavn == null || nytNavn.equals(gammelt)) {
+            return;
+        }
+        for (Dream d : user.getDreams().values()) {
+            for (CategoryDTO cdto : d.getCategories()) {
+                if (Tag.ID.equals(cdto.id)) {
+                    if (cdto.symbols != null && cdto.symbols.remove(gammelt)) {
+                        cdto.symbols.add(nytNavn);
+                        d.touch();
+                    }
+                    break;
+                }
+            }
+        }
+        tags.removeSymbol(gammelt);
+        tags.addSymbol(nytNavn);
+        tags.updateAllCCBs();
+        refreshDreamList();
+        user.genberegnStatsPlease();
+    }
+
+    /** Fjerner tagget fra ordforrådet og fra alle drømme. Selve drømmene røres ikke. */
+    public void fjernTag(String tag) {
+        Category tags = user.getTagkategori();
+        if (tags == null || tag == null) {
+            return;
+        }
+        tags.removeSymbol(tag);
+        for (Dream d : user.getDreams().values()) {
+            for (CategoryDTO cdto : d.getCategories()) {
+                if (Tag.ID.equals(cdto.id)) {
+                    if (cdto.symbols != null && cdto.symbols.remove(tag)) {
+                        d.touch();
+                    }
+                    break;
+                }
+            }
+        }
+        refreshDreamList();
+        user.genberegnStatsPlease();
     }
 
     public void fjernSymbol(String kategorien, String symbolet) {

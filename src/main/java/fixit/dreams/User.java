@@ -94,12 +94,22 @@ class User {
             System.out.println("Categories not loaded!");
         }
 
+        // Placeringen er ikke ligegyldig. BEGGE grene ovenfor fylder kategoriLabels inde i sig
+        // selv, så sås tagkategorien efter dem, står den i categories men ikke i comboboksen.
+        // refreshKategoriLabels rydder og bygger etiketterne op fra getUiCategories igen, og er
+        // idempotent - de to inline-fyldninger ovenfor gør derfor ingen skade.
+        sikrTagkategori();
+        refreshKategoriLabels();
+
         if (loadedDreams != null && !loadedDreams.isEmpty()) {
             System.out.println("Dreams loaded!");
             dreams = loadedDreams;
         } else {
             dreams = new HashMap<>();
         }
+
+        // Først her, for den læser drømmene.
+        sikrTagordforraad();
 
         if (loadedUserDTO != null) {
             System.out.println("Load userDTO virkede...");
@@ -202,6 +212,74 @@ class User {
             }
         }
         return result;
+    }
+
+    /** Tagkategorien, eller null hvis den mod forventning ikke er sået endnu. */
+    public Category getTagkategori() {
+        for (Category c : categories) {
+            if (Tag.ID.equals(c.getId())) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /** Alle tags på én drøm - aldrig null, så kalderen ikke skal tjekke. */
+    public TreeSet<String> tagsPaaDroem(Dream d) {
+        for (CategoryDTO cdto : d.getCategories()) {
+            if (Tag.ID.equals(cdto.id) && cdto.symbols != null) {
+                return new TreeSet<>(cdto.symbols);
+            }
+        }
+        return new TreeSet<>();
+    }
+
+    // Tags skal findes uanset om installationen er frisk eller gammel, og uanset om skyen lige
+    // har overskrevet cats.json med en liste fra en maskine der ikke kendte kategorien endnu.
+    //
+    // Det er med vilje IKKE en skemamigrering. Formen på cats.json ændrer sig ikke, kun
+    // indholdet, og et versionsbump ville standse synkroniseringen på den maskine der ikke er
+    // opdateret endnu - for data den udmærket forstår. Se SchemaMigrator og SyncVersionException
+    // for hvornår et bump faktisk er på sin plads.
+    //
+    // Opslaget sker på id, ikke navn, og id'et udledes af navnet alene - så begge maskiner når
+    // frem til det samme "tags" uden at tale sammen. Havde brugeren i forvejen en kategori med
+    // id'et "tags", bliver dén tagkategorien; det er sjældent, og det er den pæne udgang.
+    private void sikrTagkategori() {
+        if (getTagkategori() != null) {
+            return;
+        }
+        // Sidst i listen med vilje: Tal-fanen parrer statistik og kategorier positionelt over
+        // getUiCategories, så rækkefølgen skal være den samme begge steder.
+        categories.add(new Category(Tag.ID, Tag.NAVN));
+    }
+
+    // Tags står to steder: i kategoriens symbolliste (ordforrådet, som autocomplete foreslår
+    // fra) og på de drømme der bærer dem. cats.json synkroniseres som ÉT dokument hvor hele
+    // listen vinder eller taber, så et tag opfundet på den ene maskine kan nå at forsvinde fra
+    // ordforrådet uden at forsvinde fra drømmene. Her samles de op igen, så ordforrådet aldrig
+    // kan blive mindre end det der faktisk er i brug.
+    //
+    // Og det er bærende, ikke pynt: DreamApp.handleWindowClose gemmer kun cats.json hvis
+    // sessionen IKKE har hentet kategorier fra skyen, mens drømmene gemmes ubetinget. Har man
+    // synkroniseret og derefter fundet på et nyt tag, står tagget på drømmen i dreams.json men
+    // er aldrig nået ind i ordforrådet. Uden denne oprydning ville tagget virke i Cirkel og
+    // Graf, men ikke kunne foreslås - og næste gang man skrev det, ville en lille stavevariant
+    // blive til et nyt tag uden at man opdagede det.
+    private void sikrTagordforraad() {
+        Category tags = getTagkategori();
+        if (tags == null) {
+            return;
+        }
+        for (Dream d : dreams.values()) {
+            for (CategoryDTO cdto : d.getCategories()) {
+                if (Tag.ID.equals(cdto.id) && cdto.symbols != null) {
+                    for (String tag : cdto.symbols) {
+                        tags.addSymbol(tag);
+                    }
+                }
+            }
+        }
     }
 
     public String getForetrukneTemaNavn() {
