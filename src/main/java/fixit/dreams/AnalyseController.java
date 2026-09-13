@@ -543,7 +543,9 @@ public class AnalyseController {
         ArrayList<ArrayList<String>> statsForCats = analyseService.getTalCategories(dpFromTal.getValue(), dpToTal.getValue());
         ArrayList<Category> cats = analyseService.getCats();
 
-        int counter = 0;
+        // Kategorierne deles ligeligt over de to kolonner; ved et ulige antal får venstre den ekstra.
+        // Tidligere stod der fast 4 til venstre, så 10 kategorier blev til 4 og 6.
+        int antalVenstre = (cats.size() + 1) / 2;
 
         for (int i = 0; i < cats.size(); i++) {
             String katNavn = cats.get(i).getName();
@@ -563,14 +565,12 @@ public class AnalyseController {
             tv.getItems().addAll(statsForCats.get(i));
             tv.addEventHandler(MOUSE_CLICKED, Event -> tv.getSelectionModel().clearSelection());
 
-            if (counter < 4) {
+            if (i < antalVenstre) {
                 talVboxCatOne.getChildren().add(overskrift);
                 talVboxCatOne.getChildren().add(tv);
-                counter++;
             } else {
                 talVboxCatTwo.getChildren().add(overskrift);
                 talVboxCatTwo.getChildren().add(tv);
-                counter++;
             }
         }
         // og så drømmeantallet
