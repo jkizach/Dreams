@@ -8,6 +8,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -66,6 +67,28 @@
                                           <TextArea fx:id="tolkningFelt" prefHeight="105.0" prefWidth="210.0" wrapText="true" />
                                        </content>
                                     </Tab>
+                                    <Tab closable="false" text="Tags">
+                                       <content>
+                                          <!-- Samme opbygning som fanen Tags i editDream-view.fxml - se kommentaren dér. -->
+                                          <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" styleClass="text-area">
+                                             <content>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <TextField fx:id="tfTag" maxWidth="1.7976931348623157E308" promptText="skriv et ord, tryk Enter">
+                                                         <tooltip>
+                                                            <Tooltip text="Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol." wrapText="true" />
+                                                         </tooltip>
+                                                      </TextField>
+                                                      <FlowPane fx:id="tagChips" hgap="5.0" prefWrapLength="400.0" vgap="5.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
+                                       </content>
+                                    </Tab>
                                  </tabs>
                               </TabPane>
                            </children>
@@ -99,20 +122,9 @@
                                     <Label text="Symboler" />
                                  </children>
                               </VBox>
-                              <VBox prefWidth="280.0" spacing="5.0">
-                                 <children>
-                                    <Label text="Tags" />
-                                    <TextField fx:id="tfTag" maxWidth="1.7976931348623157E308" promptText="skriv et ord, tryk Enter">
-                                       <tooltip>
-                                          <Tooltip text="Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol." wrapText="true" />
-                                       </tooltip>
-                                    </TextField>
-                                    <FlowPane fx:id="tagChips" hgap="5.0" prefWrapLength="280.0" vgap="5.0" />
-                                 </children>
-                              </VBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1">
+                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
                            <children>
                               <Label text="Drømmejeget" />
                               <CheckBox fx:id="lucid" mnemonicParsing="false" text="Lucid">
@@ -283,7 +295,7 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <VBox alignment="CENTER_LEFT" spacing="10.0">
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                               <Label text="Vælg tema" />
                               <ComboBox fx:id="cbTemaer" onAction="#handleSkiftTema" prefHeight="37.0" prefWidth="185.0">
@@ -294,28 +306,28 @@
                               <Separator prefHeight="5.0" prefWidth="297.0" />
                            </children>
                         </VBox>
-                        <VBox spacing="10.0" GridPane.rowIndex="1">
+                        <VBox spacing="5.0" GridPane.rowIndex="1">
                            <children>
                               <Label text="Lav nyt tema">
                                  <tooltip>
                                     <Tooltip text="Du kan tilføje dine egne farvetemaer. Se dem før du gemmer!" />
                                  </tooltip>
                               </Label>
-                              <GridPane alignment="CENTER" hgap="5.0" prefHeight="410.0" prefWidth="330.0" vgap="5.0">
+                              <GridPane alignment="CENTER" hgap="5.0" prefWidth="330.0" vgap="2.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="10.0" prefWidth="134.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.0" minWidth="10.0" prefWidth="191.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <ColorPicker fx:id="baggrundBPicker" maxWidth="1.7976931348623157E308" onAction="#farveEllerFontChanged" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -401,7 +413,7 @@
                               <Separator prefHeight="5.0" prefWidth="489.0" />
                            </children>
                         </VBox>
-                        <VBox spacing="15.0" GridPane.rowIndex="2">
+                        <VBox prefWidth="467.0" spacing="10.0" GridPane.rowIndex="2">
                            <children>
                               <Button fx:id="seTemaKnap" disable="true" mnemonicParsing="false" onAction="#handleSeTemaKnap" text="Se tema">
                                  <tooltip>
@@ -449,7 +461,7 @@
                                     <Tooltip text="Vælg en kategori, skriv navnet på det nye symbol ved siden af, og tryk +." wrapText="true" />
                                  </tooltip>
                               </Label>
-                              <ComboBox fx:id="cbKategoriAdd" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="cbKategoriAdd" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="1" GridPane.valignment="TOP" />
                               <TextField fx:id="tfNytSymbol" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="260.0" promptText="Nyt symbol" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Button fx:id="addSymbolKnap" mnemonicParsing="false" onAction="#handleAddSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                  <tooltip>
@@ -464,7 +476,7 @@
                                     <Tooltip text="Vælg en kategori, vælg symbolet i listen, og tryk -." wrapText="true" />
                                  </tooltip>
                               </Label>
-                              <ComboBox fx:id="cbKategoriRemove" onAction="#opretCCbox" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="cbKategoriRemove" onAction="#opretCCbox" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="3" GridPane.valignment="TOP" />
                               <Button fx:id="fjernSymbolKnap" mnemonicParsing="false" onAction="#handleFjernSymbolKnap" prefHeight="35.0" prefWidth="35.0" text="-" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                                  <tooltip>
                                     <Tooltip text="Fjern det valgte symbol fra kategorien." wrapText="true" />
@@ -475,7 +487,7 @@
                                     <Tooltip text="Du kan tilføje op til 3 nye symbolkategorier." />
                                  </tooltip>
                               </Label>
-                              <TextField fx:id="tfNyKategori" maxWidth="220.0" prefHeight="37.0" prefWidth="220.0" promptText="Navn" GridPane.rowIndex="5" />
+                              <TextField fx:id="tfNyKategori" maxWidth="220.0" prefHeight="37.0" prefWidth="220.0" promptText="Navn" GridPane.rowIndex="5" GridPane.valignment="TOP" />
                               <Button fx:id="addNyKategoriKnap" mnemonicParsing="false" onAction="#handleAddNyKategoriKnap" prefHeight="25.0" prefWidth="100.0" text="Tilføj" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                                  <tooltip>
                                     <Tooltip text="Opret kategorien. Du kan højst tilføje tre, og de kan ikke slettes igen." wrapText="true" />
@@ -488,7 +500,7 @@
                                  </tooltip>
                               </Label>
                               <TextField fx:id="tfNytNavn" maxWidth="1.7976931348623157E308" prefHeight="37.0" prefWidth="260.0" promptText="Nyt navn" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <ComboBox fx:id="cbKategoriNavn" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="7" />
+                              <ComboBox fx:id="cbKategoriNavn" prefHeight="37.0" prefWidth="220.0" promptText="Kategori" GridPane.rowIndex="7" GridPane.valignment="TOP" />
                               <Button fx:id="skiftNavnKnap" mnemonicParsing="false" onAction="#handleSkiftNavnKnap" prefHeight="35.0" prefWidth="35.0" text="+" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
                                  <tooltip>
                                     <Tooltip text="Giv den valgte kategori det nye navn. Også de indbyggede kan omdøbes." wrapText="true" />
@@ -496,7 +508,7 @@
                               </Button>
                            </children>
                         </GridPane>
-                        <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647">
                            <children>
                               <Separator prefHeight="5.0" prefWidth="489.0" />
                               <HBox spacing="50.0">
@@ -551,7 +563,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <VBox prefWidth="467.0" spacing="5.0" GridPane.rowIndex="3">
                            <children>
                               <Separator prefHeight="5.0" prefWidth="489.0" />
                               <Label text="Tags">
@@ -561,26 +573,38 @@
                               </Label>
                               <HBox alignment="CENTER_LEFT" spacing="10.0">
                                  <children>
-                                    <ComboBox fx:id="cbTag" onAction="#handleTagValgt" prefHeight="37.0" prefWidth="200.0" promptText="Vælg tag">
-                                       <tooltip>
-                                          <Tooltip text="Vælg det tag du vil omdøbe eller slette." wrapText="true" />
-                                       </tooltip>
-                                    </ComboBox>
-                                    <TextField fx:id="tfNytTagNavn" prefHeight="35.0" prefWidth="180.0" promptText="Nyt navn">
-                                       <tooltip>
-                                          <Tooltip text="Det navn tagget skal have i stedet." wrapText="true" />
-                                       </tooltip>
-                                    </TextField>
-                                    <Button fx:id="omdoebTagKnap" mnemonicParsing="false" onAction="#handleOmdoebTag" text="Omdøb">
-                                       <tooltip>
-                                          <Tooltip text="Giv tagget et nyt navn på alle drømme. Findes navnet i forvejen, flettes de to." wrapText="true" />
-                                       </tooltip>
-                                    </Button>
-                                    <Button fx:id="sletTagKnap" mnemonicParsing="false" onAction="#handleSletTag" text="Slet">
-                                       <tooltip>
-                                          <Tooltip text="Fjern tagget fra alle drømme. Selve drømmene røres ikke." wrapText="true" />
-                                       </tooltip>
-                                    </Button>
+                                    <VBox>
+                                       <children>
+                                          <ComboBox fx:id="cbTag" onAction="#handleTagValgt" prefHeight="37.0" prefWidth="218.0" promptText="Vælg tag">
+                                             <tooltip>
+                                                <Tooltip text="Vælg det tag du vil omdøbe eller slette." wrapText="true" />
+                                             </tooltip>
+                                          </ComboBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <TextField fx:id="tfNytTagNavn" prefHeight="31.0" prefWidth="197.0" promptText="Nyt navn">
+                                             <tooltip>
+                                                <Tooltip text="Det navn tagget skal have i stedet." wrapText="true" />
+                                             </tooltip>
+                                          </TextField>
+                                          <HBox spacing="10.0">
+                                             <children>
+                                                <Button fx:id="omdoebTagKnap" mnemonicParsing="false" onAction="#handleOmdoebTag" text="Omdøb">
+                                                   <tooltip>
+                                                      <Tooltip text="Giv tagget et nyt navn på alle drømme. Findes navnet i forvejen, flettes de to." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="sletTagKnap" mnemonicParsing="false" onAction="#handleSletTag" text="Slet">
+                                                   <tooltip>
+                                                      <Tooltip text="Fjern tagget fra alle drømme. Selve drømmene røres ikke." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </HBox>
                               <Label fx:id="lblTagAntal" style="-fx-font-style: italic;" text="" />

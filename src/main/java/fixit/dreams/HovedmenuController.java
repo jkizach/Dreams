@@ -371,7 +371,7 @@ public class HovedmenuController {
     private void loadCCBs() {
         for (Category c : userService.getCats()) {
             if (Tag.ID.equals(c.getId())) {
-                continue; // tags har intet CheckComboBox - de kommer fra tagfeltet nedenunder
+                continue; // tags har intet CheckComboBox - de kommer fra tagfeltet under fanen Tags
             }
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());

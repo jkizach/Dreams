@@ -109,7 +109,7 @@ public class EditDreamController {
     private void loadCCBs() {
         for (Category c : user.getUiCategories()) {
             if (Tag.ID.equals(c.getId())) {
-                continue; // tags har intet CheckComboBox - de står i tagfeltet nedenunder
+                continue; // tags har intet CheckComboBox - de står i tagfeltet under fanen Tags
             }
             CheckComboBox<String> ccb = new CheckComboBox<>();
             ccb.getItems().addAll(c.getSymbolsForDisplay());

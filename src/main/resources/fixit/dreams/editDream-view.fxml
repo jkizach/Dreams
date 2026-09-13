@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -26,17 +28,6 @@
       </DatePicker>
       <VBox fx:id="vboxEditDream" layoutX="406.0" layoutY="47.0" prefHeight="412.0" prefWidth="280.0" spacing="10.0" />
       <Label layoutX="406.0" layoutY="21.0" text="Symboler" />
-      <VBox layoutX="406.0" layoutY="470.0" prefWidth="280.0" spacing="5.0">
-         <children>
-            <Label text="Tags" />
-            <TextField fx:id="tfTagEdit" maxWidth="1.7976931348623157E308" promptText="skriv et ord, tryk Enter">
-               <tooltip>
-                  <Tooltip text="Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol." wrapText="true" />
-               </tooltip>
-            </TextField>
-            <FlowPane fx:id="tagChipsEdit" hgap="5.0" prefWrapLength="280.0" vgap="5.0" />
-         </children>
-      </VBox>
       <GridPane layoutX="27.0" layoutY="590.0" prefHeight="160.0" prefWidth="650.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
@@ -82,6 +73,31 @@
                   <Tab closable="false" text="Tolkning">
                      <content>
                         <TextArea fx:id="editTolkning" prefHeight="90.0" prefWidth="214.0" wrapText="true" />
+                     </content>
+                  </Tab>
+                  <Tab closable="false" text="Tags">
+                     <content>
+                        <!-- ScrollPane så mange tags ruller i fanen i stedet for at gøre fanen højere og
+                             skubbe afkrydsningerne ved siden af. styleClass="text-area" giver samme
+                             scrollbar og kant som Dagrest/Tolkning (samme kneb som i txt-view.fxml);
+                             baggrunden holdes gennemsigtig, så tekstfelt og chips ikke flyder sammen. -->
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="text-area" style="-fx-background: transparent; -fx-background-color: transparent;">
+                           <content>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="tfTagEdit" maxWidth="1.7976931348623157E308" promptText="skriv et ord, tryk Enter">
+                                       <tooltip>
+                                          <Tooltip text="Skriv et ord og tryk Enter. Tagget kan du følge i Cirkel og Graf ligesom et symbol." wrapText="true" />
+                                       </tooltip>
+                                    </TextField>
+                                    <FlowPane fx:id="tagChipsEdit" hgap="5.0" prefWrapLength="200.0" vgap="5.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets top="5.0" right="5.0" bottom="5.0" left="5.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
                      </content>
                   </Tab>
                </tabs>
