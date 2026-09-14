@@ -409,13 +409,10 @@
                                           <ToggleGroup fx:id="forloebVisningGroup" />
                                        </fx:define>
                                        <children>
-                                          <ToggleButton fx:id="tgForloebKort" mnemonicParsing="false" onAction="#onForloebVisningChanged" selected="true" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Kort">
+                                          <ToggleButton fx:id="tgForloebKort" mnemonicParsing="false" onAction="#onForloebVisningChanged" selected="true" style="-fx-background-radius: 5 0 0 5; -fx-border-radius: 5 0 0 5;" text="Kort" toggleGroup="$forloebVisningGroup">
                                              <tooltip>
                                                 <Tooltip text="Vis kun begyndelsen af hver drøm i listen." wrapText="true" />
                                              </tooltip>
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="forloebVisningGroup" />
-                                             </toggleGroup>
                                           </ToggleButton>
                                           <ToggleButton fx:id="tgForloebLangt" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onForloebVisningChanged" style="-fx-background-radius: 0 5 5 0; -fx-border-radius: 0 5 5 0;" text="Langt" toggleGroup="$forloebVisningGroup">
                                              <tooltip>
