@@ -1,4 +1,4 @@
-# Drømmeappen 2.0
+# Drømmeappen 2.1
 
 En app til at skrive sine drømme ned i - og til at få øje på de mønstre der først træder frem når man har skrevet dem ned længe nok.
 

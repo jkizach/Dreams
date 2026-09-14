@@ -20,9 +20,9 @@ Et godt tip: mange steder i appen kan du holde musepilen stille over et felt ell
 
 Her skriver du drømmen i det store felt og sætter datoen for den. Datoen starter på dagens dato, så som regel skal du ikke røre den.
 
-Der er også et mindre felt til dagresten, og et til din egen tolkning.
+Under skrivefeltet ligger tre små faner: Dagrest, hvor du kan skrive hvad der skete dagen før, Tolkning, til din egen forståelse af drømmen, og Tags, som er beskrevet lige nedenfor.
 
-Nedenunder er der ni afkrydsningsfelter, hvor du kan markere hvad slags drøm det var - om den fx var lucid, et mareridt, eller handlede om praksis. Tre af felterne (Kollektiv, Advarsel og Holografisk) er skjult som udgangspunkt; du kan gøre dem synlige under Indstillinger, hvis du har brug for dem.
+I venstre side er der ni afkrydsningsfelter, hvor du kan markere hvad slags drøm det var - om den fx var lucid, et mareridt, eller handlede om praksis. Tre af felterne (Kollektiv, Advarsel og Holografisk) er skjult som udgangspunkt; du kan gøre dem synlige under Indstillinger, hvis du har brug for dem.
 
 Er du i tvivl om hvad fx Lucid, Kollektiv eller Holografisk dækker, står der en forklaring under "Om appen".
 
@@ -37,13 +37,15 @@ I højre side finder du seks symbolkategorier, hvor du markerer hvilke symboler 
 
 Du kan selv tilføje og fjerne symboler i kategorierne, og du kan oprette op til tre helt nye kategorier - fx Kropssteder, Steder eller Lyde, alt efter hvad du har brug for at holde øje med.
 
-Nederst i højre side er der et felt der hedder Tags. Det er den lette udgave af en symbolkategori: du skriver bare et ord og trykker Enter, og så sidder tagget på drømmen. Mens du skriver, foreslår appen de tags du har brugt før, så du ikke ender med "hav", "havet" og "Hav" som tre forskellige ting. Tagget kan fjernes igen ved at trykke på det.
+Under fanen Tags er der et felt til frie tags. Det er den lette udgave af en symbolkategori: du skriver bare et ord og trykker Enter, og så sidder tagget på drømmen. Bliver det til mange tags, kan du rulle ned gennem dem i fanen. Mens du skriver, foreslår appen de tags du har brugt før, så du ikke ender med "hav", "havet" og "Hav" som tre forskellige ting. Tagget kan fjernes igen ved at trykke på det.
 
-Tags er tænkt til dét du opdager undervejs. Drømmer du pludselig meget om vand eller om bygninger, behøver du ikke beslutte dig for en hel ny kategori med færdige symboler - du sætter bare et tag på, og kan bagefter følge det i Cirkel, Graf og Tal præcis som et hvilket som helst andet symbol. Viser det sig at være et mønster der er værd at holde øje med, kan du altid oprette en rigtig kategori senere.
+Tags er tænkt til dét du opdager undervejs. Drømmer du pludselig meget om vand eller om bygninger, behøver du ikke beslutte dig for en hel ny kategori med færdige symboler - du sætter bare et tag på, og kan bagefter følge det i Tal, Cirkel og Filter præcis som et hvilket som helst andet symbol. Viser det sig at være et mønster der er værd at holde øje med, kan du altid oprette en rigtig kategori senere.
 
 Du behøver ikke tænke over store og små bogstaver eller mellemrum i enderne; appen retter det til. Skriver du en havelåge foran, som man gør på nettet, bliver den også fjernet. Tags må godt være på flere ord - "gamle huse" er ét tag.
 
 Tags kan rettes bagefter under Indstillinger, og dét er værd at kende: opdager du at du har skrevet både "hav" og "havet", kan du omdøbe det ene til det andet, og så lægges de to sammen.
+
+Redigerer du en drøm senere, har redigeringsvinduet den samme Tags-fane, så du også kan sætte tags på dine gamle drømme.
 
 Når drømmen er skrevet og symbolerne markeret, trykker du "Gem drømmen". Så nulstilles felterne, og drømmen er gemt.
 
@@ -87,6 +89,9 @@ Under "Tags" retter du de tags du har sat på drømmene. Vælg et tag i listen, 
 
 Under "Ændr symbolkategorinavn" kan du give en kategori et nyt navn. Det er nyttigt hvis du har fortrudt et navn du selv fandt på - men du kan også omdøbe de indbyggede. Interesserer dyr eller chakraer dig ikke, kan du give kategorien et andet navn og holde øje med noget helt andet i stedet.
 
+## Startdato
+Under "Indstil startdato" bestemmer du hvilken dato perioden som udgangspunkt begynder fra - både i Drømme-fanen og i analyserne. Til at begynde med er det datoen for din første drøm, og den står også ved siden af, så du kan se den. Har du fx drømme fra mange år tilbage, men mest er interesseret i de seneste, kan du sætte en senere dato og trykke "Gem dato". Så gælder den med det samme, og den bliver stående næste gang du åbner appen.
+
 ## Drømmekvaliteter
 Nederst til højre er der tre felter, der gør Kollektiv, Advarsel og Holografisk synlige eller skjulte i resten af appen. Slå dem til hvis du har kollektive drømme, advarselsdrømme eller holografiske drømme.
 
@@ -102,6 +107,8 @@ Sætter du flueben i "Synkroniser automatisk", sørger appen selv for det: den h
 
 "Log ud (behold lokale data)" logger dig ud uden at røre en eneste af dine drømme - de bliver liggende på maskinen præcis som før.
 
+Bruger du appen på flere maskiner, så hold dem på samme version. Er skyen senest skrevet af en nyere udgave af appen end den du sidder med, stopper synkroniseringen og beder dig opdatere først - ellers kunne en ældre udgave komme til at læse drømmene forkert.
+
 Læs mere om hvad der bliver gemt, og hvem der kan se det, under "Om appen".
 
 ---
@@ -116,7 +123,9 @@ Her ser du optællinger af alle symbolerne i den valgte periode. Som udgangspunk
 Nedenunder vises symbolkategorierne som lister, med de hyppigste symboler øverst.
 
 ## 6.2 Cirkel
-Her ser du et cirkeldiagram over én symbolkategori ad gangen, så du kan se hvordan den fordeler sig.
+Her ser du et cirkeldiagram over én symbolkategori ad gangen, så du kan se hvordan den fordeler sig. Tags kan også vælges her.
+
+Farver og Chakraer tegnes i deres egne farver - grøn er grøn, og hjertechakraet har sin farve - så du kan se fordelingen med det samme. De andre kategorier bruger almindelige diagramfarver.
 
 Perioden vælger du selv, på to måder. Enten sætter du Fra og Til som du plejer - det er "Interval" - eller du trykker på Uge, Måned eller År, og så sætter appen datoerne for dig: hele ugen fra mandag til søndag, hele måneden, hele året.
 
@@ -144,3 +153,5 @@ Idéen - fra Jung og Jes Bertelsen - er at drømme af og til hænger sammen i fo
 Har du så en drøm der føles som en afslutning, en genfødsel eller måske en død, kan du undersøge om der lå en drøm der lignede en begyndelse otte måneder tidligere.
 
 Det er præcis dét fanen kan. Til venstre er der en liste over de drømme du har markeret som en af de ni faser. Vælger du en af dem, kan du søge frem eller tilbage med en præcision på plus/minus 1 til 10 dage. Noget lettere end at bladre i et hæfte.
+
+Med "Kort" og "Langt" vælger du om listen kun viser begyndelsen af hver drøm eller hele teksten. Finder du en drøm du vil rette - fx give den en fase - kan du vælge den og trykke "Rediger drøm", så åbner den i det samme redigeringsvindue som i Drømme-fanen.

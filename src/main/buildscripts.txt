@@ -1,4 +1,4 @@
-Byg og pakning af Drømmeappen 2.0
+Byg og pakning af Drømmeappen 2.1
 =================================
 
 Vigtigt at vide, før du går i gang
@@ -31,17 +31,17 @@ installeren. Ren input-mappe fylder 620 KB, og MSI'en faldt fra ~200 MB til 42 M
 
   Windows:
     mkdir target\jpackage-input
-    copy target\Dreams-2.0.jar target\jpackage-input\
+    copy target\Dreams-2.1.jar target\jpackage-input\
     copy src\main\splash.png   target\jpackage-input\
 
   macOS:
     mkdir -p target/jpackage-input
-    cp target/Dreams-2.0.jar src/main/splash.png target/jpackage-input/
+    cp target/Dreams-2.1.jar src/main/splash.png target/jpackage-input/
 
 
 3a. Windows: MSI
 -----------------
-  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.0 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.1.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.1 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
 
 
 3b. macOS: DMG (køres på Sørens Mac)
@@ -50,7 +50,7 @@ Bemærk at splash-stien er absolut og peger ind i den installerede app-bundle. P
 arbejdsmappen ikke app-mappen, så den relative sti "app/splash.png" virker ikke her - derfor
 den fulde sti. Den forudsætter til gengæld, at appen installeres i /Applications.
 
-  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.0.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.0 --vendor "ITfix" --icon src/main/resources/moona.icns --java-options "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.1.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.1 --vendor "ITfix" --icon src/main/resources/moona.icns --java-options "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
 
 Arkitektur (Silicon vs. Intel): jpackage har ingen --arch-mulighed i JDK 21 - den gamle
 Intel-linje med "--arch x64" er altså ikke gyldig længere. Arkitekturen bestemmes af den
