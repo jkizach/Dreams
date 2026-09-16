@@ -40,10 +40,17 @@ public class DreamApp extends Application {
         stage.getIcons().add(icon);
         stage.show();
 
-        // Test af splash-screen lukning!
-        SplashScreen splash = SplashScreen.getSplashScreen();
-        if (splash != null) {
-            splash.close();
+        // Splashen er Windows-only (se buildscripts.txt 3a/3b). På macOS skal vi holde os helt fra
+        // kaldet her: getSplashScreen() loader libsplashscreen og hiver AWT ind på FX-tråden, også
+        // når der slet ikke er givet -splash. Og AWT og JavaFX kan ikke begge være herre over
+        // hovedtråden og NSApplication på macOS - taber Glass den kamp, dør nestede event-loops,
+        // dvs. hvert eneste showAndWait-popup i appen. På Windows er der ingen konflikt, og dér
+        // skal splashen stadig lukkes, nu hvor hovedvinduet er oppe.
+        if (!System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("mac")) {
+            SplashScreen splash = SplashScreen.getSplashScreen();
+            if (splash != null) {
+                splash.close();
+            }
         }
     }
 

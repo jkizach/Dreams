@@ -34,9 +34,9 @@ installeren. Ren input-mappe fylder 620 KB, og MSI'en faldt fra ~200 MB til 42 M
     copy target\Dreams-2.1.jar target\jpackage-input\
     copy src\main\splash.png   target\jpackage-input\
 
-  macOS:
+  macOS: (ingen splash - se 3b)
     mkdir -p target/jpackage-input
-    cp target/Dreams-2.1.jar src/main/splash.png target/jpackage-input/
+    cp target/Dreams-2.1.jar target/jpackage-input/
 
 
 3a. Windows: MSI
@@ -46,11 +46,21 @@ installeren. Ren input-mappe fylder 620 KB, og MSI'en faldt fra ~200 MB til 42 M
 
 3b. macOS: DMG (køres på Sørens Mac)
 -------------------------------------
-Bemærk at splash-stien er absolut og peger ind i den installerede app-bundle. På macOS er
-arbejdsmappen ikke app-mappen, så den relative sti "app/splash.png" virker ikke her - derfor
-den fulde sti. Den forudsætter til gengæld, at appen installeres i /Applications.
+INGEN splash på macOS - og det er med vilje. -splash hører til AWT (java.desktop), ikke JavaFX,
+og på macOS kan kun ÉN af de to være herre over hovedtråden og NSApplication. Med -splash når
+launcheren at åbne et Cocoa-vindue og starte AppKit FØR main() overhovedet kører, og JavaFX'
+Glass-toolkit må så overtage en NSApplication, den ikke selv har startet. Hovedvinduet klarer
+sig, men showAndWait() kører et NESTET event-loop i den run loop, og det er præcis dét, der
+ikke virker bagefter. Alle appens popups er modale og bruger showAndWait - Rediger drøm,
+Sky-synkronisering, Hjælp-vinduerne og opdaterings-dialogerne - så symptomet er "popups virker
+ikke på Mac", selvom appen ellers starter helt normalt. På Windows er der ingen konflikt, og
+dér beholdes splashen (3a).
 
-  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.1.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.1 --vendor "ITfix" --icon src/main/resources/moona.icns --java-options "-splash:/Applications/Drømmeappen.app/Contents/app/splash.png"
+Hænger sammen med værnet i DreamApp.start(), som springer SplashScreen-kaldet over på macOS.
+Det kald trækker libsplashscreen og AWT ind på FX-tråden helt af sig selv - også når der slet
+ikke er givet -splash - så det er ikke nok kun at fjerne flaget her.
+
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.1.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.1 --vendor "ITfix" --icon src/main/resources/moona.icns
 
 Arkitektur (Silicon vs. Intel): jpackage har ingen --arch-mulighed i JDK 21 - den gamle
 Intel-linje med "--arch x64" er altså ikke gyldig længere. Arkitekturen bestemmes af den
