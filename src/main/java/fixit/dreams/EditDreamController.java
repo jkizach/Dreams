@@ -41,11 +41,19 @@ public class EditDreamController {
 
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            popupStage.setScene(scene);
 
+            // Temaet SKAL ligge på scenen, ikke bare på roden. Begge dele farver ganske vist
+            // vinduet selv, men en javafx.stage.Popup har sin egen Scene og arver ikke noget af
+            // den: PopupWindow.showImpl() tager ved hvert show() en kopi af netop
+            // ownerScene.getStylesheets() - scenens liste, ikke rodens. Lå temaet kun på roden,
+            // stod tagfeltets forslagsliste (se Tagfelt) med modenas hvide baggrund og System
+            // 12px her i Rediger drøm, mens den var pæn under Ny drøm, hvor DreamApp lægger
+            // temaet på scenen.
             Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
-            root.getStylesheets().clear();
-            root.getStylesheets().add(cssPath.toFile().toURI().toString());
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(cssPath.toFile().toURI().toString());
             root.applyCss();
 
             popupStage.setTitle("Rediger drøm");
