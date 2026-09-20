@@ -30,6 +30,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class HovedmenuController {
@@ -418,6 +420,62 @@ public class HovedmenuController {
             fromDatePicker.setValue(userService.getStartDate());
             updateForsteDromLabel();
         }
+    }
+
+    /**
+     * Gennemgår drømmeteksten for symboler brugeren allerede har i registret, og sætter
+     * fluebenene på det hun godkender. Intet sker uden om dialogen - se Symbolforslagsdialog.
+     *
+     * Kun i Ny drøm. I Rediger drøm står symbolerne der typisk allerede, og en gennemgang der
+     * ville sætte flueben oven i et færdigt valg er mere til besvær end til hjælp.
+     */
+    @FXML
+    private void handleFindSymboler() {
+        String tekst = skriveFelt.getText();
+        if (tekst == null || tekst.isBlank()) {
+            visSymbolbesked("Der er ingen drømmetekst at kigge i endnu.", null);
+            return;
+        }
+
+        // Kategori-id til symboler, i kategoriernes egen rækkefølge. Tags springes over af
+        // samme grund som i loadCCBs: de har intet CheckComboBox at sætte et flueben i.
+        LinkedHashMap<String, Collection<String>> symbolerPrKategori = new LinkedHashMap<>();
+        LinkedHashMap<String, String> kategoriNavne = new LinkedHashMap<>();
+        LinkedHashMap<String, Category> kategoriPrId = new LinkedHashMap<>();
+        for (Category c : userService.getCats()) {
+            if (Tag.ID.equals(c.getId())) {
+                continue;
+            }
+            symbolerPrKategori.put(c.getId(), c.getSymbols());
+            kategoriNavne.put(c.getId(), c.getName());
+            kategoriPrId.put(c.getId(), c);
+        }
+
+        Symbolgenkendelse.Resultat forslag = Symbolgenkendelse.find(tekst, symbolerPrKategori);
+        if (forslag.erTom()) {
+            visSymbolbesked("Ingen af dine symboler blev fundet i teksten.",
+                    "Symbolerne findes som de står i dine kategorier, også bøjet - \"hunden\" "
+                            + "finder hund. Står ordet slet ikke i teksten, skal symbolet sættes i hånden.");
+            return;
+        }
+
+        List<Symbolgenkendelse.Fund> godkendte = Symbolforslagsdialog.vis(
+                forslag, kategoriNavne, skriveFelt.getScene().getWindow());
+
+        for (Symbolgenkendelse.Fund fund : godkendte) {
+            Category kategori = kategoriPrId.get(fund.kategoriId());
+            if (kategori != null) {
+                kategori.afkrydsIDreamCCBs(fund.symbol());
+            }
+        }
+    }
+
+    private void visSymbolbesked(String overskrift, String uddybning) {
+        Alert besked = new Alert(Alert.AlertType.INFORMATION);
+        besked.setTitle("Symboler i teksten");
+        besked.setHeaderText(overskrift);
+        besked.setContentText(uddybning);
+        besked.showAndWait();
     }
 
     // Efter et pull fra skyen. Drømmene selv ligger allerede i den kørende User, men to ting

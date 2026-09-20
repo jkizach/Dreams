@@ -179,6 +179,21 @@ public class Category {
         }
     }
 
+    /**
+     * Sætter fluebenet ved ét symbol i drømmevinduets CheckComboBox - modstykket til
+     * resetDreamCCBs. Bruges af symbolgenkendelsen i Ny drøm, som kun kender kategori-id og
+     * symbolnavn og ikke selve kontrollen: boksene registreres her via addDreamCCB og ligger
+     * ikke i noget map i HovedmenuController.
+     *
+     * check() på et symbol der ikke står i boksen gør ingenting, og det er med vilje ikke
+     * noget der tjekkes for: symbolerne kommer fra kategoriens egen liste.
+     */
+    public void afkrydsIDreamCCBs(String symbol) {
+        for (CheckComboBox<String> combo : ccbDream) {
+            combo.getCheckModel().check(symbol);
+        }
+    }
+
     public CategoryDTO getccbDreamSelections() {
         CategoryDTO selected = new CategoryDTO();
         for (CheckComboBox<String> combo : ccbDream) {

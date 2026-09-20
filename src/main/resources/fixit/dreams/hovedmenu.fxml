@@ -120,6 +120,11 @@
                               <VBox fx:id="vBoxSymboler" prefWidth="280.0" spacing="10.0">
                                  <children>
                                     <Label text="Symboler" />
+                                    <Button fx:id="findSymbolerKnap" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleFindSymboler" text="Find symboler i teksten">
+                                       <tooltip>
+                                          <Tooltip text="Gennemgår drømmeteksten og foreslår de symboler den finder. Du godkender selv, før der bliver sat flueben." wrapText="true" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
                               </VBox>
                            </children>

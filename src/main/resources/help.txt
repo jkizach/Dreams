@@ -37,6 +37,18 @@ I højre side finder du seks symbolkategorier, hvor du markerer hvilke symboler 
 
 Du kan selv tilføje og fjerne symboler i kategorierne, og du kan oprette op til tre helt nye kategorier - fx Kropssteder, Steder eller Lyde, alt efter hvad du har brug for at holde øje med.
 
+Over kategorierne sidder knappen "Find symboler i teksten". Den læser det du har skrevet i drømmefeltet og foreslår de symboler den genkender, så du slipper for at bladre alle kategorierne igennem efter noget du allerede har skrevet.
+
+Der bliver aldrig sat et flueben uden at du har set det først. Knappen åbner en liste over det fundne, hvor alt er krydset af på forhånd; fjern fluebenet ved det du ikke vil have med, og tryk "Sæt flueben".
+
+Symbolerne genkendes også når de er bøjet - skriver du "hunden" eller "to hunde", finder den hund. Til gengæld gætter den ikke: står ordet slet ikke i teksten, kommer symbolet heller ikke med. Drømmens stemning, kropssteder og chakraer skal du altså stadig sætte selv.
+
+Nederst i listen spørger appen om det den ikke kan afgøre. Har du både "Anna", "Anna Fasting" og "Anna Hage" blandt dine personer, og står der bare "Anna" i drømmen, kan den umuligt vide hvem du mener - så får du valget, med "Ingen af dem" som udgangspunkt. Det samme sker hvis det samme navn findes i to kategorier.
+
+Et enkelt ord kan snyde den. Skriver du "jeg får en gave", kan den finde dyret får, for ordet står der jo. Det er netop derfor listen skal godkendes - et forkert flueben ville ellers følge med ind i din statistik.
+
+Knappen findes kun under Ny drøm. Redigerer du en gammel drøm, er symbolerne som regel sat i forvejen, og en gennemgang oven i et færdigt valg ville være mere til besvær end til hjælp.
+
 Under fanen Tags er der et felt til frie tags. Det er den lette udgave af en symbolkategori: du skriver bare et ord og trykker Enter, og så sidder tagget på drømmen. Bliver det til mange tags, kan du rulle ned gennem dem i fanen. Mens du skriver, foreslår appen de tags du har brugt før, så du ikke ender med "hav", "havet" og "Hav" som tre forskellige ting. Tagget kan fjernes igen ved at trykke på det.
 
 Tags er tænkt til dét du opdager undervejs. Drømmer du pludselig meget om vand eller om bygninger, behøver du ikke beslutte dig for en hel ny kategori med færdige symboler - du sætter bare et tag på, og kan bagefter følge det i Tal, Cirkel og Filter præcis som et hvilket som helst andet symbol. Viser det sig at være et mønster der er værd at holde øje med, kan du altid oprette en rigtig kategori senere.

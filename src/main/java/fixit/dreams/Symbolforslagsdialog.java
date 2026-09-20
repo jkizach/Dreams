@@ -1,0 +1,206 @@
+package fixit.dreams;
+
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Gennemgangen af hvad Symbolgenkendelse fandt. Intet flueben bliver sat før brugeren har
+ * sagt god for det her - det er hele grunden til at dialogen findes.
+ *
+ * De sikre fund står som afkrydsningsfelter, alle sat fra start: de er fundet præcist i
+ * teksten, så det normale svar er ja. De tvetydige står som radioknapper med "Ingen af dem"
+ * valgt fra start: dér ved appen netop ikke hvad der er rigtigt, og tavshed skal give det
+ * uskadelige svar.
+ */
+final class Symbolforslagsdialog {
+
+    private Symbolforslagsdialog() {}
+
+    /**
+     * Viser dialogen og venter. Returnerer de symboler brugeren godkendte - tom liste hvis der
+     * blev annulleret, så kalderen ikke skal skelne.
+     *
+     * @param kategoriNavne kategori-id til det navn brugeren ser. Symbolgenkendelse arbejder på
+     *                      id'er, for et navn kan brugeren nå at ændre (se CategoryDTO).
+     */
+    static List<Symbolgenkendelse.Fund> vis(Symbolgenkendelse.Resultat forslag,
+                                            Map<String, String> kategoriNavne,
+                                            Window ejer) {
+        return byg(forslag, kategoriNavne, ejer).showAndWait().orElse(List.of());
+    }
+
+    /**
+     * Bygger dialogen uden at vise den. Skilt fra vis() fordi showAndWait() blokerer: sådan her
+     * kan selve opbygningen - grupperingen, radioknapperne og resultatomregneren - efterprøves
+     * uden at noget skal klikkes.
+     */
+    static Dialog<List<Symbolgenkendelse.Fund>> byg(Symbolgenkendelse.Resultat forslag,
+                                                    Map<String, String> kategoriNavne,
+                                                    Window ejer) {
+        Dialog<List<Symbolgenkendelse.Fund>> dialog = new Dialog<>();
+        dialog.setTitle("Symboler i teksten");
+        dialog.setHeaderText(overskrift(forslag));
+        if (ejer != null) {
+            dialog.initOwner(ejer);
+        }
+
+        VBox indhold = new VBox(10);
+        indhold.setStyle("-fx-padding: 10;");
+
+        LinkedHashMap<CheckBox, Symbolgenkendelse.Fund> afkrydsninger = new LinkedHashMap<>();
+        List<ToggleGroup> grupper = new ArrayList<>();
+
+        if (!forslag.sikre().isEmpty()) {
+            indhold.getChildren().add(fed("Fundet i teksten"));
+
+            // sikre er sorteret på kategori-id, så ens kategorier står i forlængelse af hinanden
+            // og overskriften kan sættes når id'et skifter.
+            String forrigeKategori = null;
+            for (Symbolgenkendelse.Fund fund : forslag.sikre()) {
+                if (!fund.kategoriId().equals(forrigeKategori)) {
+                    Label kategori = new Label(navn(kategoriNavne, fund.kategoriId()));
+                    kategori.setStyle("-fx-opacity: 0.7;");
+                    VBox.setMargin(kategori, new javafx.geometry.Insets(5, 0, 0, 0));
+                    indhold.getChildren().add(kategori);
+                    forrigeKategori = fund.kategoriId();
+                }
+                CheckBox felt = new CheckBox(fund.symbol());
+                felt.setSelected(true);
+                VBox.setMargin(felt, new javafx.geometry.Insets(0, 0, 0, 15));
+                afkrydsninger.put(felt, fund);
+                indhold.getChildren().add(felt);
+            }
+        }
+
+        if (!forslag.tvetydige().isEmpty()) {
+            if (!forslag.sikre().isEmpty()) {
+                indhold.getChildren().add(new Separator());
+            }
+            indhold.getChildren().add(fed("Her kan appen ikke vide hvad du mener"));
+
+            for (Symbolgenkendelse.Tvetydighed tvivl : forslag.tvetydige()) {
+                Label spoergsmaal = new Label("Teksten siger “" + tvivl.ord() + "” - hvad menes der?");
+                spoergsmaal.setWrapText(true);
+                VBox.setMargin(spoergsmaal, new javafx.geometry.Insets(5, 0, 0, 0));
+                indhold.getChildren().add(spoergsmaal);
+
+                ToggleGroup gruppe = new ToggleGroup();
+                grupper.add(gruppe);
+                for (Symbolgenkendelse.Fund kandidat : tvivl.kandidater()) {
+                    RadioButton valg = new RadioButton(
+                            kandidat.symbol() + "  (" + navn(kategoriNavne, kandidat.kategoriId()) + ")");
+                    valg.setToggleGroup(gruppe);
+                    valg.setUserData(kandidat);
+                    VBox.setMargin(valg, new javafx.geometry.Insets(0, 0, 0, 15));
+                    indhold.getChildren().add(valg);
+                }
+                RadioButton ingen = new RadioButton("Ingen af dem");
+                ingen.setToggleGroup(gruppe);
+                ingen.setSelected(true); // tavshed må aldrig sætte noget
+                VBox.setMargin(ingen, new javafx.geometry.Insets(0, 0, 0, 15));
+                indhold.getChildren().add(ingen);
+            }
+        }
+
+        // En lang drøm kan sagtens give tredive fund, og dialogen må ikke blive højere end skærmen.
+        ScrollPane rulle = new ScrollPane(indhold);
+        rulle.setFitToWidth(true);
+        rulle.setPrefViewportHeight(400);
+        rulle.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+        dialog.getDialogPane().setContent(rulle);
+        dialog.getDialogPane().setPrefWidth(460);
+
+        ButtonType saetBtn = new ButtonType("Sæt flueben", ButtonBar.ButtonData.OK_DONE);
+        ButtonType annullerBtn = new ButtonType("Annuller", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().setAll(saetBtn, annullerBtn);
+
+        klaedPaa(dialog);
+
+        dialog.setResultConverter(knap -> {
+            if (knap != saetBtn) {
+                return List.of();
+            }
+            List<Symbolgenkendelse.Fund> valgte = new ArrayList<>();
+            for (Map.Entry<CheckBox, Symbolgenkendelse.Fund> post : afkrydsninger.entrySet()) {
+                if (post.getKey().isSelected()) {
+                    valgte.add(post.getValue());
+                }
+            }
+            for (ToggleGroup gruppe : grupper) {
+                Toggle valgt = gruppe.getSelectedToggle();
+                if (valgt != null && valgt.getUserData() instanceof Symbolgenkendelse.Fund fund) {
+                    valgte.add(fund);
+                }
+            }
+            return valgte;
+        });
+
+        return dialog;
+    }
+
+    private static String overskrift(Symbolgenkendelse.Resultat forslag) {
+        int sikre = forslag.sikre().size();
+        int tvivl = forslag.tvetydige().size();
+        if (tvivl == 0) {
+            return sikre == 1 ? "Ét symbol fundet i drømmeteksten."
+                    : sikre + " symboler fundet i drømmeteksten.";
+        }
+        if (sikre == 0) {
+            return tvivl == 1 ? "Ét ord i teksten kan betyde flere symboler."
+                    : tvivl + " ord i teksten kan betyde flere symboler.";
+        }
+        return sikre + " symboler fundet, og "
+                + (tvivl == 1 ? "ét ord" : tvivl + " ord") + " appen ikke kan afgøre.";
+    }
+
+    /**
+     * Temaet på dialogen. Ingen Alert i appen er temasat i dag, så uden det her ville vinduet
+     * stå med modenas hvide baggrund midt i et mørkt tema. Stilarket lægges på DialogPane'et,
+     * som er det nærmeste denne slags vindue har til en scene vi selv ejer.
+     */
+    private static void klaedPaa(Dialog<?> dialog) {
+        try {
+            Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
+            dialog.getDialogPane().getStylesheets().add(cssPath.toFile().toURI().toString());
+        } catch (RuntimeException e) {
+            // Et manglende stilark må ikke koste brugeren dialogen - så står den bare umalet.
+            e.printStackTrace();
+        }
+        try {
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image(Symbolforslagsdialog.class.getResourceAsStream("/moona.png")));
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Label fed(String tekst) {
+        Label label = new Label(tekst);
+        label.setStyle("-fx-font-weight: bold;");
+        return label;
+    }
+
+    private static String navn(Map<String, String> kategoriNavne, String kategoriId) {
+        String navn = kategoriNavne.get(kategoriId);
+        return (navn != null && !navn.isBlank()) ? navn : kategoriId;
+    }
+}
