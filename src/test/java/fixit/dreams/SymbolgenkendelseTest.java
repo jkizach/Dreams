@@ -219,4 +219,209 @@ class SymbolgenkendelseTest {
         assertEquals(Symbolgenkendelse.find(tekst, reg).sikre(),
                 Symbolgenkendelse.find(tekst, reg).sikre());
     }
+
+    // ---- Nye navne: personer der står i teksten, men ikke i registret ----
+
+    private List<String> nyeNavne(String tekst, Map<String, Collection<String>> reg) {
+        List<String> ud = new java.util.ArrayList<>();
+        for (Symbolgenkendelse.Fund f : Symbolgenkendelse.find(tekst, reg, "personer").nyeNavne()) {
+            assertEquals("personer", f.kategoriId());
+            ud.add(f.symbol());
+        }
+        return ud;
+    }
+
+    @Test
+    void et_fuldt_navn_midt_i_saetningen_foreslaas() {
+        assertEquals(List.of("Atta Bahati"),
+                nyeNavne("Jeg mødte Atta Bahati på stationen.", register("personer", List.of())));
+    }
+
+    @Test
+    void et_fuldt_navn_foerst_i_saetningen_foreslaas_ogsaa() {
+        assertEquals(List.of("Atta Bahati"),
+                nyeNavne("Atta Bahati stod i døren.", register("personer", List.of())));
+    }
+
+    @Test
+    void et_enkelt_ord_foerst_i_saetningen_er_ikke_et_navn() {
+        // "Huset" står med stort fordi sætningen begynder - det siger intet om ordet.
+        assertEquals(List.of(), nyeNavne("Huset var tomt. Vi gik ind.", register("personer", List.of())));
+    }
+
+    @Test
+    void indledende_smaaord_skraelles_af_navnet() {
+        Map<String, Collection<String>> reg = register("personer", List.of());
+        assertEquals(List.of("Atta"), nyeNavne("Pludselig Atta kom ind.", reg));
+        assertEquals(List.of("Mette"), nyeNavne("Så Mette mig.", reg));
+    }
+
+    @Test
+    void ord_der_ogsaa_staar_med_lille_er_ikke_navne() {
+        assertEquals(List.of(), nyeNavne("Jeg drømte om en hest. Hest efter hest løb forbi, og så Hest igen.",
+                register("personer", List.of())));
+    }
+
+    @Test
+    void kendte_personer_foreslaas_ikke_igen() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Peter", "Atta Bahati"));
+        assertEquals(List.of(), nyeNavne("Jeg så Peter og Atta Bahati.", reg));
+        // Heller ikke bøjet, og heller ikke når en kendt person står med efternavn på.
+        assertEquals(List.of(), nyeNavne("Det var Peters bil.", reg));
+        assertEquals(List.of(), nyeNavne("Jeg så Peter Pan.", reg));
+    }
+
+    @Test
+    void et_symbol_i_en_anden_kategori_er_ikke_et_nyt_navn() {
+        assertEquals(List.of(), nyeNavne("Vi var i Paris.", register("personer", List.of(), "steder", List.of("Paris"))));
+    }
+
+    @Test
+    void et_fuldt_navn_fjerner_spoergsmaalet_om_fornavnet() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Anna Hansen", "Anna Berg"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Jeg talte med Anna Smith.", reg, "personer");
+        assertEquals(List.of("Anna Smith"), r.nyeNavne().stream().map(Symbolgenkendelse.Fund::symbol).toList());
+        assertTrue(r.tvetydige().isEmpty(), "Anna Smith er hverken Anna Hansen eller Anna Berg");
+    }
+
+    @Test
+    void et_fornavn_registret_gaetter_paa_foreslaas_ikke_som_nyt() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Anna Hansen", "Anna Berg"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Jeg talte med Anna.", reg, "personer");
+        assertTrue(r.nyeNavne().isEmpty());
+        assertEquals(1, r.tvetydige().size());
+    }
+
+    @Test
+    void fornavn_alene_og_genitiv_fylder_ikke_ved_siden_af_det_fulde_navn() {
+        assertEquals(List.of("Atta Bahati"), nyeNavne(
+                "Jeg mødte Atta Bahati. Bagefter kørte jeg med Atta i Attas bil.",
+                register("personer", List.of())));
+    }
+
+    @Test
+    void komma_og_replikker_bryder_navnet() {
+        assertEquals(List.of("Anna", "Bo"), nyeNavne("Jeg så Anna, Bo og en hund.", register("personer", List.of())));
+        assertEquals(List.of("Bo"), nyeNavne("Hun sagde: \"Kom her\" til Bo.", register("personer", List.of())));
+    }
+
+    @Test
+    void raab_med_store_bogstaver_er_ikke_navne() {
+        assertEquals(List.of(), nyeNavne("Jeg råbte NEJ og STOP.", register("personer", List.of())));
+    }
+
+    @Test
+    void navne_med_bindestreg_holdes_samlet() {
+        assertEquals(List.of("Anne-Marie"), nyeNavne("Jeg så Anne-Marie.", register("personer", List.of())));
+    }
+
+    @Test
+    void uden_personkategori_foreslaas_ingen_nye_navne() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("hund"));
+        assertTrue(Symbolgenkendelse.find("Jeg så Atta Bahati.", reg, "personer").nyeNavne().isEmpty());
+        assertTrue(Symbolgenkendelse.find("Jeg så Atta Bahati.", reg).nyeNavne().isEmpty());
+    }
+
+    @Test
+    void kun_nye_navne_er_ikke_et_tomt_resultat() {
+        assertFalse(Symbolgenkendelse.find("Jeg så Atta.", register("personer", List.of()), "personer").erTom());
+    }
+
+    @Test
+    void genitiv_af_en_kendt_person_er_ikke_et_nyt_navn() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Anna", "Ib", "Anna Hage"));
+        assertEquals(List.of(), nyeNavne("Vi var i Annas have.", reg));
+        assertEquals(List.of(), nyeNavne("Vi kørte i Ibs bil.", reg));
+        assertEquals(List.of(), nyeNavne("Fru Hage var der.", reg), "efternavnet på en kendt person");
+    }
+
+    @Test
+    void parentesen_i_et_symbol_er_brugerens_egen_og_staar_ikke_i_teksten() {
+        assertEquals(List.of(), nyeNavne("Jeg så Allan igen.", register("personer", List.of("Allan (skolen)"))));
+    }
+
+    @Test
+    void forkortelser_og_sammensaetninger_er_ikke_navne() {
+        Map<String, Collection<String>> reg = register("personer", List.of());
+        assertEquals(List.of(), nyeNavne("Vi boede i Nr. Snede.", reg).stream().filter(n -> n.startsWith("Nr")).toList());
+        assertEquals(List.of(), nyeNavne("Jeg havde Ecco-sko og en DNA-strimmel.", reg));
+    }
+
+    @Test
+    void steder_kendt_paa_endelsen_eller_fra_listen_er_ikke_navne() {
+        Map<String, Collection<String>> reg = register("personer", List.of());
+        assertEquals(List.of(), nyeNavne("Vi gik ned ad Solbakkevej mod Porthuset.", reg));
+        assertEquals(List.of(), nyeNavne("Vi rejste fra Danmark til New York.", reg));
+    }
+
+    // ---- Homografer: navneord der også er et udsagnsord ----
+
+    @Test
+    void faar_som_udsagnsord_er_ikke_dyret() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("får"));
+        assertTrue(sikreSymboler(Symbolgenkendelse.find("Jeg får en gave af min mor.", reg)).isEmpty());
+        assertTrue(sikreSymboler(Symbolgenkendelse.find("Hun får lov til at gå.", reg)).isEmpty());
+    }
+
+    @Test
+    void faar_med_kendeord_talord_eller_tillaegsord_foran_er_dyret() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("får"));
+        assertEquals(Set.of("får"), sikreSymboler(Symbolgenkendelse.find("Der stod et får på marken.", reg)));
+        assertEquals(Set.of("får"), sikreSymboler(Symbolgenkendelse.find("Der stod et stort får.", reg)));
+        assertEquals(Set.of("får"), sikreSymboler(Symbolgenkendelse.find("Jeg så to får.", reg)));
+    }
+
+    @Test
+    void entydige_former_findes_altid() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("får"), "ting", List.of("tog", "ske"));
+        assertEquals(Set.of("får"), sikreSymboler(Symbolgenkendelse.find("Fårene græssede.", reg)));
+        assertEquals(Set.of("får"), sikreSymboler(Symbolgenkendelse.find("Jeg klappede fåret.", reg)));
+        assertEquals(Set.of("tog"), sikreSymboler(Symbolgenkendelse.find("Jeg tog toget hjem.", reg)));
+        assertEquals(Set.of("ske"), sikreSymboler(Symbolgenkendelse.find("Han gav mig skeen.", reg)));
+    }
+
+    @Test
+    void tog_og_ske_som_udsagnsord_findes_ikke() {
+        Map<String, Collection<String>> reg = register("ting", List.of("tog", "ske"));
+        assertTrue(sikreSymboler(Symbolgenkendelse.find("Jeg tog hjem, og det sker tit.", reg)).isEmpty());
+        assertEquals(Set.of("tog"), sikreSymboler(Symbolgenkendelse.find("Jeg tog et tog.", reg)));
+    }
+
+    // ---- Ikke-navne: et nej huskes ----
+
+    @Test
+    void et_afvist_navn_foreslaas_ikke_igen() {
+        Map<String, Collection<String>> reg = register("personer", List.of());
+        Set<String> ikkeNavne = Set.of(Symbolgenkendelse.ikkeNavnNoegle("Lovns"),
+                Symbolgenkendelse.ikkeNavnNoegle("Ringenes  Herre"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find(
+                "Vi var i Lovns og så Ringenes Herre med Atta.", reg, "personer", ikkeNavne);
+        assertEquals(List.of("Atta"), r.nyeNavne().stream().map(Symbolgenkendelse.Fund::symbol).toList());
+    }
+
+    @Test
+    void det_og_de_lige_foran_er_grundled_ikke_kendeord() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("får"), "ting", List.of("tog"));
+        assertTrue(sikreSymboler(Symbolgenkendelse.find("Det tog lang tid, og de får lov.", reg)).isEmpty());
+        assertTrue(sikreSymboler(Symbolgenkendelse.find("Alle får en gave.", reg)).isEmpty());
+        assertEquals(Set.of("får"), sikreSymboler(Symbolgenkendelse.find("Jeg så de hvide får.", reg)));
+        assertEquals(Set.of("tog"), sikreSymboler(Symbolgenkendelse.find("Vi tog det store tog.", reg)));
+    }
+
+    @Test
+    void et_navneord_imellem_goer_ikke_udsagnsordet_til_et_dyr() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("får"));
+        assertTrue(sikreSymboler(Symbolgenkendelse.find("En mand får en gave.", reg)).isEmpty());
+    }
+
+    @Test
+    void et_afvist_navn_brugeren_siden_selv_har_oprettet_findes_som_kendt_person() {
+        // Listen over ikke-navne gælder kun forslag til NYE navne. Står navnet i registret,
+        // er det et almindeligt symbol og findes som alle andre - afkrydset fra start.
+        Map<String, Collection<String>> reg = register("personer", List.of("Gerd"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find(
+                "Jeg talte med Gerd.", reg, "personer", Set.of(Symbolgenkendelse.ikkeNavnNoegle("Gerd")));
+        assertEquals(Set.of("Gerd"), sikreSymboler(r));
+        assertTrue(r.nyeNavne().isEmpty());
+    }
 }

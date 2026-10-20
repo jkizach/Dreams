@@ -27,6 +27,7 @@ public class IOutils {
     private static final Path FILE_PATH_DELETED = AppPaths.APP_DATA_PATH.resolve("deleted.json");
     private static final Path FILE_PATH_META = AppPaths.APP_DATA_PATH.resolve("meta.json");
     private static final Path FILE_PATH_MACHINE = AppPaths.APP_DATA_PATH.resolve("machine.json");
+    private static final Path FILE_PATH_IKKENAVNE = AppPaths.APP_DATA_PATH.resolve("ikkenavne.json");
 
     static {
         objectMapper.registerModule(new JavaTimeModule()); // Registrér JavaTimeModule
@@ -339,6 +340,32 @@ public class IOutils {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    // Navne symbolgenkendelsen har foreslået til Personer, og som brugeren sagde nej til - så de
+    // ikke dukker op igen ved hver drøm (se Symbolgenkendelse.find). Bor i sin egen fil og
+    // følger ikke med i cloud-syncen: det er en lille bekvemmelighed, og den er ikke en
+    // skemaændring værd. Mangler filen eller er den ødelagt, er listen bare tom.
+    public static TreeSet<String> loadIkkeNavne() {
+        try {
+            File file = FILE_PATH_IKKENAVNE.toFile();
+            if (!file.exists()) {
+                return new TreeSet<>();
+            }
+            return new TreeSet<>(objectMapper.readValue(file, new TypeReference<List<String>>() {}));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new TreeSet<>();
+        }
+    }
+
+    public static void saveIkkeNavne(Set<String> ikkeNavne) {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(FILE_PATH_IKKENAVNE.toFile(), new ArrayList<>(new TreeSet<>(ikkeNavne)));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -5,7 +5,9 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 public class Category {
@@ -20,6 +22,7 @@ public class Category {
     public static final String ID_CHAKRAER = Kategoriid.forIndbygget("Chakraer");
     public static final String ID_FORLOEB = Kategoriid.forIndbygget("Forløb");
     public static final String ID_FARVER = Kategoriid.forIndbygget("Farver");
+    public static final String ID_PERSONER = Kategoriid.forIndbygget("Personer");
 
     private static final List<String> ID_ER_MED_FAST_RAEKKEFOELGE =
             List.of(ID_CHAKRAER, ID_FORLOEB, ID_KVALITETER);
@@ -192,6 +195,26 @@ public class Category {
         for (CheckComboBox<String> combo : ccbDream) {
             combo.getCheckModel().check(symbol);
         }
+    }
+
+    /**
+     * Tilføjer symboler uden at fluebenene i boksene går tabt. updateAllCCBs tømmer og fylder
+     * hver boks forfra, og det ville her slette det brugeren allerede havde krydset af i Ny drøm
+     * - og valget i filtret - bare fordi symbolgenkendelsen oprettede et nyt navn.
+     */
+    public void addSymbolsBevarFlueben(Collection<String> nye) {
+        Map<CheckComboBox<String>, List<String>> flueben = new IdentityHashMap<>();
+        for (CheckComboBox<String> combo : ccbDream) {
+            flueben.put(combo, new ArrayList<>(combo.getCheckModel().getCheckedItems()));
+        }
+        for (CheckComboBox<String> combo : ccbFilter) {
+            flueben.put(combo, new ArrayList<>(combo.getCheckModel().getCheckedItems()));
+        }
+        for (String symbol : nye) {
+            addSymbol(symbol);
+        }
+        updateAllCCBs();
+        flueben.forEach((combo, valgte) -> valgte.forEach(combo.getCheckModel()::check));
     }
 
     public CategoryDTO getccbDreamSelections() {

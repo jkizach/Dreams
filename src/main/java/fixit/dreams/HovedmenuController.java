@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
 
 public class HovedmenuController {
     private UserService userService;
@@ -451,7 +453,8 @@ public class HovedmenuController {
             kategoriPrId.put(c.getId(), c);
         }
 
-        Symbolgenkendelse.Resultat forslag = Symbolgenkendelse.find(tekst, symbolerPrKategori);
+        Symbolgenkendelse.Resultat forslag =
+                Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, IOutils.loadIkkeNavne());
         if (forslag.erTom()) {
             visSymbolbesked("Ingen af dine symboler blev fundet i teksten.",
                     "Symbolerne findes som de står i dine kategorier, også bøjet - \"hunden\" "
@@ -459,8 +462,36 @@ public class HovedmenuController {
             return;
         }
 
-        List<Symbolgenkendelse.Fund> godkendte = Symbolforslagsdialog.vis(
+        Optional<List<Symbolgenkendelse.Fund>> svar = Symbolforslagsdialog.vis(
                 forslag, kategoriNavne, skriveFelt.getScene().getWindow());
+        if (svar.isEmpty()) {
+            return; // annulleret - intet sat, og intet navn afvist
+        }
+        List<Symbolgenkendelse.Fund> godkendte = svar.get();
+
+        // Nye navne brugeren lod stå uden flueben, er et nej: de skal ikke foreslås igen.
+        TreeSet<String> ikkeNavne = IOutils.loadIkkeNavne();
+        boolean flereIkkeNavne = false;
+        for (Symbolgenkendelse.Fund fund : forslag.nyeNavne()) {
+            if (!godkendte.contains(fund)) {
+                flereIkkeNavne |= ikkeNavne.add(Symbolgenkendelse.ikkeNavnNoegle(fund.symbol()));
+            }
+        }
+        if (flereIkkeNavne) {
+            IOutils.saveIkkeNavne(ikkeNavne);
+        }
+
+        // Godkendte nye navne oprettes først, så de står i boksen når fluebenet skal sættes.
+        // Symbolerne gemmes sammen med resten af kategorierne ved appluk, som når man tilføjer
+        // et symbol under Indstillinger.
+        LinkedHashMap<Category, List<String>> nyeSymboler = new LinkedHashMap<>();
+        for (Symbolgenkendelse.Fund fund : godkendte) {
+            Category kategori = kategoriPrId.get(fund.kategoriId());
+            if (kategori != null && !kategori.getSymbols().contains(fund.symbol())) {
+                nyeSymboler.computeIfAbsent(kategori, k -> new ArrayList<>()).add(fund.symbol());
+            }
+        }
+        nyeSymboler.forEach(Category::addSymbolsBevarFlueben);
 
         for (Symbolgenkendelse.Fund fund : godkendte) {
             Category kategori = kategoriPrId.get(fund.kategoriId());

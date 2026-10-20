@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Gennemgangen af hvad Symbolgenkendelse fandt. Intet flueben bliver sat før brugeren har
@@ -29,22 +30,27 @@ import java.util.Map;
  * teksten, så det normale svar er ja. De tvetydige står som radioknapper med "Ingen af dem"
  * valgt fra start: dér ved appen netop ikke hvad der er rigtigt, og tavshed skal give det
  * uskadelige svar.
+ *
+ * Nye navne - navne i teksten som ikke står i Personer endnu - står som afkrydsningsfelter UDEN
+ * flueben. Godkendes et, opretter kalderen det som nyt symbol; se HovedmenuController.
  */
 final class Symbolforslagsdialog {
 
     private Symbolforslagsdialog() {}
 
     /**
-     * Viser dialogen og venter. Returnerer de symboler brugeren godkendte - tom liste hvis der
-     * blev annulleret, så kalderen ikke skal skelne.
+     * Viser dialogen og venter. Returnerer de symboler brugeren godkendte, eller tom hvis der
+     * blev annulleret. Forskellen betyder noget: et nyt navn uden flueben er et nej, som
+     * kalderen husker (se HovedmenuController) - men kun når brugeren faktisk trykkede
+     * "Sæt flueben". Et annulleret vindue har ikke sagt noget som helst.
      *
      * @param kategoriNavne kategori-id til det navn brugeren ser. Symbolgenkendelse arbejder på
      *                      id'er, for et navn kan brugeren nå at ændre (se CategoryDTO).
      */
-    static List<Symbolgenkendelse.Fund> vis(Symbolgenkendelse.Resultat forslag,
-                                            Map<String, String> kategoriNavne,
-                                            Window ejer) {
-        return byg(forslag, kategoriNavne, ejer).showAndWait().orElse(List.of());
+    static Optional<List<Symbolgenkendelse.Fund>> vis(Symbolgenkendelse.Resultat forslag,
+                                                      Map<String, String> kategoriNavne,
+                                                      Window ejer) {
+        return byg(forslag, kategoriNavne, ejer).showAndWait();
     }
 
     /**
@@ -120,6 +126,30 @@ final class Symbolforslagsdialog {
             }
         }
 
+        if (!forslag.nyeNavne().isEmpty()) {
+            if (!forslag.sikre().isEmpty() || !forslag.tvetydige().isEmpty()) {
+                indhold.getChildren().add(new Separator());
+            }
+            indhold.getChildren().add(fed("Nye navne"));
+            String kategori = navn(kategoriNavne, forslag.nyeNavne().get(0).kategoriId());
+            Label forklaring = new Label("Står ikke i " + kategori + " endnu. Sæt flueben ved dem "
+                    + "du vil oprette som nye symboler dér - dem uden flueben foreslås ikke igen.");
+            forklaring.setWrapText(true);
+            forklaring.setStyle("-fx-opacity: 0.7;");
+            indhold.getChildren().add(forklaring);
+
+            for (Symbolgenkendelse.Fund fund : forslag.nyeNavne()) {
+                CheckBox felt = new CheckBox(fund.symbol());
+                // Uden flueben fra start, modsat de sikre fund: et nyt symbol bliver liggende i
+                // registret og dukker op i hver eneste drøm fremover, og "Paris" eller "Gud" ser
+                // ud som et navn uden at være en person.
+                felt.setSelected(false);
+                VBox.setMargin(felt, new javafx.geometry.Insets(0, 0, 0, 15));
+                afkrydsninger.put(felt, fund);
+                indhold.getChildren().add(felt);
+            }
+        }
+
         // En lang drøm kan sagtens give tredive fund, og dialogen må ikke blive højere end skærmen.
         ScrollPane rulle = new ScrollPane(indhold);
         rulle.setFitToWidth(true);
@@ -137,7 +167,7 @@ final class Symbolforslagsdialog {
 
         dialog.setResultConverter(knap -> {
             if (knap != saetBtn) {
-                return List.of();
+                return null; // showAndWait() giver så Optional.empty()
             }
             List<Symbolgenkendelse.Fund> valgte = new ArrayList<>();
             for (Map.Entry<CheckBox, Symbolgenkendelse.Fund> post : afkrydsninger.entrySet()) {
@@ -160,16 +190,33 @@ final class Symbolforslagsdialog {
     private static String overskrift(Symbolgenkendelse.Resultat forslag) {
         int sikre = forslag.sikre().size();
         int tvivl = forslag.tvetydige().size();
-        if (tvivl == 0) {
+        int nye = forslag.nyeNavne().size();
+        if (tvivl == 0 && nye == 0) {
             return sikre == 1 ? "Ét symbol fundet i drømmeteksten."
                     : sikre + " symboler fundet i drømmeteksten.";
         }
-        if (sikre == 0) {
+        if (sikre == 0 && nye == 0) {
             return tvivl == 1 ? "Ét ord i teksten kan betyde flere symboler."
                     : tvivl + " ord i teksten kan betyde flere symboler.";
         }
-        return sikre + " symboler fundet, og "
-                + (tvivl == 1 ? "ét ord" : tvivl + " ord") + " appen ikke kan afgøre.";
+        if (sikre == 0 && tvivl == 0) {
+            return nye == 1 ? "Ét nyt navn i drømmeteksten."
+                    : nye + " nye navne i drømmeteksten.";
+        }
+        List<String> dele = new ArrayList<>();
+        if (sikre > 0) {
+            dele.add(sikre == 1 ? "ét symbol fundet" : sikre + " symboler fundet");
+        }
+        if (tvivl > 0) {
+            dele.add(tvivl == 1 ? "ét ord appen ikke kan afgøre" : tvivl + " ord appen ikke kan afgøre");
+        }
+        if (nye > 0) {
+            dele.add(nye == 1 ? "ét nyt navn" : nye + " nye navne");
+        }
+        String samlet = dele.size() == 2
+                ? dele.get(0) + " og " + dele.get(1)
+                : dele.get(0) + ", " + dele.get(1) + " og " + dele.get(2);
+        return Character.toUpperCase(samlet.charAt(0)) + samlet.substring(1) + ".";
     }
 
     /**

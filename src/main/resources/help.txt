@@ -45,7 +45,11 @@ Symbolerne genkendes også når de er bøjet - skriver du "hunden" eller "to hun
 
 Nederst i listen spørger appen om det den ikke kan afgøre. Har du både "Anna", "Anna Fasting" og "Anna Hage" blandt dine personer, og står der bare "Anna" i drømmen, kan den umuligt vide hvem du mener - så får du valget, med "Ingen af dem" som udgangspunkt. Det samme sker hvis det samme navn findes i to kategorier.
 
-Et enkelt ord kan snyde den. Skriver du "jeg får en gave", kan den finde dyret får, for ordet står der jo. Det er netop derfor listen skal godkendes - et forkert flueben ville ellers følge med ind i din statistik.
+Allersidst kommer nye navne: ord med stort begyndelsesbogstav midt i en sætning, som ikke står blandt dine personer endnu - fx "Atta Bahati". Sætter du flueben ved et af dem, bliver det oprettet som nyt symbol i Personer og krydset af på drømmen. De står uden flueben fra start, for et stort bogstav kan også betyde et sted eller en film, og et nyt symbol bliver liggende i din liste. Lader du et navn stå uden flueben og trykker "Sæt flueben", husker appen at det ikke er en person, og foreslår det ikke igen. Trykker du "Annuller", huskes intet.
+
+Nogle få dyr og ting staves ligesom et almindeligt udsagnsord - "får", "tog", "ske", "fly", "bad" og "sang". De findes kun når der står et kendeord eller talord foran, fx "et får" eller "et stort får", så "jeg får en gave" ikke giver et får. Står ordet i en form der kun kan være dyret eller tingen, som "fåret" eller "toget", findes det altid.
+
+Et enkelt ord kan snyde den. Skriver du "vi farer vild", kan den finde far, for "farer" ligner en bøjning af det. Det er netop derfor listen skal godkendes - et forkert flueben ville ellers følge med ind i din statistik.
 
 Knappen findes kun under Ny drøm. Redigerer du en gammel drøm, er symbolerne som regel sat i forvejen, og en gennemgang oven i et færdigt valg ville være mere til besvær end til hjælp.
 
