@@ -181,6 +181,9 @@ final class Symbolforslagsdialog {
         try {
             Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
             dialog.getDialogPane().getStylesheets().add(cssPath.toFile().toURI().toString());
+            // Overskrift, scrollbar og radioknapper - se kommentaren øverst i filen.
+            dialog.getDialogPane().getStylesheets().add(
+                    Symbolforslagsdialog.class.getResource("symbolforslag.css").toExternalForm());
         } catch (RuntimeException e) {
             // Et manglende stilark må ikke koste brugeren dialogen - så står den bare umalet.
             e.printStackTrace();
@@ -196,6 +199,7 @@ final class Symbolforslagsdialog {
     private static Label fed(String tekst) {
         Label label = new Label(tekst);
         label.setStyle("-fx-font-weight: bold;");
+        label.setWrapText(true);
         return label;
     }
 
