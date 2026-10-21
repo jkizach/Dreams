@@ -1,10 +1,10 @@
 /* Symbolforslagsdialogen.
  *
- * Ligger her i resources og ikke i currentTema.css, fordi currentTema.css kun kopieres ud i
- * brugerens datamappe hvis den ikke findes i forvejen (CSSUpdater.copyCssIfNotExists) - nye
- * regler dér ville aldrig nå nogen der har brugt appen før. Farverne er stadig temaets: det er
- * variablerne fra currentTema.css, som altid findes, fordi CSSUpdater kun skriver deres
- * værdier om, aldrig deres navne. */
+ * Ligger for sig selv og ikke i currentTema.css, fordi reglerne kun skal gælde dialogen.
+ * Selektorer som ".scroll-pane .scroll-bar:vertical" og ".radio-button" ville i temafilen
+ * ramme hvert eneste vindue i appen. Farverne er stadig temaets: det er variablerne fra
+ * currentTema.css, som dialogen også har på sig. Skal radioknapperne se sådan ud overalt, er
+ * det den regel der skal flyttes over i temafilen. */
 
 /* Overskriften */
 .dialog-pane > .header-panel {
