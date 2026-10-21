@@ -453,8 +453,24 @@ public class HovedmenuController {
             kategoriPrId.put(c.getId(), c);
         }
 
+        // De binære flueben der kan foreslås: kun dem der ikke allerede er sat, og kun synlige -
+        // Holografisk kan være slået fra under Indstillinger. Se Kvalitetsgenkendelse.
+        LinkedHashMap<String, CheckBox> kvalitetsfelter = new LinkedHashMap<>();
+        kvalitetsfelter.put(Kvalitetsgenkendelse.LUCID, lucid);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.PRAKTISERER, praktiserer);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.MODSATKOENNET, modsat);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.MARERIDT, mareridt);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.HOLOGRAFISK, holografisk);
+        List<String> tilladteKvaliteter = new ArrayList<>();
+        kvalitetsfelter.forEach((navn, felt) -> {
+            if (felt.isVisible() && !felt.isSelected()) {
+                tilladteKvaliteter.add(navn);
+            }
+        });
+
         Symbolgenkendelse.Resultat forslag =
-                Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, IOutils.loadIkkeNavne());
+                Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, IOutils.loadIkkeNavne())
+                        .medKvaliteter(Kvalitetsgenkendelse.find(tekst, tilladteKvaliteter));
         if (forslag.erTom()) {
             visSymbolbesked("Ingen af dine symboler blev fundet i teksten.",
                     "Symbolerne findes som de står i dine kategorier, også bøjet - \"hunden\" "
@@ -494,6 +510,13 @@ public class HovedmenuController {
         nyeSymboler.forEach(Category::addSymbolsBevarFlueben);
 
         for (Symbolgenkendelse.Fund fund : godkendte) {
+            if (Category.ID_KVALITETER.equals(fund.kategoriId())) {
+                CheckBox felt = kvalitetsfelter.get(fund.symbol());
+                if (felt != null) {
+                    felt.setSelected(true);
+                }
+                continue;
+            }
             Category kategori = kategoriPrId.get(fund.kategoriId());
             if (kategori != null) {
                 kategori.afkrydsIDreamCCBs(fund.symbol());

@@ -32,6 +32,9 @@ import java.util.Optional;
  * uskadelige svar. Undtagelsen er Tvetydighed.forvalgt: siger teksten kun "Anna", og registret
  * har både "Anna" og "Anna Fasting", står "Anna" valgt fra start.
  *
+ * Kvaliteterne (Lucid, Praktiserer...) står ligesom de sikre fund med flueben fra start, med
+ * det stykke tekst der udløste dem. Kalderen sætter så de binære afkrydsningsfelter.
+ *
  * Nye navne - navne i teksten som ikke står i Personer endnu - står som afkrydsningsfelter UDEN
  * flueben. Godkendes et, opretter kalderen det som nyt symbol; se HovedmenuController.
  */
@@ -97,8 +100,25 @@ final class Symbolforslagsdialog {
             }
         }
 
-        if (!forslag.tvetydige().isEmpty()) {
+        if (!forslag.kvaliteter().isEmpty()) {
             if (!forslag.sikre().isEmpty()) {
+                indhold.getChildren().add(new Separator());
+            }
+            indhold.getChildren().add(fed("Kvaliteter"));
+            for (Symbolgenkendelse.Fund fund : forslag.kvaliteter()) {
+                // Med flueben fra start som de sikre symboler - Kvalitetsgenkendelse kræver både
+                // "jeg" og intet forbehold. Stedet i teksten står med, så et forkert træf kan ses.
+                CheckBox felt = new CheckBox(fund.symbol() + "  (“" + fund.fundetSom() + "”)");
+                felt.setSelected(true);
+                felt.setWrapText(true);
+                VBox.setMargin(felt, new javafx.geometry.Insets(0, 0, 0, 15));
+                afkrydsninger.put(felt, fund);
+                indhold.getChildren().add(felt);
+            }
+        }
+
+        if (!forslag.tvetydige().isEmpty()) {
+            if (!forslag.sikre().isEmpty() || !forslag.kvaliteter().isEmpty()) {
                 indhold.getChildren().add(new Separator());
             }
             indhold.getChildren().add(fed("Her kan appen ikke vide hvad du mener"));
@@ -129,7 +149,7 @@ final class Symbolforslagsdialog {
         }
 
         if (!forslag.nyeNavne().isEmpty()) {
-            if (!forslag.sikre().isEmpty() || !forslag.tvetydige().isEmpty()) {
+            if (!forslag.sikre().isEmpty() || !forslag.kvaliteter().isEmpty() || !forslag.tvetydige().isEmpty()) {
                 indhold.getChildren().add(new Separator());
             }
             indhold.getChildren().add(fed("Nye navne"));
@@ -190,7 +210,8 @@ final class Symbolforslagsdialog {
     }
 
     private static String overskrift(Symbolgenkendelse.Resultat forslag) {
-        int sikre = forslag.sikre().size();
+        // En kvalitet er et symbol i Kvaliteter, og tælles med som et fundet symbol.
+        int sikre = forslag.sikre().size() + forslag.kvaliteter().size();
         int tvivl = forslag.tvetydige().size();
         int nye = forslag.nyeNavne().size();
         if (tvivl == 0 && nye == 0) {

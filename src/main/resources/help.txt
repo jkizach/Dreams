@@ -37,13 +37,15 @@ I højre side finder du seks symbolkategorier, hvor du markerer hvilke symboler 
 
 Du kan selv tilføje og fjerne symboler i kategorierne, og du kan oprette op til tre helt nye kategorier - fx Kropssteder, Steder eller Lyde, alt efter hvad du har brug for at holde øje med.
 
-Over kategorierne sidder knappen "Find symboler i teksten". Den læser det du har skrevet i drømmefeltet og foreslår de symboler den genkender, så du slipper for at bladre alle kategorierne igennem efter noget du allerede har skrevet.
+Ved siden af "Gem drømmen" sidder knappen "Find symboler i drømmen". Den læser det du har skrevet i drømmefeltet og foreslår de symboler den genkender, så du slipper for at bladre alle kategorierne igennem efter noget du allerede har skrevet.
 
 Der bliver aldrig sat et flueben uden at du har set det først. Knappen åbner en liste over det fundne, hvor alt er krydset af på forhånd; fjern fluebenet ved det du ikke vil have med, og tryk "Sæt flueben".
 
 Symbolerne genkendes også når de er bøjet - skriver du "hunden" eller "to hunde", finder den hund. Til gengæld gætter den ikke: står ordet slet ikke i teksten, kommer symbolet heller ikke med. Drømmens stemning, kropssteder og chakraer skal du altså stadig sætte selv.
 
-Nederst i listen spørger appen om det den ikke kan afgøre. Har du både "Anna", "Anna Fasting" og "Anna Hage" blandt dine personer, og står der bare "Anna" i drømmen, kan den umuligt vide hvem du mener - så får du valget, med "Ingen af dem" som udgangspunkt. Det samme sker hvis det samme navn findes i to kategorier.
+Drømmens kvaliteter kan den også finde: Lucid, Praktiserer, Modsatkønnet, Mareridt og Holografisk. Her er ordet alene ikke nok - der skal stå at det er dig, og intet forbehold lige foran. "Jeg bliver lucid" og "nu mediterer jeg" giver flueben; "jeg er ikke lucid", "næsten holografisk" og "Erik sidder og mediterer" gør ikke. Ved hver kvalitet står det stykke tekst den blev fundet i, så du kan se hvorfor. Arketypisk, Om praksis, Advarsel og Kollektiv er fortolkninger og ikke ord, så dem sætter du selv.
+
+Nederst i listen spørger appen om det den ikke kan afgøre. Har du "Anna Fasting" og "Anna Hage" blandt dine personer, og står der bare "Anna" i drømmen, kan den umuligt vide hvem du mener - så får du valget, med "Ingen af dem" som udgangspunkt. Har du også bare "Anna", står den valgt fra start: havde du ment Anna Fasting, havde du skrevet det. Findes det samme navn i to kategorier, er "Ingen af dem" igen udgangspunktet.
 
 Allersidst kommer nye navne: ord med stort begyndelsesbogstav midt i en sætning, som ikke står blandt dine personer endnu - fx "Atta Bahati". Sætter du flueben ved et af dem, bliver det oprettet som nyt symbol i Personer og krydset af på drømmen. De står uden flueben fra start, for et stort bogstav kan også betyde et sted eller en film, og et nyt symbol bliver liggende i din liste. Lader du et navn stå uden flueben og trykker "Sæt flueben", husker appen at det ikke er en person, og foreslår det ikke igen. Trykker du "Annuller", huskes intet.
 

@@ -52,14 +52,26 @@ public final class Symbolgenkendelse {
     /**
      * nyeNavne er navne i teksten som ikke står i registret endnu - kandidater til at blive
      * oprettet som nye symboler i Personer. Se findNyeNavne.
+     *
+     * kvaliteter er de binære flueben (Lucid, Praktiserer...) fundet af Kvalitetsgenkendelse.
+     * De lægges på med medKvaliteter, for de findes efter helt andre regler end symbolerne.
      */
-    public record Resultat(List<Fund> sikre, List<Tvetydighed> tvetydige, List<Fund> nyeNavne) {
+    public record Resultat(List<Fund> sikre, List<Tvetydighed> tvetydige, List<Fund> nyeNavne,
+                           List<Fund> kvaliteter) {
+        public Resultat(List<Fund> sikre, List<Tvetydighed> tvetydige, List<Fund> nyeNavne) {
+            this(sikre, tvetydige, nyeNavne, List.of());
+        }
+
         public Resultat(List<Fund> sikre, List<Tvetydighed> tvetydige) {
             this(sikre, tvetydige, List.of());
         }
 
+        public Resultat medKvaliteter(List<Fund> kvaliteter) {
+            return new Resultat(sikre, tvetydige, nyeNavne, List.copyOf(kvaliteter));
+        }
+
         public boolean erTom() {
-            return sikre.isEmpty() && tvetydige.isEmpty() && nyeNavne.isEmpty();
+            return sikre.isEmpty() && tvetydige.isEmpty() && nyeNavne.isEmpty() && kvaliteter.isEmpty();
         }
     }
 
