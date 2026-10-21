@@ -164,6 +164,22 @@ class SymbolgenkendelseTest {
         assertEquals(1, r.tvetydige().size());
         assertEquals(List.of("Peter", "Peter Jensen"),
                 r.tvetydige().get(0).kandidater().stream().map(Symbolgenkendelse.Fund::symbol).toList());
+        // ...men det korte står valgt fra start: havde Peter Jensen været ment, stod der det.
+        assertEquals("Peter", r.tvetydige().get(0).forvalgt().symbol());
+    }
+
+    @Test
+    void uden_et_praecist_traef_er_intet_forvalgt() {
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find(
+                "Peter kom.", register("personer", List.of("Peter Jensen", "Peter Høeg")));
+        assertNull(r.tvetydige().get(0).forvalgt());
+    }
+
+    @Test
+    void samme_korte_navn_i_to_kategorier_er_ikke_forvalgt() {
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find(
+                "Peter kom.", register("personer", List.of("Peter", "Peter Jensen"), "dyr", List.of("Peter")));
+        assertNull(r.tvetydige().get(0).forvalgt());
     }
 
     @Test
@@ -175,6 +191,7 @@ class SymbolgenkendelseTest {
         assertEquals(1, r.tvetydige().size());
         assertEquals(List.of("farver", "foelelser"),
                 r.tvetydige().get(0).kandidater().stream().map(Symbolgenkendelse.Fund::kategoriId).toList());
+        assertNull(r.tvetydige().get(0).forvalgt());
     }
 
     @Test

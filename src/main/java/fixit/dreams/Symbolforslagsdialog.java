@@ -29,7 +29,8 @@ import java.util.Optional;
  * De sikre fund står som afkrydsningsfelter, alle sat fra start: de er fundet præcist i
  * teksten, så det normale svar er ja. De tvetydige står som radioknapper med "Ingen af dem"
  * valgt fra start: dér ved appen netop ikke hvad der er rigtigt, og tavshed skal give det
- * uskadelige svar.
+ * uskadelige svar. Undtagelsen er Tvetydighed.forvalgt: siger teksten kun "Anna", og registret
+ * har både "Anna" og "Anna Fasting", står "Anna" valgt fra start.
  *
  * Nye navne - navne i teksten som ikke står i Personer endnu - står som afkrydsningsfelter UDEN
  * flueben. Godkendes et, opretter kalderen det som nyt symbol; se HovedmenuController.
@@ -115,12 +116,13 @@ final class Symbolforslagsdialog {
                             kandidat.symbol() + "  (" + navn(kategoriNavne, kandidat.kategoriId()) + ")");
                     valg.setToggleGroup(gruppe);
                     valg.setUserData(kandidat);
+                    valg.setSelected(kandidat.equals(tvivl.forvalgt()));
                     VBox.setMargin(valg, new javafx.geometry.Insets(0, 0, 0, 15));
                     indhold.getChildren().add(valg);
                 }
                 RadioButton ingen = new RadioButton("Ingen af dem");
                 ingen.setToggleGroup(gruppe);
-                ingen.setSelected(true); // tavshed må aldrig sætte noget
+                ingen.setSelected(tvivl.forvalgt() == null); // tavshed må aldrig sætte et gæt
                 VBox.setMargin(ingen, new javafx.geometry.Insets(0, 0, 0, 15));
                 indhold.getChildren().add(ingen);
             }

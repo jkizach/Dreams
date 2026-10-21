@@ -35,8 +35,19 @@ public final class Symbolgenkendelse {
     /** Ét symbol fundet i teksten. fundetSom er det ord i teksten der udløste det. */
     public record Fund(String kategoriId, String symbol, String fundetSom) {}
 
-    /** Ét ord i teksten som kan betyde flere forskellige symboler - brugeren må vælge. */
-    public record Tvetydighed(String ord, List<Fund> kandidater) {}
+    /**
+     * Ét ord i teksten som kan betyde flere forskellige symboler - brugeren må vælge.
+     *
+     * forvalgt er det svar dialogen står med fra start, eller null for "Ingen af dem". Det sættes
+     * kun når ét af symbolerne står præcist i teksten, og de andre blot er længere navne der
+     * begynder med ordet: teksten siger "Anna", registret har "Anna" og "Anna Fasting". Havde
+     * brugeren ment Anna Fasting, havde der stået Anna Fasting.
+     */
+    public record Tvetydighed(String ord, List<Fund> kandidater, Fund forvalgt) {
+        public Tvetydighed(String ord, List<Fund> kandidater) {
+            this(ord, kandidater, null);
+        }
+    }
 
     /**
      * nyeNavne er navne i teksten som ikke står i registret endnu - kandidater til at blive
@@ -590,9 +601,17 @@ public final class Symbolgenkendelse {
                     kandidater.add(fund);
                 }
             }
-            if (!kandidater.isEmpty()) {
-                tilbage.add(new Tvetydighed(tvivl.ord(), List.copyOf(kandidater)));
+            if (kandidater.isEmpty()) {
+                continue;
             }
+            // Kun når netop ét præcist træf er tilbage OG ordet også er starten på længere navne.
+            // To præcise træf ("rød" i to kategorier) er ægte tvivl, og der forbliver "Ingen af
+            // dem" svaret.
+            List<Fund> praeciseTilbage = new ArrayList<>(praecise.getOrDefault(tvivl.ord(), new LinkedHashSet<>()));
+            praeciseTilbage.retainAll(kandidater);
+            Fund forvalgt = praeciseTilbage.size() == 1 && gaet.containsKey(tvivl.ord())
+                    ? praeciseTilbage.get(0) : null;
+            tilbage.add(new Tvetydighed(tvivl.ord(), List.copyOf(kandidater), forvalgt));
         }
 
         sikre.sort(Comparator.comparing(Fund::kategoriId).thenComparing(Fund::symbol));
