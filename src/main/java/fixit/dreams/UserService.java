@@ -355,6 +355,17 @@ public class UserService extends ServiceMother {
         return user.isVisHolografisk();
     }
 
+    public TreeSet<String> getIkkeNavne() {
+        return user.getIkkeNavne();
+    }
+
+    /** Husker navnene som ikke-personer og gemmer straks, hvis mindst ét var nyt. */
+    public void tilføjIkkeNavne(Collection<String> navne) {
+        if (user.tilføjIkkeNavne(navne)) {
+            IOutils.gemIkkeNavne(user);
+        }
+    }
+
     public LocalDate getStartDate() {
         return user.getStartFromThisDate();
     }

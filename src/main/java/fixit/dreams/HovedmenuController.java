@@ -469,7 +469,7 @@ public class HovedmenuController {
         });
 
         Symbolgenkendelse.Resultat forslag =
-                Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, IOutils.loadIkkeNavne())
+                Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, userService.getIkkeNavne())
                         .medKvaliteter(Kvalitetsgenkendelse.find(tekst, tilladteKvaliteter));
         if (forslag.erTom()) {
             visSymbolbesked("Ingen af dine symboler blev fundet i teksten.",
@@ -486,16 +486,13 @@ public class HovedmenuController {
         List<Symbolgenkendelse.Fund> godkendte = svar.get();
 
         // Nye navne brugeren lod stå uden flueben, er et nej: de skal ikke foreslås igen.
-        TreeSet<String> ikkeNavne = IOutils.loadIkkeNavne();
-        boolean flereIkkeNavne = false;
+        List<String> afviste = new ArrayList<>();
         for (Symbolgenkendelse.Fund fund : forslag.nyeNavne()) {
             if (!godkendte.contains(fund)) {
-                flereIkkeNavne |= ikkeNavne.add(Symbolgenkendelse.ikkeNavnNoegle(fund.symbol()));
+                afviste.add(Symbolgenkendelse.ikkeNavnNoegle(fund.symbol()));
             }
         }
-        if (flereIkkeNavne) {
-            IOutils.saveIkkeNavne(ikkeNavne);
-        }
+        userService.tilføjIkkeNavne(afviste);
 
         // Godkendte nye navne oprettes først, så de står i boksen når fluebenet skal sættes.
         // Symbolerne gemmes sammen med resten af kategorierne ved appluk, som når man tilføjer

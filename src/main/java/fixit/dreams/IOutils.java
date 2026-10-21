@@ -347,7 +347,10 @@ public class IOutils {
     // ikke dukker op igen ved hver drøm (se Symbolgenkendelse.find). Bor i sin egen fil og
     // følger ikke med i cloud-syncen: det er en lille bekvemmelighed, og den er ikke en
     // skemaændring værd. Mangler filen eller er den ødelagt, er listen bare tom.
-    public static TreeSet<String> loadIkkeNavne() {
+    // Kun til overgangen: listen bor nu i user.json (UserDTO.ikkeNavne), så den følger med i
+    // syncen. Filen læses kun når user.json er ældre end feltet - se User-konstruktøren. Den
+    // slettes ikke: et nej for meget at have liggende koster intet, et tabt nej koster et klik.
+    public static TreeSet<String> loadGamleIkkeNavne() {
         try {
             File file = FILE_PATH_IKKENAVNE.toFile();
             if (!file.exists()) {
@@ -360,13 +363,17 @@ public class IOutils {
         }
     }
 
-    public static void saveIkkeNavne(Set<String> ikkeNavne) {
-        try {
-            objectMapper.writerWithDefaultPrettyPrinter()
-                    .writeValue(FILE_PATH_IKKENAVNE.toFile(), new ArrayList<>(new TreeSet<>(ikkeNavne)));
-        } catch (IOException e) {
-            e.printStackTrace();
+    // Gemmer KUN listen over ikke-navne, oven i den user.json der ligger på disken - samme grund
+    // som gemStartDato: har syncen hentet indstillinger i denne session, er disken den nyeste
+    // udgave, og et fuldt gem fra hukommelsen kunne skrive fx et hentet temanavn væk.
+    public static void gemIkkeNavne(User user) {
+        UserDTO paaDisken = FILE_PATH_USER.toFile().exists() ? loadUser() : null;
+        if (paaDisken == null) {
+            saveUser(user);
+            return;
         }
+        paaDisken.ikkeNavne = new ArrayList<>(user.getIkkeNavne());
+        saveUserDTO(paaDisken);
     }
 
     public static void saveMachineId(String machineId) {

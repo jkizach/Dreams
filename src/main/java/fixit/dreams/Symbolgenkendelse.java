@@ -249,7 +249,7 @@ public final class Symbolgenkendelse {
      * registret (brugeren kan have slettet den), foreslås ingen nye navne.
      *
      * @param ikkeNavne navne brugeren tidligere har sagt nej til, skrevet som smaat() skriver
-     *                  dem. De foreslås ikke igen - se IOutils.loadIkkeNavne.
+     *                  dem. De foreslås ikke igen - se UserDTO.ikkeNavne.
      */
     public static Resultat find(String tekst, Map<String, Collection<String>> symbolerPrKategori,
                                 String personKategoriId, Set<String> ikkeNavne) {

@@ -756,6 +756,15 @@ public class SyncService {
         // filerne var gamle og køre alle migrationer forfra ved næste opstart.
         dto.schemaVersion = SchemaMigrator.CURRENT_SCHEMA_VERSION;
 
+        // Ikke-navnene: mangler feltet, er dokumentet skrevet af en udgave fra før det fandtes,
+        // og så beholdes vores egen liste - ellers ville den gamle maskine tømme den. Står det
+        // der, vinder skyen som for alle de andre indstillinger. Et tabt nej koster ét klik.
+        if (dto.ikkeNavne == null) {
+            dto.ikkeNavne = new ArrayList<>(user.getIkkeNavne());
+        } else {
+            user.setIkkeNavne(dto.ikkeNavne);
+        }
+
         IOutils.saveUserDTO(dto);
         stemplFraSkyen(meta -> meta.settings, cloudUpdatedAt);
 

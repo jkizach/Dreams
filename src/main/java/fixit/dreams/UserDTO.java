@@ -3,6 +3,8 @@ package fixit.dreams;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 // Ukendte felter ignoreres - men KUN her, ikke på IOutils' mapper som helhed. Forskellen er
 // bevidst: strengheden på drømmene er en sikring, der får umigreret data til at fejle højlydt
@@ -25,6 +27,14 @@ public class UserDTO {
     // Er startFromThisDate null, er der ingen dato at have en mening om.
     public Boolean startDatoValgtAfBruger;
 
+    // Additivt felt, nyt efter 2.1: navne brugeren har sagt nej til i symbolforslagsdialogen, så
+    // de ikke foreslås som personer igen (se Symbolgenkendelse.find). Ligger her og ikke i en
+    // fil for sig, så listen følger med i syncen som en af indstillingerne. Ingen skemaændring:
+    // en ældre udgave springer feltet over (se @JsonIgnoreProperties ovenfor).
+    // null betyder "filen eller sky-dokumentet er ældre end feltet" - IKKE "ingen nej'er". Så
+    // beholder User den liste den har, i stedet for at tømme den (se User og SyncService).
+    public List<String> ikkeNavne;
+
     public int schemaVersion;
 
     public UserDTO() {}
@@ -39,6 +49,8 @@ public class UserDTO {
         // fra skyen, ikke sidder fast på den dato den havde inden drømmene ankom.
         this.startFromThisDate = user.harValgtStartdato() ? user.getStartFromThisDate() : null;
         this.startDatoValgtAfBruger = user.harValgtStartdato();
+        // Sorteret (User holder et TreeSet), så samme liste altid giver samme hash i meta.json.
+        this.ikkeNavne = new ArrayList<>(user.getIkkeNavne());
         this.schemaVersion = SchemaMigrator.CURRENT_SCHEMA_VERSION;
 
     }

@@ -14,6 +14,7 @@ import org.controlsfx.control.CheckComboBox;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,9 @@ class User {
     // sync trak startdatoen tilbage til første drøm - også når brugeren selv havde valgt en senere.
     private LocalDate startFromThisDate = null;
     private boolean startDatoValgtAfBruger = false;
+    // Navne brugeren har sagt nej til som nye personer, skrevet som Symbolgenkendelse.ikkeNavnNoegle
+    // skriver dem. TreeSet, så rækkefølgen i user.json - og dermed indstillingernes hash - er fast.
+    private TreeSet<String> ikkeNavne = new TreeSet<>();
     // Tælles én op hver gang statistikken skal regnes om. Det VAR et boolsk flag, og det var
     // forkert: JavaFX fyrer kun listeners når værdien faktisk ÆNDRER sig, og flaget blev kun
     // sat tilbage til false inde i Analyse-fanens egen listener. Skete der noget der krævede
@@ -124,6 +128,16 @@ class User {
         } else {
             System.out.println("Ingen user loaded...");
          }
+
+        // Overgangen: før lå listen i sin egen ikkenavne.json, som ikke fulgte med i syncen.
+        // Mangler feltet i user.json, er filen skrevet før flytningen - så hentes de nej'er
+        // brugeren allerede har givet derfra, og første gem lægger dem i user.json. Bagefter står
+        // feltet der, også som tom liste, og den gamle fil læses aldrig igen.
+        if (loadedUserDTO != null && loadedUserDTO.ikkeNavne != null) {
+            ikkeNavne = new TreeSet<>(loadedUserDTO.ikkeNavne);
+        } else {
+            ikkeNavne = IOutils.loadGamleIkkeNavne();
+        }
     }
 
     public LocalDate getFirstDreamDate() {
@@ -328,6 +342,20 @@ class User {
 
     public void setVisKollektiv(boolean visKollektiv) {
         this.visKollektiv = visKollektiv;
+    }
+
+    /** En kopi - ændringer går gennem tilføjIkkeNavne/setIkkeNavne. */
+    public TreeSet<String> getIkkeNavne() {
+        return new TreeSet<>(ikkeNavne);
+    }
+
+    /** @return true hvis mindst ét af navnene var nyt, og listen altså skal gemmes. */
+    public boolean tilføjIkkeNavne(Collection<String> navne) {
+        return ikkeNavne.addAll(navne);
+    }
+
+    public void setIkkeNavne(Collection<String> navne) {
+        ikkeNavne = new TreeSet<>(navne);
     }
 
     public boolean isVisHolografisk() {

@@ -39,7 +39,7 @@ class MetaSyncTest {
 
     private static final List<String> FILNAVNE = List.of(
             "user.json", "temaer.json", "cats.json", "dreams.json", "sync.json", "deleted.json", "meta.json",
-            "cloudindex.json");
+            "cloudindex.json", "ikkenavne.json");
 
     private FakeFirestore sky;
     private User user;
@@ -264,6 +264,57 @@ class MetaSyncTest {
         synkroniser();
 
         assertEquals(SchemaMigrator.CURRENT_SCHEMA_VERSION, IOutils.loadUser().schemaVersion);
+    }
+
+    // Ikke-navnene er en indstilling som de andre: de følger med op, og et hentet dokument lægger
+    // dem både på disken og i den kørende app - ellers ville næste nej i sessionen gemme den
+    // gamle liste hen over den hentede.
+    @Test
+    void ikke_navne_sendes_med_indstillingerne() throws SyncException {
+        lokaleStempler(NY);
+        user.tilføjIkkeNavne(List.of("lovns", "minecraft"));
+        IOutils.saveUser(user);
+
+        synkroniser();
+
+        JsonNode sendt = sky.patched.get(SETTINGS_PATH).path("ikkeNavne");
+        assertEquals(2, sendt.size());
+        assertEquals("lovns", sendt.get(0).asText());
+    }
+
+    @Test
+    void hentede_ikke_navne_laegges_paa_disken_og_i_den_koerende_user() throws SyncException {
+        lokaleStempler(GAMMEL);
+        user.tilføjIkkeNavne(List.of("lokalt navn"));
+        ObjectNode doc = SyncObjectMapper.INSTANCE.createObjectNode();
+        doc.put("foretrukneTema", "mørkt grønt");
+        doc.putArray("ikkeNavne").add("gud").add("paris");
+        doc.put("updatedAt", NY.toString());
+        sky.documents.put(SETTINGS_PATH, doc);
+
+        synkroniser();
+
+        assertEquals(List.of("gud", "paris"), List.copyOf(user.getIkkeNavne()));
+        assertEquals(List.of("gud", "paris"), IOutils.loadUser().ikkeNavne);
+    }
+
+    // Et dokument fra en udgave der ikke kender feltet, er IKKE "ingen nej'er". Den anden
+    // maskine må ikke tømme listen bare fordi den ikke er opdateret endnu.
+    @Test
+    void et_sky_dokument_uden_feltet_toemmer_ikke_listen() throws SyncException {
+        lokaleStempler(GAMMEL);
+        user.tilføjIkkeNavne(List.of("lovns"));
+        ObjectNode doc = SyncObjectMapper.INSTANCE.createObjectNode();
+        doc.put("foretrukneTema", "mørkt grønt");
+        doc.put("visAdvarsel", true);
+        doc.put("updatedAt", NY.toString());
+        sky.documents.put(SETTINGS_PATH, doc);
+
+        synkroniser();
+
+        assertTrue(user.isVisAdvarsel(), "resten af indstillingerne skal stadig hentes");
+        assertEquals(List.of("lovns"), List.copyOf(user.getIkkeNavne()));
+        assertEquals(List.of("lovns"), IOutils.loadUser().ikkeNavne);
     }
 
     @Test
