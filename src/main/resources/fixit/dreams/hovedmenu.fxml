@@ -107,14 +107,28 @@
                            </children>
                         </HBox>
                         <TextArea fx:id="skriveFelt" prefHeight="532.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Button id="minKnap" fx:id="gemDream" mnemonicParsing="false" onAction="#handleAddDream" text="Gem drømmen" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                        <!-- Find-knappen står ved Gem, ikke under Symboler: den læser drømmeteksten og
+                             sætter også kvaliteternes flueben, ikke kun symbolernes. Rækken spænder over
+                             tekstkolonnen også, for symbolkolonnen er for smal til begge knapper ved
+                             standardstørrelsen. pickOnBounds="false", ellers tager den gennemsigtige
+                             HBox klikkene fra Dagrest/Tolkning/Tags, som ligger i samme række. -->
+                        <HBox alignment="BOTTOM_RIGHT" pickOnBounds="false" spacing="10.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                            <GridPane.margin>
                               <Insets bottom="10.0" right="10.0" />
                            </GridPane.margin>
-                           <tooltip>
-                              <Tooltip text="Gem drømmen med den valgte dato og de afkrydsede symboler." wrapText="true" />
-                           </tooltip>
-                        </Button>
+                           <children>
+                              <Button fx:id="findSymbolerKnap" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleFindSymboler" text="Find symboler i drømmen">
+                                 <tooltip>
+                                    <Tooltip text="Gennemgår drømmeteksten og foreslår de symboler og kvaliteter den finder. Du godkender selv, før der bliver sat flueben." wrapText="true" />
+                                 </tooltip>
+                              </Button>
+                              <Button id="minKnap" fx:id="gemDream" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleAddDream" text="Gem drømmen">
+                                 <tooltip>
+                                    <Tooltip text="Gem drømmen med den valgte dato og de afkrydsede symboler." wrapText="true" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
                         <VBox prefHeight="530.0" prefWidth="280.0" spacing="20.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <children>
                               <VBox fx:id="vBoxSymboler" prefWidth="280.0" spacing="10.0">

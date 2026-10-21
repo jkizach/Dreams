@@ -45,6 +45,7 @@ Fanen "Ny drøm"
 ---------------
 DATEPICKER   newDreamDate           Datoen for drømmen. Står på i dag, så den skal som regel ikke røres.
 BUTTON       "Gem drømmen"          Gem drømmen med den valgte dato og de afkrydsede symboler.
+BUTTON       findSymbolerKnap       Gennemgår drømmeteksten og foreslår de symboler den finder. Du godkender selv, før der bliver sat flueben.
 CHECKBOX     "Lucid"                Ved man at man drømmer?
 CHECKBOX     "Praktiserer"          Mediterer eller beder du i drømmen?
 CHECKBOX     "Modsatkønnet"         Er drømmejeget det modsatte køn?

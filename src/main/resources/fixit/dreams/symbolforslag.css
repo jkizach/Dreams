@@ -1,0 +1,81 @@
+/* Symbolforslagsdialogen.
+ *
+ * Ligger for sig selv og ikke i currentTema.css, fordi reglerne kun skal gælde dialogen.
+ * Selektorer som ".scroll-pane .scroll-bar:vertical" og ".radio-button" ville i temafilen
+ * ramme hvert eneste vindue i appen. Farverne er stadig temaets: det er variablerne fra
+ * currentTema.css, som dialogen også har på sig. Skal radioknapperne se sådan ud overalt, er
+ * det den regel der skal flyttes over i temafilen. */
+
+/* Overskriften */
+.dialog-pane > .header-panel {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-border-color: transparent transparent -fx-border-border transparent;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: -fx-alternativtxt-text;
+}
+
+/* Scrollbaren - samme farver som i tekstfeltet */
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: -fx-andenalternativbg-background;
+    -fx-background-radius: 0;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button,
+.scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button:hover,
+.scroll-pane .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-arrow,
+.scroll-pane .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button:hover .increment-arrow,
+.scroll-pane .scroll-bar:vertical .decrement-button:hover .decrement-arrow {
+    -fx-background-color: -fx-andenalternativbg-background;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: -fx-hovedbg-background;
+}
+
+/* Radioknapperne - som afkrydsningsfelterne, bare runde */
+.radio-button {
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.radio-button .radio {
+    -fx-background-color: -fx-border-border, -fx-andenalternativbg-background;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 1em;
+    -fx-padding: 7px; /* samme størrelse som afkrydsningsfelternes .box */
+}
+
+.radio-button:focused .radio {
+    -fx-background-color: -fx-alternativbg-background, -fx-andenalternativbg-background;
+}
+
+.radio-button .dot {
+    -fx-background-color: transparent;
+    -fx-background-radius: 1em;
+    -fx-padding: 4px;
+}
+
+.radio-button:selected .dot {
+    -fx-background-color: -fx-alternativbg-background;
+}

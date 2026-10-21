@@ -30,7 +30,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
 
 public class HovedmenuController {
     private UserService userService;
@@ -418,6 +422,114 @@ public class HovedmenuController {
             fromDatePicker.setValue(userService.getStartDate());
             updateForsteDromLabel();
         }
+    }
+
+    /**
+     * Gennemgår drømmeteksten for symboler brugeren allerede har i registret, og sætter
+     * fluebenene på det hun godkender. Intet sker uden om dialogen - se Symbolforslagsdialog.
+     *
+     * Kun i Ny drøm. I Rediger drøm står symbolerne der typisk allerede, og en gennemgang der
+     * ville sætte flueben oven i et færdigt valg er mere til besvær end til hjælp.
+     */
+    @FXML
+    private void handleFindSymboler() {
+        String tekst = skriveFelt.getText();
+        if (tekst == null || tekst.isBlank()) {
+            visSymbolbesked("Der er ingen drømmetekst at kigge i endnu.", null);
+            return;
+        }
+
+        // Kategori-id til symboler, i kategoriernes egen rækkefølge. Tags springes over af
+        // samme grund som i loadCCBs: de har intet CheckComboBox at sætte et flueben i.
+        LinkedHashMap<String, Collection<String>> symbolerPrKategori = new LinkedHashMap<>();
+        LinkedHashMap<String, String> kategoriNavne = new LinkedHashMap<>();
+        LinkedHashMap<String, Category> kategoriPrId = new LinkedHashMap<>();
+        for (Category c : userService.getCats()) {
+            if (Tag.ID.equals(c.getId())) {
+                continue;
+            }
+            symbolerPrKategori.put(c.getId(), c.getSymbols());
+            kategoriNavne.put(c.getId(), c.getName());
+            kategoriPrId.put(c.getId(), c);
+        }
+
+        // De binære flueben der kan foreslås: kun dem der ikke allerede er sat, og kun synlige -
+        // Holografisk kan være slået fra under Indstillinger. Se Kvalitetsgenkendelse.
+        LinkedHashMap<String, CheckBox> kvalitetsfelter = new LinkedHashMap<>();
+        kvalitetsfelter.put(Kvalitetsgenkendelse.LUCID, lucid);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.PRAKTISERER, praktiserer);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.MODSATKOENNET, modsat);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.MARERIDT, mareridt);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.HOLOGRAFISK, holografisk);
+        List<String> tilladteKvaliteter = new ArrayList<>();
+        kvalitetsfelter.forEach((navn, felt) -> {
+            if (felt.isVisible() && !felt.isSelected()) {
+                tilladteKvaliteter.add(navn);
+            }
+        });
+
+        Symbolgenkendelse.Resultat forslag =
+                Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, IOutils.loadIkkeNavne())
+                        .medKvaliteter(Kvalitetsgenkendelse.find(tekst, tilladteKvaliteter));
+        if (forslag.erTom()) {
+            visSymbolbesked("Ingen af dine symboler blev fundet i teksten.",
+                    "Symbolerne findes som de står i dine kategorier, også bøjet - \"hunden\" "
+                            + "finder hund. Står ordet slet ikke i teksten, skal symbolet sættes i hånden.");
+            return;
+        }
+
+        Optional<List<Symbolgenkendelse.Fund>> svar = Symbolforslagsdialog.vis(
+                forslag, kategoriNavne, skriveFelt.getScene().getWindow());
+        if (svar.isEmpty()) {
+            return; // annulleret - intet sat, og intet navn afvist
+        }
+        List<Symbolgenkendelse.Fund> godkendte = svar.get();
+
+        // Nye navne brugeren lod stå uden flueben, er et nej: de skal ikke foreslås igen.
+        TreeSet<String> ikkeNavne = IOutils.loadIkkeNavne();
+        boolean flereIkkeNavne = false;
+        for (Symbolgenkendelse.Fund fund : forslag.nyeNavne()) {
+            if (!godkendte.contains(fund)) {
+                flereIkkeNavne |= ikkeNavne.add(Symbolgenkendelse.ikkeNavnNoegle(fund.symbol()));
+            }
+        }
+        if (flereIkkeNavne) {
+            IOutils.saveIkkeNavne(ikkeNavne);
+        }
+
+        // Godkendte nye navne oprettes først, så de står i boksen når fluebenet skal sættes.
+        // Symbolerne gemmes sammen med resten af kategorierne ved appluk, som når man tilføjer
+        // et symbol under Indstillinger.
+        LinkedHashMap<Category, List<String>> nyeSymboler = new LinkedHashMap<>();
+        for (Symbolgenkendelse.Fund fund : godkendte) {
+            Category kategori = kategoriPrId.get(fund.kategoriId());
+            if (kategori != null && !kategori.getSymbols().contains(fund.symbol())) {
+                nyeSymboler.computeIfAbsent(kategori, k -> new ArrayList<>()).add(fund.symbol());
+            }
+        }
+        nyeSymboler.forEach(Category::addSymbolsBevarFlueben);
+
+        for (Symbolgenkendelse.Fund fund : godkendte) {
+            if (Category.ID_KVALITETER.equals(fund.kategoriId())) {
+                CheckBox felt = kvalitetsfelter.get(fund.symbol());
+                if (felt != null) {
+                    felt.setSelected(true);
+                }
+                continue;
+            }
+            Category kategori = kategoriPrId.get(fund.kategoriId());
+            if (kategori != null) {
+                kategori.afkrydsIDreamCCBs(fund.symbol());
+            }
+        }
+    }
+
+    private void visSymbolbesked(String overskrift, String uddybning) {
+        Alert besked = new Alert(Alert.AlertType.INFORMATION);
+        besked.setTitle("Symboler i teksten");
+        besked.setHeaderText(overskrift);
+        besked.setContentText(uddybning);
+        besked.showAndWait();
     }
 
     // Efter et pull fra skyen. Drømmene selv ligger allerede i den kørende User, men to ting
