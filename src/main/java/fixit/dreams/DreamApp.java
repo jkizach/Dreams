@@ -25,7 +25,9 @@ public class DreamApp extends Application {
         stage.setOnCloseRequest(event -> handleWindowClose());
         scene = new Scene(fxmlLoader.load(), 1200, 780);
         //scene.getStylesheets().add(getClass().getResource("currentTema.css").toExternalForm());
-        CSSUpdater.init();
+        // Det foretrukne tema kan mangle i temaer.json (fx efter en sync), så null-tjek.
+        Tema foretrukne = User.getInstance().getForetrukneTema();
+        CSSUpdater.init(foretrukne != null ? foretrukne.getTemaForCSSUpdater() : null);
 
         Path cssPath = AppPaths.APP_DATA_PATH.resolve("currentTema.css");
         File cssFile = cssPath.toFile();

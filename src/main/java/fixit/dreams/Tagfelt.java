@@ -27,9 +27,9 @@ import java.util.TreeSet;
  *        | havfrue
  *     ( hav x ) ( mørke x )
  *
- * Chippen er en helt almindelig Button med appens globale knapstyling. Det er ikke bare
- * bekvemt: CSSUpdater.init() kopierer kun temafilen ud hvis den ikke findes i forvejen, så en
- * ny CSS-regel ville aldrig nå frem til en installation der allerede kører.
+ * Chippen er en helt almindelig Button med appens globale knapstyling. Det var valgt dengang
+ * CSSUpdater.init() kun kopierede temafilen ud ved første opstart, så en ny CSS-regel aldrig nåede
+ * frem til en installation der allerede kørte. I dag lægges filen ud ved hver opstart.
  *
  * Forslagslisten er skrevet i hånden oven på Popup og ListView, og det er med vilje.
  * ControlsFX har en færdig TextFields.bindAutoCompletion(), men dens AutoCompletionBinding

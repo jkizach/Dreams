@@ -28,10 +28,9 @@ import javafx.stage.Stage;
 //   tom linje    afsnitsskift
 //
 // Farver og font hentes fra brugerens valgte tema og sættes DIREKTE på noderne, ikke via CSS.
-// Det er med vilje: currentTema.css ligger i brugerens datamappe og kopieres kun derover hvis
-// den ikke findes i forvejen (CSSUpdater.copyCssIfNotExists), så nye stilregler i resource-
-// filen ville aldrig nå ud til nogen der har brugt appen før. Læser man temaet direkte,
-// virker det for alle med det samme - også med et hjemmelavet tema.
+// Det blev valgt dengang currentTema.css kun blev kopieret ud i datamappen ved første opstart,
+// så nye stilregler i resource-filen aldrig nåede ud til nogen der havde brugt appen før. I dag
+// lægges filen ud ved hver opstart (CSSUpdater.init), men at læse temaet direkte virker stadig.
 public class TxtController {
 
     private static final double BRØDSTØRRELSE = 16;

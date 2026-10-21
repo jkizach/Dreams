@@ -14,9 +14,9 @@
    <center>
       <!-- fitToWidth er dét der får afsnittene til at ombryde efter vinduets bredde.
            styleClass="text-area" er ikke en fejl: temaet har allerede farvet scrollbaren for
-           tekstfelter, og de regler ligger i BRUGERENS egen currentTema.css. Ved at bruge
-           samme klasse arver vinduet den styling - også hos alle der har haft appen længe og
-           derfor aldrig får nye regler ud (se CSSUpdater.copyCssIfNotExists). -->
+           tekstfelter, og ved at bruge samme klasse arver vinduet den styling uden en ny
+           regel. (Skrevet dengang currentTema.css kun blev kopieret ud ved første opstart -
+           i dag lægges den ud ved hver opstart, se CSSUpdater.init.) -->
       <ScrollPane fx:id="txtviewScroll" fitToWidth="true" hbarPolicy="NEVER" styleClass="text-area"
                   BorderPane.alignment="CENTER">
          <content>
