@@ -441,4 +441,26 @@ class SymbolgenkendelseTest {
         assertEquals(Set.of("Gerd"), sikreSymboler(r));
         assertTrue(r.nyeNavne().isEmpty());
     }
+
+    // ---- Chakraer: tre af navnene betyder næsten altid noget andet ----
+
+    @Test
+    void hals_rod_og_krone_findes_ikke_som_chakraer() {
+        Map<String, Collection<String>> reg = register("chakraer", List.of("hals", "rod", "krone", "hjerte"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find(
+                "Jeg havde ondt i halsen, roder i en skuffe ved roden af et træ og finder ti kroner. En krone.", reg);
+        assertTrue(r.erTom());
+    }
+
+    @Test
+    void hjerte_findes_stadig_som_chakra() {
+        Map<String, Collection<String>> reg = register("chakraer", List.of("hals", "hjerte"));
+        assertEquals(Set.of("hjerte"), sikreSymboler(Symbolgenkendelse.find("Hjertet bankede i halsen.", reg)));
+    }
+
+    @Test
+    void hals_i_en_anden_kategori_findes_stadig() {
+        Map<String, Collection<String>> reg = register("krop", List.of("hals"));
+        assertEquals(Set.of("hals"), sikreSymboler(Symbolgenkendelse.find("Jeg havde ondt i halsen.", reg)));
+    }
 }
