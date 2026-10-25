@@ -114,6 +114,9 @@ public final class Symbolgenkendelse {
      * "sker" er med af samme grund som "anden": -r er en gyldig endelse, men flertal af ske er
      * skeer, så "det sker" er aldrig en ske.
      *
+     * "lamme" er med af samme grund: en fordoblet konsonant gør det til flertal af lam, men i
+     * en drøm er man lammet.
+     *
      * Listen bruges kun de to steder: på et BØJET træf, og på gættet. Står symbolet
      * præcist i teksten, står det der, og så skal det med uanset hvad ordet ellers kan betyde.
      */
@@ -128,7 +131,7 @@ public final class Symbolgenkendelse {
             "hende", "mine", "alt", "meget", "sit", "sine", "mod", "disse", "hvis", "din",
             "nogle", "hos", "blive", "mange", "bliver", "hendes", "vaeret", "været", "jer",
             "saadan", "sådan", "lige", "bare", "helt", "igen", "stadig", "saa", "så", "ja", "nej",
-            "sker");
+            "sker", "lamme");
 
     /**
      * Navneord der i præcis disse former også er et almindeligt udsagnsord: "jeg får en gave",
@@ -157,6 +160,31 @@ public final class Symbolgenkendelse {
      */
     private static final String CHAKRA_ID = Kategoriid.forIndbygget("Chakraer");
     private static final Set<String> CHAKRAER_DER_IKKE_SOEGES = Set.of("hals", "rod", "krone");
+
+    /**
+     * Forløb søges slet ikke. Symbolerne er brugerens fortolkning af drømmens bevægelse, ikke ord
+     * der står i den: mod de rigtige drømme gav kategorien 92 fund og 0 rigtige - "møde" alene 88.
+     */
+    private static final String FORLOEB_ID = Kategoriid.forIndbygget("Forløb");
+
+    /**
+     * Farver har deres egne endelser: "rødligt", "blålig", "sølvfarvet", "rødhåret". Mod de
+     * rigtige drømme gav -lig-formerne 37 fund og 33 rigtige, de sammensatte 18 og 14. De gælder
+     * kun i Farver - ellers bliver "farlig" til et symbol "far".
+     */
+    private static final String FARVER_ID = Kategoriid.forIndbygget("Farver");
+    private static final Set<String> FARVEENDELSER = Set.of(
+            "lig", "ligt", "lige", "farvet", "farvede", "håret", "hårede", "malet", "malede", "skægget");
+
+    /**
+     * Endelser efter en fordoblet slutkonsonant: grøn - grønne, kat - katten, edderkop -
+     * edderkopper. Mod de rigtige drømme stod "grønne" alene for 32 fund og 28 rigtige, som før
+     * gik tabt. Kortere end BOEJNINGER: -t, -n og -r giver ingen mening efter en fordobling.
+     */
+    private static final Set<String> BOEJNINGER_EFTER_DOBBELT = Set.of(
+            "e", "en", "et", "er", "ene", "erne", "s", "es", "ens", "ets", "ers", "enes", "ernes");
+
+    private static final String VOKALER = "aeiouyæøå";
 
     /** Ord der kan stå lige foran et navneord, men ikke foran et udsagnsord: "et får", "mit tog". */
     private static final Set<String> BESTEMMERE = Set.of(
@@ -280,28 +308,28 @@ public final class Symbolgenkendelse {
         // Ord hvor et flerordssymbol allerede er fundet i sin helhed. Står "Peter Jensen" i
         // teksten, skal vi ikke bagefter spørge hvilken Peter der menes.
         Set<String> daekketAfFrase = new HashSet<>();
+        // Det samme for efternavnet: står "Jacob Piet" der, skal "Piet" ikke også være et spørgsmål.
+        Set<String> sidsteOrdDaekket = new HashSet<>();
 
         for (Map.Entry<String, Collection<String>> post : symbolerPrKategori.entrySet()) {
             if (post.getValue() == null) {
                 continue;
             }
             for (String symbol : post.getValue()) {
-                if (symbol == null || symbol.isBlank()) {
+                if (symbol == null || symbol.isBlank() || soegesIkke(post.getKey(), symbol)) {
                     continue;
                 }
-                if (CHAKRA_ID.equals(post.getKey()) && CHAKRAER_DER_IKKE_SOEGES.contains(smaat(symbol))) {
-                    continue;
-                }
-                String fundetSom = findITekst(ord, symbol);
+                String fundetSom = findITekst(ord, symbol, FARVER_ID.equals(post.getKey()));
                 if (fundetSom == null) {
                     continue;
                 }
                 praecise.computeIfAbsent(fundetSom, k -> new LinkedHashSet<>())
                         .add(new Fund(post.getKey(), symbol, fundetSom));
 
-                String[] symbolOrd = smaat(symbol).split(" ");
-                if (symbolOrd.length > 1) {
-                    daekketAfFrase.add(symbolOrd[0]);
+                String[] dele = symbolOrd(symbol);
+                if (dele.length > 1) {
+                    daekketAfFrase.add(dele[0]);
+                    sidsteOrdDaekket.add(dele[dele.length - 1]);
                 }
             }
         }
@@ -326,15 +354,14 @@ public final class Symbolgenkendelse {
                     continue;
                 }
                 for (String symbol : post.getValue()) {
-                    if (symbol == null || symbol.isBlank()) {
+                    if (symbol == null || symbol.isBlank() || soegesIkke(post.getKey(), symbol)) {
                         continue;
                     }
-                    String small = smaat(symbol);
-                    int mellemrum = small.indexOf(' ');
-                    if (mellemrum < 0) {
+                    String[] dele = symbolOrd(symbol);
+                    if (dele.length < 2) {
                         continue; // ét-ords-symboler er afgjort ovenfor
                     }
-                    if (small.substring(0, mellemrum).equals(ordet)) {
+                    if (dele[0].equals(ordet)) {
                         gaet.computeIfAbsent(ordet, k -> new LinkedHashSet<>())
                                 .add(new Fund(post.getKey(), symbol, ordet));
                     }
@@ -344,6 +371,41 @@ public final class Symbolgenkendelse {
 
         if (personKategoriId == null || !symbolerPrKategori.containsKey(personKategoriId)) {
             return sammenstil(praecise, gaet);
+        }
+
+        // Efternavnet alene: "Piet kom ind" når registret har "Jacob Piet". Brugeren kalder ofte
+        // en person ved efternavnet, og mod de rigtige drømme gik Jacob Piet tabt 12 gange af 14.
+        // Kun ord med stort midt i sætningen, og kun som spørgsmål - et efternavn kan deles af en
+        // hel familie, og sammenstil forvælger aldrig et gæt.
+        //
+        // Et ord der også er et fornavn i registret, er ikke et efternavn: "John" fra Elton John
+        // gav 3 spørgsmål og 0 rigtige, før det blev sorteret fra. Af samme grund tæller den
+        // sidste halvdel af et bindestregsnavn ikke - "Mette" er ikke Anne-Mettes efternavn.
+        Collection<String> personer = symbolerPrKategori.get(personKategoriId);
+        Set<String> fornavne = new HashSet<>();
+        for (String symbol : personer == null ? List.<String>of() : personer) {
+            if (symbol != null && !symbol.isBlank()) {
+                fornavne.add(symbolOrd(symbol)[0]);
+            }
+        }
+        for (String navn : personer == null ? List.<String>of() : navneMidtISaetning(tekst)) {
+            String udenGenitiv = navn.endsWith("s") ? navn.substring(0, navn.length() - 1) : navn;
+            if (navn.length() < MINDSTE_LAENGDE_FOR_BOEJNING || STOPORD.contains(navn)
+                    || sidsteOrdDaekket.contains(navn) || sidsteOrdDaekket.contains(udenGenitiv)
+                    || fornavne.contains(navn) || fornavne.contains(udenGenitiv)) {
+                continue;
+            }
+            for (String symbol : personer) {
+                if (symbol == null || symbol.isBlank()) {
+                    continue;
+                }
+                String[] dele = smaat(symbol).split(" ");
+                String sidste = dele[dele.length - 1];
+                if (dele.length > 1 && (navn.equals(sidste) || udenGenitiv.equals(sidste))) {
+                    gaet.computeIfAbsent(navn, k -> new LinkedHashSet<>())
+                            .add(new Fund(personKategoriId, symbol, navn));
+                }
+            }
         }
 
         List<Fund> nye = new ArrayList<>();
@@ -533,6 +595,30 @@ public final class Symbolgenkendelse {
         return ud;
     }
 
+    /**
+     * Ord der står med stort midt i en sætning og aldrig med lille nogen steder i teksten -
+     * skrevet småt og uden genitiv med apostrof. Samme sætningsregler som findNyeNavne.
+     */
+    private static Set<String> navneMidtISaetning(String tekst) {
+        Set<String> medStort = new LinkedHashSet<>();
+        Set<String> medLille = new HashSet<>();
+        Matcher m = ORD_MED_FORM.matcher(tekst);
+        int forrigeSlut = -1;
+        while (m.find()) {
+            String mellem = forrigeSlut < 0 ? "" : tekst.substring(forrigeSlut, m.start());
+            boolean start = forrigeSlut < 0 || indeholderSkel(mellem);
+            String smaa = m.group().toLowerCase(Locale.ROOT);
+            if (Character.isLowerCase(m.group().charAt(0))) {
+                medLille.add(smaa);
+            } else if (!start && erNavneagtigt(m.group())) {
+                medStort.add(smaa.replaceAll("['’]s$", ""));
+            }
+            forrigeSlut = m.end();
+        }
+        medStort.removeAll(medLille);
+        return medStort;
+    }
+
     /** Stort begyndelsesbogstav, men ikke råb, ikke en forkortelse og ikke en sammensætning. */
     private static boolean erNavneagtigt(String ord) {
         if (ord.length() < 2 || !Character.isUpperCase(ord.charAt(0))
@@ -649,6 +735,21 @@ public final class Symbolgenkendelse {
         return fund.kategoriId() + " " + fund.symbol();
     }
 
+    private static boolean soegesIkke(String kategoriId, String symbol) {
+        return FORLOEB_ID.equals(kategoriId)
+                || (CHAKRA_ID.equals(kategoriId) && CHAKRAER_DER_IKKE_SOEGES.contains(smaat(symbol)));
+    }
+
+    /**
+     * Symbolet delt i ord, som teksten deles i delIOrd: også ved bindestreg. Ellers står
+     * "gull-maja" som ét ord over for tekstens "gull" og "maja", og Gull-Maja blev aldrig fundet
+     * - 16 gange i de rigtige drømme. En parentes ("Allan (skolen)") røres ikke: den står aldrig
+     * i teksten, og symbolet findes derfor kun som gæt på fornavnet, som det skal.
+     */
+    private static String[] symbolOrd(String symbol) {
+        return smaat(symbol.replace('-', ' ')).split(" ");
+    }
+
     /**
      * Det sted i teksten hvor symbolet står, skrevet som teksten skriver det - eller null.
      *
@@ -657,8 +758,8 @@ public final class Symbolgenkendelse {
      * ville falde på gulvet. Kun symbolets SIDSTE ord må være bøjet ("peter jensens", ikke
      * "peters jensen").
      */
-    private static String findITekst(List<String> ord, String symbol) {
-        String[] symbolOrd = smaat(symbol).split(" ");
+    private static String findITekst(List<String> ord, String symbol, boolean farve) {
+        String[] symbolOrd = symbolOrd(symbol);
         if (symbolOrd.length == 0 || symbolOrd[0].isEmpty()) {
             return null;
         }
@@ -674,7 +775,7 @@ public final class Symbolgenkendelse {
                 continue;
             }
             int sidste = symbolOrd.length - 1;
-            if (!matcherMedBoejning(ord.get(i + sidste), symbolOrd[sidste])) {
+            if (!matcherMedBoejning(ord.get(i + sidste), symbolOrd[sidste], farve)) {
                 continue;
             }
             if (symbolOrd.length == 1 && erVerbumHer(ord, i, symbolOrd[0])) {
@@ -723,6 +824,10 @@ public final class Symbolgenkendelse {
     }
 
     private static boolean matcherMedBoejning(String ordet, String symbolOrdet) {
+        return matcherMedBoejning(ordet, symbolOrdet, false);
+    }
+
+    private static boolean matcherMedBoejning(String ordet, String symbolOrdet, boolean farve) {
         if (ordet.equals(symbolOrdet)) {
             return true;
         }
@@ -733,7 +838,17 @@ public final class Symbolgenkendelse {
         if (STOPORD.contains(ordet)) {
             return false;
         }
-        return BOEJNINGER.contains(ordet.substring(symbolOrdet.length()));
+        String endelse = ordet.substring(symbolOrdet.length());
+        if (BOEJNINGER.contains(endelse) || (farve && FARVEENDELSER.contains(endelse))) {
+            return true;
+        }
+        // Fordoblet slutkonsonant: grønne, katten, gullig.
+        char slut = symbolOrdet.charAt(symbolOrdet.length() - 1);
+        if (VOKALER.indexOf(slut) >= 0 || endelse.length() < 2 || endelse.charAt(0) != slut) {
+            return false;
+        }
+        String efter = endelse.substring(1);
+        return BOEJNINGER_EFTER_DOBBELT.contains(efter) || (farve && FARVEENDELSER.contains(efter));
     }
 
     /**
