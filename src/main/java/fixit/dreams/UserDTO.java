@@ -35,6 +35,11 @@ public class UserDTO {
     // beholder User den liste den har, i stedet for at tømme den (se User og SyncService).
     public List<String> ikkeNavne;
 
+    // Additivt felt, nyt i 2.3: ord brugeren har føjet til stavekontrollens ordbog (se
+    // Stavefelt). Samme regler som ikkeNavne: følger med i syncen, ingen skemaændring, og null
+    // betyder "ældre end feltet", ikke "ingen ord".
+    public List<String> egneOrd;
+
     public int schemaVersion;
 
     public UserDTO() {}
@@ -51,6 +56,7 @@ public class UserDTO {
         this.startDatoValgtAfBruger = user.harValgtStartdato();
         // Sorteret (User holder et TreeSet), så samme liste altid giver samme hash i meta.json.
         this.ikkeNavne = new ArrayList<>(user.getIkkeNavne());
+        this.egneOrd = new ArrayList<>(user.getEgneOrd());
         this.schemaVersion = SchemaMigrator.CURRENT_SCHEMA_VERSION;
 
     }

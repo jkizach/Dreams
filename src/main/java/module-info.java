@@ -21,6 +21,12 @@ module fixit.dreams {
     // fuld JDK, som har modulet i forvejen.
     requires jdk.crypto.ec;
 
+    // Stavekontrollen (Stavekontrol.java): Hunspell-motoren og den Directory den gemmer i.
+    // Lucene advarer ved opstart om at jdk.management ikke er med. Det er ufarligt - den
+    // springer bare nogle interne optimeringer over - og modulet er bevidst ikke taget med.
+    requires org.apache.lucene.analysis.common;
+    requires org.apache.lucene.core;
+
     opens fixit.dreams to javafx.fxml;
     exports fixit.dreams;
 

@@ -317,6 +317,51 @@ class MetaSyncTest {
         assertEquals(List.of("lovns"), IOutils.loadUser().ikkeNavne);
     }
 
+    // Stavekontrollens egne ord følger samme regler som ikke-navnene.
+    @Test
+    void egne_ord_sendes_med_indstillingerne() throws SyncException {
+        lokaleStempler(NY);
+        user.tilføjEgetOrd("vipassana");
+        IOutils.saveUser(user);
+
+        synkroniser();
+
+        JsonNode sendt = sky.patched.get(SETTINGS_PATH).path("egneOrd");
+        assertEquals(1, sendt.size());
+        assertEquals("vipassana", sendt.get(0).asText());
+    }
+
+    @Test
+    void hentede_egne_ord_laegges_paa_disken_og_i_den_koerende_user() throws SyncException {
+        lokaleStempler(GAMMEL);
+        user.tilføjEgetOrd("lokalt");
+        ObjectNode doc = SyncObjectMapper.INSTANCE.createObjectNode();
+        doc.put("foretrukneTema", "mørkt grønt");
+        doc.putArray("egneOrd").add("hjertebøn").add("vipassana");
+        doc.put("updatedAt", NY.toString());
+        sky.documents.put(SETTINGS_PATH, doc);
+
+        synkroniser();
+
+        assertEquals(List.of("hjertebøn", "vipassana"), List.copyOf(user.getEgneOrd()));
+        assertEquals(List.of("hjertebøn", "vipassana"), IOutils.loadUser().egneOrd);
+    }
+
+    @Test
+    void et_sky_dokument_uden_egne_ord_toemmer_ikke_ordbogen() throws SyncException {
+        lokaleStempler(GAMMEL);
+        user.tilføjEgetOrd("vipassana");
+        ObjectNode doc = SyncObjectMapper.INSTANCE.createObjectNode();
+        doc.put("foretrukneTema", "mørkt grønt");
+        doc.put("updatedAt", NY.toString());
+        sky.documents.put(SETTINGS_PATH, doc);
+
+        synkroniser();
+
+        assertEquals(List.of("vipassana"), List.copyOf(user.getEgneOrd()));
+        assertEquals(List.of("vipassana"), IOutils.loadUser().egneOrd);
+    }
+
     @Test
     void indstillinger_sendes_uden_skemaversion() throws SyncException {
         lokaleStempler(NY);

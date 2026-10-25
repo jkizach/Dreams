@@ -1,0 +1,3 @@
+# Stavekontrolden's ordbogsfiler skal ligge byte for byte som udgivet - ingen CRLF-konvertering.
+*.dic -text
+*.aff -text

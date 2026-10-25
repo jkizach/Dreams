@@ -764,6 +764,12 @@ public class SyncService {
         } else {
             user.setIkkeNavne(dto.ikkeNavne);
         }
+        // Stavekontrollens egne ord: præcis samme regel.
+        if (dto.egneOrd == null) {
+            dto.egneOrd = new ArrayList<>(user.getEgneOrd());
+        } else {
+            user.setEgneOrd(dto.egneOrd);
+        }
 
         IOutils.saveUserDTO(dto);
         stemplFraSkyen(meta -> meta.settings, cloudUpdatedAt);

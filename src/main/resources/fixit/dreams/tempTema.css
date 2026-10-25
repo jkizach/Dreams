@@ -238,6 +238,29 @@
 }
 
 
+/* Højrekliksmenuer (stavekontrollens forslag). Uden disse regler står de med modenas hvide
+   baggrund og den globale .label-farve, som er svær at læse på hvidt. */
+.context-menu {
+    -fx-background-color: -fx-textfelt-background;
+    -fx-border-color: -fx-border-border;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: -fx-hovedtxt-text;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: -fx-alternativbg-background;
+}
+
+.context-menu .menu-item:focused .label {
+    -fx-text-fill: -fx-hovedbg-background;
+}
+
+.context-menu .separator .line {
+    -fx-border-color: -fx-border-border transparent transparent transparent;
+}
+
 .custom-list-view {
     -fx-background-color: -fx-textfelt-background;
     -fx-text-fill: -fx-hovedtxt-text;
