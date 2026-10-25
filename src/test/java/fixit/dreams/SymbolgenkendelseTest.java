@@ -458,6 +458,100 @@ class SymbolgenkendelseTest {
         assertEquals(Set.of("hjerte"), sikreSymboler(Symbolgenkendelse.find("Hjertet bankede i halsen.", reg)));
     }
 
+    // ---- Forløb er fortolkning, ikke ord ----
+
+    @Test
+    void forloeb_soeges_ikke_i_teksten() {
+        Map<String, Collection<String>> reg = register("forloeb", List.of("møde", "det ukendte"));
+        assertTrue(Symbolgenkendelse.find("Vi har et møde om det ukendte.", reg).erTom());
+    }
+
+    // ---- Bindestreg ----
+
+    @Test
+    void et_navn_med_bindestreg_findes() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Gull-Maja"));
+        assertEquals(Set.of("Gull-Maja"), sikreSymboler(Symbolgenkendelse.find("Så kommer Gull-Maja ind.", reg)));
+    }
+
+    @Test
+    void bindestregsnavnet_skygges_ikke_af_varianten_med_parentes() {
+        // Som "Peter Jensen": står hele navnet der, spørges der ikke om fornavnet.
+        Map<String, Collection<String>> reg = register("personer", List.of("Anne-Mette", "Anne-Mette (klient)"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Jeg taler med Anne-Mette.", reg);
+        assertEquals(Set.of("Anne-Mette"), sikreSymboler(r));
+        assertTrue(r.tvetydige().isEmpty());
+    }
+
+    // ---- Fordoblet slutkonsonant ----
+
+    @Test
+    void fordoblet_slutkonsonant_findes() {
+        Map<String, Collection<String>> reg = register("ting", List.of("grøn", "kat", "edderkop"));
+        assertEquals(Set.of("grøn", "kat", "edderkop"),
+                sikreSymboler(Symbolgenkendelse.find("De grønne katte jagede edderkopperne.", reg)));
+    }
+
+    @Test
+    void lamme_er_ikke_flertal_af_lam() {
+        Map<String, Collection<String>> reg = register("dyr", List.of("lam"));
+        assertTrue(Symbolgenkendelse.find("Mine ben er lamme.", reg).erTom());
+    }
+
+    // ---- Farvernes egne endelser ----
+
+    @Test
+    void farver_findes_med_lig_og_farvet() {
+        Map<String, Collection<String>> reg = register("farver", List.of("rød", "sølv", "gul", "brun"));
+        assertEquals(Set.of("rød", "sølv", "gul", "brun"),
+                sikreSymboler(Symbolgenkendelse.find("Et rødligt lys, en sølvfarvet bil, gulligt papir og en brunhåret mand.", reg)));
+    }
+
+    @Test
+    void farveendelserne_gaelder_kun_i_farver() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Far"));
+        assertTrue(Symbolgenkendelse.find("Det er farligt.", reg).erTom());
+    }
+
+    // ---- Efternavn alene ----
+
+    @Test
+    void efternavnet_alene_er_et_spoergsmaal_uden_forvalg() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Jacob Piet"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Så kom Piet ind, og vi spillede.", reg, "personer");
+        assertTrue(r.sikre().isEmpty());
+        assertEquals(1, r.tvetydige().size());
+        assertEquals("Jacob Piet", r.tvetydige().get(0).kandidater().get(0).symbol());
+        assertNull(r.tvetydige().get(0).forvalgt());
+        assertTrue(r.nyeNavne().isEmpty());
+    }
+
+    @Test
+    void et_fornavn_er_ikke_et_efternavn() {
+        // "John" er Elton Johns efternavn, men også et fornavn i registret.
+        Map<String, Collection<String>> reg = register("personer", List.of("Elton John", "John Katzeff", "Anne-Mette"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Så kom Mette ind.", reg, "personer");
+        assertTrue(r.tvetydige().isEmpty());
+        r = Symbolgenkendelse.find("Så kom John ind.", reg, "personer");
+        assertEquals(List.of("John Katzeff"), r.tvetydige().get(0).kandidater().stream().map(Symbolgenkendelse.Fund::symbol).toList());
+    }
+
+    @Test
+    void efternavnet_i_genitiv_er_ogsaa_et_spoergsmaal() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Jacob Piet"));
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Huset er Piets.", reg, "personer");
+        assertEquals(1, r.tvetydige().size());
+    }
+
+    @Test
+    void efternavnet_skrevet_med_lille_eller_i_hele_navnet_spoerges_der_ikke_om() {
+        Map<String, Collection<String>> reg = register("personer", List.of("Rikke Sand"));
+        assertTrue(Symbolgenkendelse.find("Der var Sand overalt og sand i skoene.", reg, "personer").tvetydige().isEmpty());
+        Symbolgenkendelse.Resultat r = Symbolgenkendelse.find("Jeg mødte Rikke Sand.", reg, "personer");
+        assertEquals(Set.of("Rikke Sand"), sikreSymboler(r));
+        assertTrue(r.tvetydige().isEmpty());
+    }
+
     @Test
     void hals_i_en_anden_kategori_findes_stadig() {
         Map<String, Collection<String>> reg = register("krop", List.of("hals"));

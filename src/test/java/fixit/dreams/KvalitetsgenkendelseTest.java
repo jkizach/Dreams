@@ -152,4 +152,58 @@ class KvalitetsgenkendelseTest {
         assertEquals(List.of(), find(""));
         assertEquals(List.of(), find(null));
     }
+
+    // ---- Drømmerens køn, udledt af drømmene med flueben i Modsatkønnet ----
+
+    private static final Kvalitetsgenkendelse.Koen MAND = Kvalitetsgenkendelse.Koen.MAND;
+    private static final Kvalitetsgenkendelse.Koen KVINDE = Kvalitetsgenkendelse.Koen.KVINDE;
+
+    @Test
+    void en_droem_som_kvinde_med_flueben_viser_en_mand() {
+        assertEquals(MAND, Kvalitetsgenkendelse.udledDroemmerensKoen(List.of("Jeg er en kvinde i en kjole.")));
+        assertEquals(KVINDE, Kvalitetsgenkendelse.udledDroemmerensKoen(List.of("Pludselig er jeg en ung mand.")));
+    }
+
+    @Test
+    void en_er_valgfrit() {
+        assertEquals(MAND, Kvalitetsgenkendelse.udledDroemmerensKoen(List.of("Jeg er kvinde.")));
+        assertEquals(KVINDE, Kvalitetsgenkendelse.udledDroemmerensKoen(List.of("Nu er jeg mand.")));
+        assertEquals(List.of("Modsatkønnet"), symboler(Kvalitetsgenkendelse.find("Jeg er kvinde.", ALLE, MAND)));
+    }
+
+    @Test
+    void ingen_droemme_eller_uenige_droemme_giver_ukendt_koen() {
+        assertNull(Kvalitetsgenkendelse.udledDroemmerensKoen(List.of()));
+        assertNull(Kvalitetsgenkendelse.udledDroemmerensKoen(List.of("Jeg flyver.")));
+        assertNull(Kvalitetsgenkendelse.udledDroemmerensKoen(List.of("Jeg er en kvinde.", "Jeg er en mand.")));
+    }
+
+    @Test
+    void en_droem_med_begge_koen_vidner_ikke() {
+        assertEquals(MAND, Kvalitetsgenkendelse.udledDroemmerensKoen(List.of(
+                "Jeg er en kvinde. Senere er jeg en mand igen.", "Jeg er en kvinde.")));
+    }
+
+    @Test
+    void kendt_koen_foreslaar_kun_det_modsatte() {
+        assertEquals(List.of("Modsatkønnet"), symboler(Kvalitetsgenkendelse.find("Jeg er en kvinde.", ALLE, MAND)));
+        assertEquals(List.of(), symboler(Kvalitetsgenkendelse.find("Jeg er en mand.", ALLE, MAND)));
+        assertEquals(List.of(), symboler(Kvalitetsgenkendelse.find("Jeg er en ung pige.", ALLE, KVINDE)));
+    }
+
+    @Test
+    void omvendt_ordstilling_taeller_men_ikke_med_forbehold() {
+        assertEquals(List.of("Modsatkønnet"), symboler(Kvalitetsgenkendelse.find("Nu er jeg en kvinde.", ALLE, MAND)));
+        assertEquals(List.of(), symboler(Kvalitetsgenkendelse.find("Men muligvis er jeg en kvinde?", ALLE, MAND)));
+    }
+
+    @Test
+    void ukendt_koen_foreslaar_begge_som_foer() {
+        assertEquals(List.of("Modsatkønnet"), symboler(Kvalitetsgenkendelse.find("Jeg er en mand.", ALLE, null)));
+        assertEquals(List.of("Modsatkønnet"), symboler(Kvalitetsgenkendelse.find("Jeg er en kvinde.", ALLE, null)));
+    }
+
+    private static List<String> symboler(List<Symbolgenkendelse.Fund> fund) {
+        return fund.stream().map(Symbolgenkendelse.Fund::symbol).toList();
+    }
 }
