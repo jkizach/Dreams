@@ -2,11 +2,13 @@ package fixit.dreams;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,6 +69,9 @@ public final class Kvalitetsgenkendelse {
 
     private static final Set<String> FORBEHOLD_MARERIDT = Set.of("ikke", "intet", "ingen", "aldrig");
 
+    /** "muligvis er jeg en kvinde?" - det eneste falske kønsforslag, efter at "er jeg" kom med. */
+    private static final Set<String> FORBEHOLD_KOEN = Set.of("muligvis", "måske", "vist", "nok");
+
     /** Udsagnsord for at praktisere, som ordstammer: mediterer, mediterede, meditere... */
     private static final List<String> PRAKSISVERBER = List.of("mediter", "praktiser", "dobbeltret");
 
@@ -85,21 +90,89 @@ public final class Kvalitetsgenkendelse {
             "(klar over|ved|indser|opdager|forstår|bevidst om|går op for mig)( at)? (det( her)? er en drøm|jeg drømmer)");
 
     private static final Pattern KOEN = Pattern.compile(
-            "jeg (er|var|bliver|blev)( nu| pludselig| selv| også| her)? (en |et )?(\\p{L}+ )?"
+            "(jeg (er|var|bliver|blev)|(er|var|bliver|blev) jeg)( nu| pludselig| selv| også| her)? (en |et )?(\\p{L}+ )?"
                     + "(kvinde|mand|pige|dreng|kvindelig\\p{L}*|mandlig\\p{L}*)(?!\\p{L})"
                     + "|jeg som (kvinde|mand|pige|dreng)(?!\\p{L})");
 
     /** Ét ord i en sætning, med sin originale form - stort begyndelsesbogstav afslører navne. */
     private record Ord(String smaat, String original) {}
 
+    public enum Koen { MAND, KVINDE }
+
+    /**
+     * Drømmerens køn, udledt af de drømme brugeren selv har sat flueben i Modsatkønnet på: står
+     * der kun "jeg er en kvinde" i sådan en drøm, er drømmeren en mand, og omvendt.
+     *
+     * Kønnet gemmes ikke, men udledes hver gang - så retter det sig selv, hvis et flueben fjernes,
+     * og følger med til den anden maskine sammen med drømmene. En drøm der nævner begge køn ("jeg er
+     * en kvinde ... nu er jeg en mand") vidner ikke om noget. Peger drømmene begge veje, eller er
+     * der ingen, er kønnet ukendt (null), og Modsatkønnet foreslås ved begge køn som før.
+     *
+     * Mod de rigtige drømme: 8 drømme med flueben og kun kvinde-ord, ingen med mand-ord.
+     *
+     * @param teksterMedModsatkoennet drømmeteksten fra hver drøm med flueben i Modsatkønnet
+     */
+    public static Koen udledDroemmerensKoen(Collection<String> teksterMedModsatkoennet) {
+        Koen udledt = null;
+        for (String tekst : teksterMedModsatkoennet) {
+            Set<Koen> naevnt = koenINaevnt(tekst);
+            if (naevnt.size() != 1) {
+                continue;
+            }
+            Koen modsat = naevnt.contains(Koen.KVINDE) ? Koen.MAND : Koen.KVINDE;
+            if (udledt != null && udledt != modsat) {
+                return null;
+            }
+            udledt = modsat;
+        }
+        return udledt;
+    }
+
+    /** De køn drømmeren beskriver sig selv som, overalt i teksten: "jeg er en kvinde", "jeg som dreng". */
+    private static Set<Koen> koenINaevnt(String tekst) {
+        Set<Koen> ud = EnumSet.noneOf(Koen.class);
+        if (tekst == null) {
+            return ud;
+        }
+        for (String saetning : SAETNING.split(tekst)) {
+            StringBuilder sb = new StringBuilder();
+            for (Ord o : delIOrd(saetning)) {
+                if (sb.length() > 0) {
+                    sb.append(' ');
+                }
+                sb.append(o.smaat());
+            }
+            Matcher m = KOEN.matcher(sb);
+            while (m.find()) {
+                if (m.start() == 0 || sb.charAt(m.start() - 1) == ' ') {
+                    ud.add(koenAf(m.group()));
+                }
+            }
+        }
+        return ud;
+    }
+
+    /** Kønsordet står sidst i både "jeg er en ung kvinde" og "jeg som dreng". */
+    private static Koen koenAf(String udtryk) {
+        String sidste = udtryk.substring(udtryk.lastIndexOf(' ') + 1);
+        return sidste.startsWith("kvind") || sidste.equals("pige") ? Koen.KVINDE : Koen.MAND;
+    }
+
+    public static List<Symbolgenkendelse.Fund> find(String tekst, Collection<String> tilladte) {
+        return find(tekst, tilladte, null);
+    }
+
     /**
      * @param tekst    drømmeteksten
      * @param tilladte de kvaliteter der må foreslås - fx ikke dem der allerede har flueben, og
      *                 ikke Holografisk når boksen er slået fra under Indstillinger
+     * @param droemmer drømmerens køn fra udledDroemmerensKoen, eller null. Kendes det, tæller kun
+     *                 det modsatte køn til Modsatkønnet: en mand der skriver "jeg er en mand" er
+     *                 ikke modsatkønnet. De tre drømme af den slags var de eneste falske forslag.
      * @return ét Fund pr. kvalitet, i Category.FLAGS_SYMBOLS_IN_ORDER-rækkefølge. fundetSom er
      *         sætningsstykket der udløste det, så dialogen kan vise hvorfor.
      */
-    public static List<Symbolgenkendelse.Fund> find(String tekst, Collection<String> tilladte) {
+    public static List<Symbolgenkendelse.Fund> find(String tekst, Collection<String> tilladte, Koen droemmer) {
         if (tekst == null || tekst.isBlank() || tilladte == null || tilladte.isEmpty()) {
             return List.of();
         }
@@ -111,7 +184,7 @@ public final class Kvalitetsgenkendelse {
             }
             soeg(LUCID, tilladte, fund, () -> lucid(ord));
             soeg(PRAKTISERER, tilladte, fund, () -> praktiserer(ord));
-            soeg(MODSATKOENNET, tilladte, fund, () -> modsatkoennet(ord));
+            soeg(MODSATKOENNET, tilladte, fund, () -> modsatkoennet(ord, droemmer));
             soeg(MARERIDT, tilladte, fund, () -> mareridt(ord));
             soeg(HOLOGRAFISK, tilladte, fund, () -> holografisk(ord));
         }
@@ -162,9 +235,9 @@ public final class Kvalitetsgenkendelse {
         return frase(ord, PRAKSISNAVNEORD, FORBEHOLD_PRAKSIS, true);
     }
 
-    private static String modsatkoennet(List<Ord> ord) {
+    private static String modsatkoennet(List<Ord> ord, Koen droemmer) {
         // "jeg" står i selve udtrykket, så omMig er unødvendig - og "ikke" kan ikke stå imellem.
-        return frase(ord, KOEN, Set.of(), false);
+        return frase(ord, KOEN, FORBEHOLD_KOEN, false, udtryk -> droemmer == null || koenAf(udtryk) != droemmer);
     }
 
     private static String mareridt(List<Ord> ord) {
@@ -247,6 +320,11 @@ public final class Kvalitetsgenkendelse {
      * tegnsætning og linjeskift ikke spænder ben. Forbehold og omMig måles fra udtrykkets første ord.
      */
     private static String frase(List<Ord> ord, Pattern p, Set<String> forbehold, boolean kraevMig) {
+        return frase(ord, p, forbehold, kraevMig, udtryk -> true);
+    }
+
+    private static String frase(List<Ord> ord, Pattern p, Set<String> forbehold, boolean kraevMig,
+                                Predicate<String> godkend) {
         StringBuilder sb = new StringBuilder();
         List<Integer> starter = new ArrayList<>();
         for (Ord o : ord) {
@@ -262,7 +340,8 @@ public final class Kvalitetsgenkendelse {
                 continue; // midt i et ord
             }
             int i = starter.indexOf(m.start());
-            if (i < 0 || forbeholdForan(ord, i, 3, forbehold) || (kraevMig && !omMig(ord, i))) {
+            if (i < 0 || forbeholdForan(ord, i, 3, forbehold) || (kraevMig && !omMig(ord, i))
+                    || !godkend.test(m.group())) {
                 continue;
             }
             return m.group();

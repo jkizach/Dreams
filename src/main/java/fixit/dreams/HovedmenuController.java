@@ -470,7 +470,8 @@ public class HovedmenuController {
 
         Symbolgenkendelse.Resultat forslag =
                 Symbolgenkendelse.find(tekst, symbolerPrKategori, Category.ID_PERSONER, userService.getIkkeNavne())
-                        .medKvaliteter(Kvalitetsgenkendelse.find(tekst, tilladteKvaliteter));
+                        .medKvaliteter(Kvalitetsgenkendelse.find(tekst, tilladteKvaliteter,
+                                userService.getDrømmerensKøn()));
         if (forslag.erTom()) {
             visSymbolbesked("Ingen af dine symboler blev fundet i teksten.",
                     "Symbolerne findes som de står i dine kategorier, også bøjet - \"hunden\" "

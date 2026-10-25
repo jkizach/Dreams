@@ -378,6 +378,17 @@ public class UserService extends ServiceMother {
         return !user.getDreams().isEmpty();
     }
 
+    // Drømmerens køn, udledt af drømmene med flueben i Modsatkønnet - se Kvalitetsgenkendelse.
+    public Kvalitetsgenkendelse.Koen getDrømmerensKøn() {
+        List<String> tekster = new ArrayList<>();
+        for (Dream d : user.getDreams().values()) {
+            if (d.hasFlag(Kvalitetsgenkendelse.MODSATKOENNET)) {
+                tekster.add(d.getIndhold());
+            }
+        }
+        return Kvalitetsgenkendelse.udledDroemmerensKoen(tekster);
+    }
+
     // Ældste drøm syncen har hentet ned i denne session, eller null hvis der ikke kom nogen.
     public LocalDate getÆldsteHentedeDrøm() {
         return user.getÆldsteHentedeDrøm();
