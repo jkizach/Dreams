@@ -21,7 +21,9 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fixit.dreams.HovedmenuController">
@@ -106,7 +108,13 @@
                               </DatePicker>
                            </children>
                         </HBox>
-                        <TextArea fx:id="skriveFelt" prefHeight="532.0" prefWidth="600.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <!-- Stavekontrollens streger tegnes i stavelag oven på skriveFelt (se Stavefelt). -->
+                        <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <TextArea fx:id="skriveFelt" prefHeight="532.0" prefWidth="600.0" wrapText="true" />
+                              <Pane fx:id="stavelag" mouseTransparent="true" />
+                           </children>
+                        </StackPane>
                         <!-- Find-knappen står ved Gem, ikke under Symboler: den læser drømmeteksten og
                              sætter også kvaliteternes flueben, ikke kun symbolernes. Rækken spænder over
                              tekstkolonnen også, for symbolkolonnen er for smal til begge knapper ved

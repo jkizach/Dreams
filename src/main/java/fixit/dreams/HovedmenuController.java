@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -75,6 +76,12 @@ public class HovedmenuController {
 
     /** Tagfeltet på Ny drøm. Kontrollerne står i FXML, opførslen i Tagfelt. */
     private Tagfelt tagfelt;
+
+    @FXML
+    private Pane stavelag;
+
+    /** Stavekontrollen i skrivefeltet på Ny drøm. Laget står i FXML, opførslen i Stavefelt. */
+    private Stavefelt stavefelt;
 
     @FXML
     private VBox fjernSymbolVbox = new VBox();
@@ -271,7 +278,6 @@ public class HovedmenuController {
         });
 
         searchField.setContextMenu(new ContextMenu());
-        skriveFelt.setContextMenu(new ContextMenu());
         dagrestFelt.setContextMenu(new ContextMenu());
         tolkningFelt.setContextMenu(new ContextMenu());
 
@@ -289,6 +295,7 @@ public class HovedmenuController {
         // Og kunne man så lave et Søren-trick med Categories her i stedet? vv
         loadCCBs();
         tagfelt = new Tagfelt(tfTag, tagChips, user.getTagkategori());
+        stavefelt = new Stavefelt(skriveFelt, stavelag); // har sin egen højrekliksmenu
         opdaterTagliste();
 
         kategoriLabels = user.getKategoriLabels(); // skal løses så det bruger categories og ikke noget andet...
