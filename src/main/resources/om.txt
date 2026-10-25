@@ -4,6 +4,8 @@ En app til at skrive sine drømme ned i - og til at få øje på de mønstre der
 
 Den er udviklet af Johannes Kizach med stor hjælp fra Søren Munk, og er til fri afbenyttelse.
 
+En stor tak også til Claude Opus 5 fra Anthropic for et stort og tålmodigt stykke arbejde med koden.
+
 ## Hent den
 https://github.com/jkizach/Dreams/releases/latest
 
@@ -140,3 +142,5 @@ Drømmen er helt kort og simpel, men når man husker den som vågen, er den fuld
 # Tak til
 
 Måneikonet er hentet fra Gallery Yopriceille og er gratis og til fri afbenyttelse - tak til dem.
+
+Stavekontrollens danske ordbog er Stavekontrolden (stavekontrolden.dk), © Foreningen for frit tilgængelige sprogværktøjer, udgivet under de åbne licenser GNU GPL 2.0, GNU LGPL 2.1 og Mozilla MPL 1.1. Den bygger på data fra Det Danske Sprog- og Litteraturselskab (dsl.dk) - tak til dem begge.

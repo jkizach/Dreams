@@ -376,6 +376,17 @@ public class IOutils {
         saveUserDTO(paaDisken);
     }
 
+    // Stavekontrollens egne ord - KUN det felt, af samme grund som gemIkkeNavne.
+    public static void gemEgneOrd(User user) {
+        UserDTO paaDisken = FILE_PATH_USER.toFile().exists() ? loadUser() : null;
+        if (paaDisken == null) {
+            saveUser(user);
+            return;
+        }
+        paaDisken.egneOrd = new ArrayList<>(user.getEgneOrd());
+        saveUserDTO(paaDisken);
+    }
+
     public static void saveMachineId(String machineId) {
         try {
             objectMapper.writerWithDefaultPrettyPrinter()

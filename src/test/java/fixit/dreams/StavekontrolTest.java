@@ -2,9 +2,6 @@ package fixit.dreams;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -105,13 +102,5 @@ class StavekontrolTest {
         List<Stavekontrol.Fejl> fejl = List.of(new Stavekontrol.Fejl(0, 3, "drø"));
         assertEquals(List.of(), Stavekontrol.forskyd(fejl, "drø", "drøm"));
         assertEquals(List.of(), Stavekontrol.forskyd(fejl, "drø", "dø"));
-    }
-
-    @Test
-    void egenOrdbogGemmesOgLaesesSomSmaaBogstaver(@TempDir Path mappe) {
-        Path fil = mappe.resolve("egen-ordbog.txt");
-        assertEquals(Set.of(), Stavekontrol.laesEgenOrdbog(fil));
-        Stavekontrol.gemEgenOrdbog(fil, Set.of("hjertebøn", "vipassana"));
-        assertEquals(Set.of("hjertebøn", "vipassana"), Stavekontrol.laesEgenOrdbog(fil));
     }
 }

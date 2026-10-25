@@ -20,6 +20,12 @@ Et godt tip: mange steder i appen kan du holde musepilen stille over et felt ell
 
 Her skriver du drømmen i det store felt og sætter datoen for den. Datoen starter på dagens dato, så som regel skal du ikke røre den.
 
+Mens du skriver, holder appen øje med stavningen. Ord den ikke kender, får en rød bølgestreg under sig - først når du er gået videre til næste ord, så den ikke blander sig midt i et ord. Højreklik på et markeret ord, så får du forslag; vælger du et, bliver det skrevet ind i stedet. Stavekontrollen retter aldrig noget af sig selv, den markerer kun.
+
+Navnene på dine symboler kender den i forvejen, så "Anna Fasting" bliver ikke markeret. Er et ord stavet rigtigt, men ukendt for appen - fx "vipassana" - vælger du "Tilføj til ordbogen" i samme menu, og så bliver det aldrig markeret igen. Din ordbog følger med i sky-synkroniseringen, så ordene også er der på dine andre maskiner. "Ignorér" lader ordet være i fred, indtil du lukker appen.
+
+Har du valgt et tema hvor rød er svær at se i skrivefeltet, skifter stregen selv til en farve der kan ses. Stavekontrollen er der også når du redigerer en gammel drøm.
+
 Under skrivefeltet ligger tre små faner: Dagrest, hvor du kan skrive hvad der skete dagen før, Tolkning, til din egen forståelse af drømmen, og Tags, som er beskrevet lige nedenfor.
 
 I venstre side er der ni afkrydsningsfelter, hvor du kan markere hvad slags drøm det var - om den fx var lucid, et mareridt, eller handlede om praksis. Tre af felterne (Kollektiv, Advarsel og Holografisk) er skjult som udgangspunkt; du kan gøre dem synlige under Indstillinger, hvis du har brug for dem.

@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -66,7 +65,6 @@ class Stavefelt {
     private final ContextMenu tidligereMenu;
 
     private Stavekontrol stavekontrol;
-    private Set<String> egenOrdbog = Set.of();
     /** "Ignorér" gælder kun til appen lukkes. */
     private final Set<String> ignorerede = new HashSet<>();
 
@@ -132,13 +130,6 @@ class Stavefelt {
         }, Platform::runLater).exceptionally(t -> {
             t.printStackTrace(); // uden ordbog er feltet bare et almindeligt tekstfelt
             return null;
-        });
-        TRAAD.execute(() -> {
-            Set<String> laest = Stavekontrol.laesEgenOrdbog(Stavekontrol.egenOrdbogSti());
-            Platform.runLater(() -> {
-                egenOrdbog = laest;
-                tjek();
-            });
         });
     }
 
@@ -207,10 +198,12 @@ class Stavefelt {
         }
         String tekst = felt.getText() == null ? "" : felt.getText();
         long tjekketVersion = version;
-        // Symbolerne læses her på FX-tråden; kun et øjebliksbillede sendes videre.
-        Set<String> godkendte = new HashSet<>(egenOrdbog);
+        // Egne ord og symboler læses her på FX-tråden; kun et øjebliksbillede sendes videre.
+        // Egne ord hentes fra User hver gang, så ord hentet fra skyen tæller med det samme.
+        User user = User.getInstance();
+        Set<String> godkendte = new HashSet<>(user.getEgneOrd());
         godkendte.addAll(ignorerede);
-        godkendte.addAll(Stavekontrol.ordFraSymboler(User.getInstance().getCategories()));
+        godkendte.addAll(Stavekontrol.ordFraSymboler(user.getCategories()));
         Stavekontrol s = stavekontrol;
         TRAAD.execute(() -> {
             List<Stavekontrol.Fejl> fundne = s.find(tekst, godkendte);
@@ -386,10 +379,11 @@ class Stavefelt {
     }
 
     private void tilfoejTilOrdbog(String ord) {
-        Set<String> ny = new TreeSet<>(egenOrdbog);
-        ny.add(ord.toLowerCase(Locale.ROOT));
-        egenOrdbog = ny;
-        TRAAD.execute(() -> Stavekontrol.gemEgenOrdbog(Stavekontrol.egenOrdbogSti(), ny));
+        // I user.json, så ordet følger med i syncen til de andre maskiner (se UserDTO.egneOrd).
+        User user = User.getInstance();
+        if (user.tilføjEgetOrd(ord)) {
+            IOutils.gemEgneOrd(user);
+        }
         fjernOgTjek(ord);
     }
 

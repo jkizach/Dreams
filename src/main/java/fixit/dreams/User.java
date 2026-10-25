@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -42,6 +43,8 @@ class User {
     // Navne brugeren har sagt nej til som nye personer, skrevet som Symbolgenkendelse.ikkeNavnNoegle
     // skriver dem. TreeSet, så rækkefølgen i user.json - og dermed indstillingernes hash - er fast.
     private TreeSet<String> ikkeNavne = new TreeSet<>();
+    // Stavekontrollens egen ordbog, med små bogstaver. TreeSet af samme grund som ikkeNavne.
+    private TreeSet<String> egneOrd = new TreeSet<>();
     // Tælles én op hver gang statistikken skal regnes om. Det VAR et boolsk flag, og det var
     // forkert: JavaFX fyrer kun listeners når værdien faktisk ÆNDRER sig, og flaget blev kun
     // sat tilbage til false inde i Analyse-fanens egen listener. Skete der noget der krævede
@@ -137,6 +140,9 @@ class User {
             ikkeNavne = new TreeSet<>(loadedUserDTO.ikkeNavne);
         } else {
             ikkeNavne = IOutils.loadGamleIkkeNavne();
+        }
+        if (loadedUserDTO != null && loadedUserDTO.egneOrd != null) {
+            egneOrd = new TreeSet<>(loadedUserDTO.egneOrd);
         }
     }
 
@@ -356,6 +362,20 @@ class User {
 
     public void setIkkeNavne(Collection<String> navne) {
         ikkeNavne = new TreeSet<>(navne);
+    }
+
+    /** En kopi - ændringer går gennem tilføjEgetOrd/setEgneOrd. */
+    public TreeSet<String> getEgneOrd() {
+        return new TreeSet<>(egneOrd);
+    }
+
+    /** @return true hvis ordet var nyt, og listen altså skal gemmes. */
+    public boolean tilføjEgetOrd(String ord) {
+        return egneOrd.add(ord.toLowerCase(Locale.ROOT));
+    }
+
+    public void setEgneOrd(Collection<String> ord) {
+        egneOrd = new TreeSet<>(ord);
     }
 
     public boolean isVisHolografisk() {

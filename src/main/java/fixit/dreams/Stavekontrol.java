@@ -7,9 +7,6 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +38,6 @@ class Stavekontrol {
 
     /** Bogstaver, gerne bundet sammen af bindestreg eller apostrof: "tv-serie", "Gull-Maja". */
     private static final Pattern ORD = Pattern.compile("\\p{L}+(?:[-'’]\\p{L}+)*");
-
-    private static final String ORDBOG_FIL = "egen-ordbog.txt";
 
     private static CompletableFuture<Stavekontrol> indlaesning;
 
@@ -205,35 +200,5 @@ class Stavekontrol {
             }
         }
         return ord;
-    }
-
-    // ---- Brugerens egen ordbog: én linje pr. ord i datamappen. Kun på denne maskine. ----
-
-    static Path egenOrdbogSti() {
-        return AppPaths.APP_DATA_PATH.resolve(ORDBOG_FIL);
-    }
-
-    static Set<String> laesEgenOrdbog(Path fil) {
-        Set<String> ord = new TreeSet<>();
-        if (Files.exists(fil)) {
-            try {
-                for (String linje : Files.readAllLines(fil, StandardCharsets.UTF_8)) {
-                    if (!linje.isBlank()) {
-                        ord.add(linje.strip().toLowerCase(Locale.ROOT));
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return ord;
-    }
-
-    static void gemEgenOrdbog(Path fil, Set<String> ord) {
-        try {
-            Files.write(fil, new TreeSet<>(ord), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
