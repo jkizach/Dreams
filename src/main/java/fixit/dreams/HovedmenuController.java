@@ -278,6 +278,7 @@ public class HovedmenuController {
         });
 
         searchField.setContextMenu(new ContextMenu());
+        skriveFelt.setContextMenu(new ContextMenu()); // Stavefelt viser kun en menu på stavefejl
         dagrestFelt.setContextMenu(new ContextMenu());
         tolkningFelt.setContextMenu(new ContextMenu());
 
@@ -295,7 +296,7 @@ public class HovedmenuController {
         // Og kunne man så lave et Søren-trick med Categories her i stedet? vv
         loadCCBs();
         tagfelt = new Tagfelt(tfTag, tagChips, user.getTagkategori());
-        stavefelt = new Stavefelt(skriveFelt, stavelag); // har sin egen højrekliksmenu
+        stavefelt = new Stavefelt(skriveFelt, stavelag);
         opdaterTagliste();
 
         kategoriLabels = user.getKategoriLabels(); // skal løses så det bruger categories og ikke noget andet...

@@ -59,6 +59,11 @@ class Stavefelt {
     private final Pane lag;
     private final PauseTransition ventetid = new PauseTransition(PAUSE);
     private final ContextMenu menu = new ContextMenu();
+    /**
+     * Feltets egen menu fra før stavekontrollen, til højreklik der ikke rammer en stavefejl. Ny
+     * drøm har en tom menu (= ingen menu); Rediger drøm har null, dvs. JavaFX' Klip/Kopiér/Sæt ind.
+     */
+    private final ContextMenu tidligereMenu;
 
     private Stavekontrol stavekontrol;
     private Set<String> egenOrdbog = Set.of();
@@ -85,7 +90,7 @@ class Stavefelt {
         lag.setMinSize(0, 0);
 
         menu.getStyleClass().add("stavemenu");
-        felt.setContextMenu(menu);
+        tidligereMenu = felt.getContextMenu();
         felt.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, this::vedHoejreklik);
 
         ventetid.setOnFinished(e -> tjek());
@@ -314,11 +319,22 @@ class Stavefelt {
             }
         }
         if (ramt == null || stavekontrol == null) {
-            // Som før stavekontrollen: ingen menu, heller ikke JavaFX' engelske standardmenu.
-            e.consume();
+            // Som før stavekontrollen: feltets egen menu får lov. Er den null, viser TextArea'ens
+            // behavior sin standardmenu; en tom menu betyder at der bevidst ikke skal være nogen.
+            if (tidligereMenu != null && tidligereMenu.getItems().isEmpty()) {
+                e.consume();
+            }
             return;
         }
+        // Forslagene vises herfra, og hændelsen standses i filteret, så hverken Control eller
+        // behavior når at vise feltets egen menu oveni. Feltets contextMenu røres aldrig, så
+        // dets egen menu (eller mangel på samme) er uændret alle andre steder.
+        if (tidligereMenu != null) {
+            tidligereMenu.hide();
+        }
         byggMenu(ramt);
+        menu.show(felt, e.getScreenX(), e.getScreenY());
+        e.consume();
     }
 
     /**

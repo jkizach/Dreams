@@ -13,6 +13,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
@@ -97,6 +98,12 @@ public class EditDreamController {
     private Tagfelt tagfelt;
 
     @FXML
+    private Pane stavelagEdit;
+
+    /** Stavekontrollen i drømmeteksten - samme klasse som på Ny drøm. */
+    private Stavefelt stavefelt;
+
+    @FXML
     private CheckBox lucidEdit, praktisererEdit, modsatEdit, arketypiskEdit, praksisEdit, mareridtEdit, kollektivEdit, advarselEdit, holografiskEdit;
 
     @FXML
@@ -104,6 +111,7 @@ public class EditDreamController {
         user = User.getInstance();
         loadCCBs();
         tagfelt = new Tagfelt(tfTagEdit, tagChipsEdit, user.getTagkategori());
+        stavefelt = new Stavefelt(editSkrivefelt, stavelagEdit);
 
         // De tre valgfri cber:
         kollektivEdit.setVisible(user.isVisKollektiv());
