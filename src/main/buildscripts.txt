@@ -1,4 +1,4 @@
-Byg og pakning af Drømmeappen 2.1
+Byg og pakning af Drømmeappen 2.2
 =================================
 
 Vigtigt at vide, før du går i gang
@@ -31,17 +31,17 @@ installeren. Ren input-mappe fylder 620 KB, og MSI'en faldt fra ~200 MB til 42 M
 
   Windows:
     mkdir target\jpackage-input
-    copy target\Dreams-2.1.jar target\jpackage-input\
+    copy target\Dreams-2.2.jar target\jpackage-input\
     copy src\main\splash.png   target\jpackage-input\
 
   macOS: (ingen splash - se 3b)
     mkdir -p target/jpackage-input
-    cp target/Dreams-2.1.jar target/jpackage-input/
+    cp target/Dreams-2.2.jar target/jpackage-input/
 
 
 3a. Windows: MSI
 -----------------
-  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.1.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.1 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.2.jar --main-class fixit.dreams.Main --runtime-image target/app --type msi --icon src/main/resources/moona.ico --app-version 2.2 --vendor "ITfix" --win-shortcut --win-menu --win-upgrade-uuid "186F9AE6-606A-330C-BA4F-15E3A38582EE" --java-options "-splash:app/splash.png"
 
 
 3b. macOS: DMG (køres på Sørens Mac)
@@ -60,7 +60,7 @@ Hænger sammen med værnet i DreamApp.start(), som springer SplashScreen-kaldet 
 Det kald trækker libsplashscreen og AWT ind på FX-tråden helt af sig selv - også når der slet
 ikke er givet -splash - så det er ikke nok kun at fjerne flaget her.
 
-  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.1.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.1 --vendor "ITfix" --icon src/main/resources/moona.icns
+  jpackage --input target/jpackage-input --name "Drømmeappen" --main-jar Dreams-2.2.jar --main-class fixit.dreams.Main --runtime-image target/app --type dmg --app-version 2.2 --vendor "ITfix" --icon src/main/resources/moona.icns
 
 Arkitektur (Silicon vs. Intel): jpackage har ingen --arch-mulighed i JDK 21 - den gamle
 Intel-linje med "--arch x64" er altså ikke gyldig længere. Arkitekturen bestemmes af den

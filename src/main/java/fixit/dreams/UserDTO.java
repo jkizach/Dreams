@@ -27,7 +27,7 @@ public class UserDTO {
     // Er startFromThisDate null, er der ingen dato at have en mening om.
     public Boolean startDatoValgtAfBruger;
 
-    // Additivt felt, nyt efter 2.1: navne brugeren har sagt nej til i symbolforslagsdialogen, så
+    // Additivt felt, nyt i 2.2: navne brugeren har sagt nej til i symbolforslagsdialogen, så
     // de ikke foreslås som personer igen (se Symbolgenkendelse.find). Ligger her og ikke i en
     // fil for sig, så listen følger med i syncen som en af indstillingerne. Ingen skemaændring:
     // en ældre udgave springer feltet over (se @JsonIgnoreProperties ovenfor).

@@ -35,7 +35,7 @@ public class DreamApp extends Application {
         scene.getStylesheets().add(cssFile.toURI().toString()); // Indlæs direkte fra resources
         //scene.getStylesheets().applyCss();
 
-        stage.setTitle("Drømmeappen 2.1");
+        stage.setTitle("Drømmeappen 2.2");
         stage.setMinWidth(650);
         stage.setMinHeight(550);
         stage.setScene(scene);
