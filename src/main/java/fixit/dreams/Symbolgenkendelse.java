@@ -146,6 +146,18 @@ public final class Symbolgenkendelse {
             "bad", Set.of("bad"),
             "sang", Set.of("sang"));
 
+    /**
+     * Chakraer hvis navn i en drømmetekst næsten altid betyder noget andet: halsen er kroppen,
+     * "roder" og "roden" er rod, og kroner er penge. Mod de rigtige 868 drømme gav hals 11 fund
+     * og 0 rigtige, rod 11 og 1, krone 3 og 0 - mens hjerte gav 9 og 6 og derfor bliver.
+     *
+     * Gælder kun i chakrakategorien. Id'et skrives ud her og hentes ikke fra
+     * Category.ID_CHAKRAER: det er et metodekald, ikke en konstant, og ville trække Category og
+     * dermed JavaFX ind i unittesten.
+     */
+    private static final String CHAKRA_ID = Kategoriid.forIndbygget("Chakraer");
+    private static final Set<String> CHAKRAER_DER_IKKE_SOEGES = Set.of("hals", "rod", "krone");
+
     /** Ord der kan stå lige foran et navneord, men ikke foran et udsagnsord: "et får", "mit tog". */
     private static final Set<String> BESTEMMERE = Set.of(
             "en", "et", "min", "mit", "mine", "din", "dit", "dine", "sin", "sit", "sine",
@@ -275,6 +287,9 @@ public final class Symbolgenkendelse {
             }
             for (String symbol : post.getValue()) {
                 if (symbol == null || symbol.isBlank()) {
+                    continue;
+                }
+                if (CHAKRA_ID.equals(post.getKey()) && CHAKRAER_DER_IKKE_SOEGES.contains(smaat(symbol))) {
                     continue;
                 }
                 String fundetSom = findITekst(ord, symbol);
