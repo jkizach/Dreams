@@ -20,7 +20,9 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -208,6 +210,34 @@ public class EditDreamController {
 
         user.setDreamEdited(dream.getId());
         closePopup(event);
+    }
+
+    /** Se Symbolfinder - samme knap som i Ny drøm. */
+    @FXML
+    private void findSymboler() {
+        LinkedHashMap<String, CheckBox> kvalitetsfelter = new LinkedHashMap<>();
+        kvalitetsfelter.put(Kvalitetsgenkendelse.LUCID, lucidEdit);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.PRAKTISERER, praktisererEdit);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.MODSATKOENNET, modsatEdit);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.MARERIDT, mareridtEdit);
+        kvalitetsfelter.put(Kvalitetsgenkendelse.HOLOGRAFISK, holografiskEdit);
+        Symbolfinder.find(editSkrivefelt.getText(), kvalitetsfelter, editSkrivefelt.getScene().getWindow(),
+                this::afkryds);
+    }
+
+    // Vinduets bokse er ikke registreret i Category, så et navn symbolfinderen lige har oprettet
+    // står ikke i boksen endnu. Boksen fyldes da forfra, uden at de andre flueben går tabt.
+    private void afkryds(Category kategori, String symbol) {
+        CheckComboBox<String> ccb = editCCBs.get(kategori.getId());
+        if (ccb == null) {
+            return;
+        }
+        if (!ccb.getItems().contains(symbol)) {
+            List<String> valgte = new ArrayList<>(ccb.getCheckModel().getCheckedItems());
+            ccb.getItems().setAll(kategori.getSymbolsForDisplay());
+            valgte.forEach(ccb.getCheckModel()::check);
+        }
+        ccb.getCheckModel().check(symbol);
     }
 
     @FXML

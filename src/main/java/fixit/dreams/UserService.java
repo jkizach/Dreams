@@ -355,17 +355,6 @@ public class UserService extends ServiceMother {
         return user.isVisHolografisk();
     }
 
-    public TreeSet<String> getIkkeNavne() {
-        return user.getIkkeNavne();
-    }
-
-    /** Husker navnene som ikke-personer og gemmer straks, hvis mindst ét var nyt. */
-    public void tilføjIkkeNavne(Collection<String> navne) {
-        if (user.tilføjIkkeNavne(navne)) {
-            IOutils.gemIkkeNavne(user);
-        }
-    }
-
     public LocalDate getStartDate() {
         return user.getStartFromThisDate();
     }
@@ -376,17 +365,6 @@ public class UserService extends ServiceMother {
 
     public boolean harDrømme() {
         return !user.getDreams().isEmpty();
-    }
-
-    // Drømmerens køn, udledt af drømmene med flueben i Modsatkønnet - se Kvalitetsgenkendelse.
-    public Kvalitetsgenkendelse.Koen getDrømmerensKøn() {
-        List<String> tekster = new ArrayList<>();
-        for (Dream d : user.getDreams().values()) {
-            if (d.hasFlag(Kvalitetsgenkendelse.MODSATKOENNET)) {
-                tekster.add(d.getIndhold());
-            }
-        }
-        return Kvalitetsgenkendelse.udledDroemmerensKoen(tekster);
     }
 
     // Ældste drøm syncen har hentet ned i denne session, eller null hvis der ikke kom nogen.
