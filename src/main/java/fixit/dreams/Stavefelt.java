@@ -2,6 +2,7 @@ package fixit.dreams;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -13,6 +14,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.skin.TextAreaSkin;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -73,6 +75,16 @@ class Stavefelt {
     private long version = 0;
     private boolean skalTegnes = false;
     private final Runnable efterLayout = this::tegnHvisNoedvendigt;
+    /**
+     * Et klik et vilkårligt sted i vinduet lukker forslagsmenuen. ContextMenu skulle selv gøre
+     * det (autoHide), men menuen blev stående til man valgte noget (brugerfundet 2026-11-07).
+     * Et nyt højreklik på en fejl lukker den gamle her og åbner en ny i vedHoejreklik.
+     */
+    private final EventHandler<MouseEvent> lukMenuVedKlik = e -> {
+        if (menu.isShowing()) {
+            menu.hide();
+        }
+    };
 
     private Color stregfarve = Color.RED;
     private Region fulgtBaggrund;
@@ -114,14 +126,17 @@ class Stavefelt {
         felt.sceneProperty().addListener((obs, gammel, ny) -> {
             if (ny != null) {
                 ny.addPostLayoutPulseListener(efterLayout);
+                ny.addEventFilter(MouseEvent.MOUSE_PRESSED, lukMenuVedKlik);
             }
             if (gammel != null) {
                 gammel.removePostLayoutPulseListener(efterLayout);
+                gammel.removeEventFilter(MouseEvent.MOUSE_PRESSED, lukMenuVedKlik);
             }
         });
         Scene scene = felt.getScene();
         if (scene != null) {
             scene.addPostLayoutPulseListener(efterLayout);
+            scene.addEventFilter(MouseEvent.MOUSE_PRESSED, lukMenuVedKlik);
         }
 
         Stavekontrol.indlaes().thenAcceptAsync(s -> {
