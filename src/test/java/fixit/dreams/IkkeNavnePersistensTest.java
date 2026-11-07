@@ -85,8 +85,7 @@ class IkkeNavnePersistensTest {
 
     @Test
     void et_nej_overlever_en_genstart() {
-        UserService service = new UserService(User.getInstance());
-        service.tilføjIkkeNavne(List.of("paris"));
+        Symbolfinder.afvisNavne(User.getInstance(), List.of("paris"));
         genstart();
 
         assertEquals(List.of("paris"), List.copyOf(User.getInstance().getIkkeNavne()));

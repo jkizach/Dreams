@@ -59,7 +59,7 @@ Nogle få dyr og ting staves ligesom et almindeligt udsagnsord - "får", "tog", 
 
 Et enkelt ord kan snyde den. Skriver du "vi farer vild", kan den finde far, for "farer" ligner en bøjning af det. Det er netop derfor listen skal godkendes - et forkert flueben ville ellers følge med ind i din statistik.
 
-Knappen findes kun under Ny drøm. Redigerer du en gammel drøm, er symbolerne som regel sat i forvejen, og en gennemgang oven i et færdigt valg ville være mere til besvær end til hjælp.
+Knappen findes også i Rediger drøm, nederst til venstre. Den virker på samme måde, og de symboler drømmen allerede har, beholder deres flueben.
 
 Under fanen Tags er der et felt til frie tags. Det er den lette udgave af en symbolkategori: du skriver bare et ord og trykker Enter, og så sidder tagget på drømmen. Bliver det til mange tags, kan du rulle ned gennem dem i fanen. Mens du skriver, foreslår appen de tags du har brugt før, så du ikke ender med "hav", "havet" og "Hav" som tre forskellige ting. Tagget kan fjernes igen ved at trykke på det.
 

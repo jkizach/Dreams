@@ -142,6 +142,12 @@
             <Pane fx:id="stavelagEdit" mouseTransparent="true" />
          </children>
       </StackPane>
+      <!-- Samme knap som i Ny drøm (se Symbolfinder), i venstre side under afkrydsningerne. -->
+      <Button layoutX="27.0" layoutY="773.0" mnemonicParsing="false" onAction="#findSymboler" text="Find symboler i drømmen">
+         <tooltip>
+            <Tooltip text="Gennemgår drømmeteksten og foreslår de symboler og kvaliteter den finder. Du godkender selv, før der bliver sat flueben." wrapText="true" />
+         </tooltip>
+      </Button>
       <Button layoutX="624.0" layoutY="773.0" mnemonicParsing="false" onAction="#saveDream" text="Gem">
          <tooltip>
             <Tooltip text="Gem ændringerne og luk vinduet." wrapText="true" />
